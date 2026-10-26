@@ -28,39 +28,40 @@ class PlayState extends MusicSyncedState
         {
             time: 4000,
             object: "pulse_square",
+            lead: 750,
             params: {
                 x: FlxG.random.int(64, 1000),
-                y: 500,
-                warning: 250,
+                y: 600,
                 outro: 500,
-                duration: 750
+                attackSpeed: 500,
+                duration: 1250
             }
         },
         {
             time: 5000,
             object: "pulse_square",
+            lead: 750,
             params: {
                 x: FlxG.random.int(64, 1000),
-                y: 500,
-                warning: 250,
+                y: 600,
                 outro: 500,
-                duration: 750
+                attackSpeed: 500,
+                duration: 1250
             }
         },
         {
             time: 6000,
             object: "pulse_square",
+            lead: 750,
             params: {
                 x: FlxG.random.int(64, 1000),
-                y: 500,
-                warning: 250,
+                y: 600,
                 outro: 500,
-                duration: 750
+                attackSpeed: 500,
+                duration: 1250
             }
         },
     ];
-    
-    var music:FlxSound;
     
     override public function create()
     {
@@ -110,7 +111,7 @@ class PlayState extends MusicSyncedState
             {
                 case "pulse_square":
                     trace("pulse");
-                    levelActors.add(new PulseBlock(e.params.x, e.params.y, e.time, e.lead, e.params.duration, e.params.outro));
+                    levelActors.add(new PulseBlock(e.params.x, e.params.y, e.time, e.lead, e.params.attackSpeed, e.params.duration, e.params.outro));
             }
         });
         
