@@ -1,5 +1,6 @@
 package states;
 
+import core.Level;
 import objects.PulseBlock;
 import flixel.tweens.FlxTween;
 import core.Conductor;
@@ -71,7 +72,9 @@ class PlayState extends MusicSyncedState
         
         FlxG.debugger.drawDebug = true;
         
-        timeline = new Timeline(events);
+        final level = Level.loadJsonData("game.json");
+        
+        timeline = new Timeline(level.events);
         
         FlxG.sound.cache("assets/music/life_is_game_kay.ogg");
         
@@ -91,6 +94,7 @@ class PlayState extends MusicSyncedState
         add(platform);
         add(levelActors);
         
+        Conductor.changeBPM(110);
         FlxG.sound.playMusic("assets/music/life_is_game_kay.ogg");
         
         super.create();

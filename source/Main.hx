@@ -13,7 +13,7 @@ class Main extends Sprite
     public function new()
     {
         super();
-        game = new FlxGame(screenWidth, screenHeight, states.PlayState, updateFrameRate, updateFrameRate, true, false);
+        game = new FlxGame(screenWidth, screenHeight, states.EditorState, updateFrameRate, updateFrameRate, true, false);
         
         addChild(game);
     }

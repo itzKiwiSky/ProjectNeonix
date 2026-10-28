@@ -1,5 +1,6 @@
 package objects;
 
+import core.Conductor;
 import flixel.FlxSprite;
 import flixel.FlxG;
 import flixel.tweens.FlxEase;
@@ -41,87 +42,50 @@ class PulseBlock extends LevelActor
         return s;
     }
     
-    inline function syncActive(obj:FlxSprite)
+    inline function syncActive(obj:FlxSprite):Void
     {
         obj.updateHitbox();
         obj.setPosition(cx - obj.width * 0.5, cy - obj.height * 0.5);
     }
     
-    function cancelAll()
+    function setScale(s:FlxSprite, v:Float)
     {
-        FlxTween.cancelTweensOf(warningSprite);
-        FlxTween.cancelTweensOf(warningSprite.scale);
-        FlxTween.cancelTweensOf(activeSprite);
-        FlxTween.cancelTweensOf(activeSprite.scale);
+        s.scale.set(v, v);
+        syncActive(s);
     }
     
-    override function onWaiting()
+    override function update(elapsed:Float)
     {
-        cancelAll();
+        super.update(elapsed); // roda a troca de fase primeiro
         
-        warningSprite.visible = false;
-        activeSprite.visible = false;
-        warningSprite.scale.set(0, 0);
-        activeSprite.scale.set(0, 0);
+        var now = Conductor.songPosition;
+        
+        switch (phase)
+        {
+            case Warning:
+                var t:Float = progress(now, time - warningTime, 200);
+                setScale(warningSprite, FlxEase.backOut(t));
+            case Active:
+                var t:Float = progress(now, time, 150);
+                setScale(activeSprite, FlxEase.backOut(t));
+            case Outro:
+                var t:Float = progress(now, time + duration, outroDuration);
+                activeSprite.alpha = 1 - FlxEase.quadIn(t);
+                setScale(activeSprite, 1 - FlxEase.quadIn(t));
+            default:
+        }
     }
     
     override function onWarning()
     {
-        cancelAll();
-        
-        activeSprite.visible = false;
-        activeSprite.scale.set(0, 0);
-        
         warningSprite.visible = true;
-        warningSprite.scale.set(0, 0);
-        warningSprite.alpha = 0.5;
-        syncActive(warningSprite);
-        
-        FlxTween.tween(warningSprite.scale, {x: 1, y: 1}, warningTime / 1000, {
-            ease: FlxEase.backOut,
-            onUpdate: (_) -> syncActive(warningSprite)
-        });
+        activeSprite.visible = false;
     }
     
     override function onActive()
     {
-        cancelAll();
-        
         warningSprite.visible = false;
-        
         activeSprite.visible = true;
-        activeSprite.alpha = 1;
-        activeSprite.scale.set(0, 0);
-        syncActive(activeSprite);
-        
-        FlxTween.tween(activeSprite.scale, {x: 1, y: 1}, attackSpeed / 1000, {
-            ease: FlxEase.backOut,
-            onUpdate: (_) -> syncActive(activeSprite)
-        });
-    }
-    
-    override function onOutro()
-    {
-        cancelAll();
-        
-        warningSprite.visible = false;
-        
-        activeSprite.visible = true;
-        activeSprite.alpha = 1;
-        activeSprite.scale.set(1, 1);
-        syncActive(activeSprite);
-        
-        FlxTween.tween(activeSprite, {alpha: 0}, outroDuration / 1000, {ease: FlxEase.quadIn});
-        FlxTween.tween(activeSprite.scale, {x: 0, y: 0}, outroDuration / 1000, {
-            ease: FlxEase.quadIn,
-            onUpdate: (_) -> syncActive(activeSprite)
-        });
-    }
-    
-    override function onDead()
-    {
-        cancelAll();
-        super.onDead();
     }
     
     override public function hits(obj:FlxSprite):Bool

@@ -1,8 +1,10 @@
 package core;
 
+import sys.io.File;
+import haxe.Json;
 import core.Timeline.TimelineEvent;
 
-typedef LeveMetaData =
+typedef LevelMetaData =
 {
     var title:String;
     var artist:String;
@@ -12,4 +14,11 @@ typedef LeveMetaData =
     var events:Array<TimelineEvent>;
 }
 
-class Level {}
+class Level
+{
+    public inline static function loadJsonData(filename:String)
+    {
+        final data:LevelMetaData = Json.parse(File.getContent("assets/data/" + filename));
+        return data;
+    }
+}

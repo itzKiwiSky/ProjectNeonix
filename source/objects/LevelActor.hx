@@ -68,6 +68,9 @@ class LevelActor extends FlxTypedSpriteGroup<FlxSprite>
         super.update(elapsed);
     }
     
+    inline function progress(now:Float, start:Float, len:Float):Float
+        return Math.max(0, Math.min(1, (now - start) / len));
+        
     public function hits(obj:FlxSprite):Bool
         return false;
         
@@ -79,6 +82,5 @@ class LevelActor extends FlxTypedSpriteGroup<FlxSprite>
     
     public function onOutro() {}
     
-    public function onDead()
-        kill();
+    public function onDead() {}
 }

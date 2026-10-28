@@ -26,6 +26,9 @@ class Timeline
     static inline function spawnTime(e:TimelineEvent):Float
         return e.time - (e.lead == null ? 0 : e.lead);
         
+    inline function progress(now:Float, start:Float, len:Float):Float
+        return Math.max(0, Math.min(1, (now - start) / len));
+        
     public function update(currentTime:Float, spawn:TimelineEvent->Void)
     {
         while (next < events.length && spawnTime(events[next]) <= currentTime)
