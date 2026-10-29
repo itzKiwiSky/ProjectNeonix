@@ -16,7 +16,7 @@ typedef LevelMetaData =
 
 class Level
 {
-    public inline static function loadJsonData(filename:String)
+    public inline static function loadJsonData(filename:String):LevelMetaData
     {
         final data:LevelMetaData = Json.parse(File.getContent("assets/data/" + filename));
         return data;

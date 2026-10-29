@@ -1,5 +1,6 @@
 package states;
 
+import objects.ActorManager;
 import core.Level;
 import objects.PulseBlock;
 import flixel.tweens.FlxTween;
@@ -23,6 +24,9 @@ class PlayState extends MusicSyncedState
     public static var currentSong:String = "";
     
     var levelActors:FlxTypedGroup<LevelActor>;
+    
+    var platformSprite:FlxSprite;
+    var background:FlxSprite;
     
     // test //
     var events:Array<TimelineEvent> = [
@@ -68,6 +72,8 @@ class PlayState extends MusicSyncedState
     {
         persistentDraw = persistentUpdate = true;
         
+        ActorManager.init();
+        
         FlxG.worldBounds.set(0, 0, FlxG.width, FlxG.height);
         
         FlxG.debugger.drawDebug = true;
@@ -87,15 +93,25 @@ class PlayState extends MusicSyncedState
         platform.immovable = true;
         platform.y = FlxG.height - 28;
         platform.screenCenter(X);
+        platform.visible = false;
+        
+        platformSprite = new FlxSprite();
+        platformSprite.loadGraphic("assets/images/game/platform.png");
+        platform.updateHitbox();
+        platformSprite.y = FlxG.height - 28;
+        platformSprite.immovable = true;
+        platformSprite.screenCenter(X);
         
         levelActors = new FlxTypedGroup<LevelActor>();
         
         add(player);
         add(platform);
+        add(platformSprite);
         add(levelActors);
         
         Conductor.changeBPM(110);
         FlxG.sound.playMusic("assets/music/life_is_game_kay.ogg");
+        FlxG.sound.music.volume = 0.2;
         
         super.create();
     }

@@ -1,5 +1,6 @@
 package objects;
 
+import core.Timeline.TimelineEvent;
 import core.Conductor;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
@@ -22,6 +23,7 @@ class LevelActor extends FlxTypedSpriteGroup<FlxSprite>
     public var phase:Null<Phase> = null;
     public var cx:Float;
     public var cy:Float;
+    public var event:TimelineEvent;
     
     public function new(x:Float = 0, y:Float = 0, time:Float = 0, warningTime:Float = 1000, duration:Float = 500, outroDuration:Float = 200)
     {
@@ -74,6 +76,14 @@ class LevelActor extends FlxTypedSpriteGroup<FlxSprite>
     public function hits(obj:FlxSprite):Bool
         return false;
         
+    public function isInside(now:Float):Bool
+    {
+        var start = time - warningTime;
+        var end = time + duration + outroDuration;
+        return now >= start && now < end;
+    }
+    
+    // events //
     public function onWaiting() {}
     
     public function onWarning() {}
