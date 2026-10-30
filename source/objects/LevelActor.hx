@@ -1,5 +1,6 @@
 package objects;
 
+import flixel.FlxBasic;
 import core.Timeline.TimelineEvent;
 import core.Conductor;
 import flixel.FlxSprite;
@@ -73,7 +74,7 @@ class LevelActor extends FlxTypedSpriteGroup<FlxSprite>
     inline function progress(now:Float, start:Float, len:Float):Float
         return len <= 0 ? 1 : Math.max(0, Math.min(1, (now - start) / len));
         
-    public function hits(obj:FlxSprite):Bool
+    public function hits(obj:FlxBasic):Bool
         return false;
         
     public function isInside(now:Float):Bool

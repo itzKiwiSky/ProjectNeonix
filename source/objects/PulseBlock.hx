@@ -1,5 +1,6 @@
 package objects;
 
+import flixel.FlxBasic;
 import core.Conductor;
 import flixel.FlxSprite;
 import flixel.FlxG;
@@ -94,6 +95,6 @@ class PulseBlock extends LevelActor
         activeSprite.visible = false;
     }
     
-    override public function hits(obj:FlxSprite):Bool
+    override public function hits(obj:FlxBasic):Bool
         return phase == Active && FlxG.overlap(obj, activeSprite);
 }

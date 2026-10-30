@@ -1,7 +1,8 @@
 package objects;
 
 import core.Timeline.TimelineEvent;
-import core.Level.LevelMetaData;
+import core.level.Level.LevelMetaData;
+import core.level.Level.LevelData;
 
 typedef ActorFactory = TimelineEvent->LevelActor;
 
@@ -38,7 +39,7 @@ class ActorManager
         return actor;
     }
     
-    public static function createAll(levelData:LevelMetaData):Array<LevelActor>
+    public static function createAll(levelData:LevelData):Array<LevelActor>
     {
         var actors:Array<LevelActor> = [];
         for (e in levelData.events)

@@ -1,7 +1,7 @@
 package states;
 
 import objects.ActorManager;
-import core.Level;
+import core.level.Level;
 import objects.PulseBlock;
 import flixel.tweens.FlxTween;
 import core.Conductor;
@@ -78,7 +78,7 @@ class PlayState extends MusicSyncedState
         
         FlxG.debugger.drawDebug = true;
         
-        final level = Level.loadJsonData("game.json");
+        final level:LevelData = Level.loadJsonData("game.json");
         
         timeline = new Timeline(level.events);
         
