@@ -88,6 +88,12 @@ class PulseBlock extends LevelActor
         activeSprite.visible = true;
     }
     
+    override function onDead()
+    {
+        warningSprite.visible = false;
+        activeSprite.visible = false;
+    }
+    
     override public function hits(obj:FlxSprite):Bool
         return phase == Active && FlxG.overlap(obj, activeSprite);
 }

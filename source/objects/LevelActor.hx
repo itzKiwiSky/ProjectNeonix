@@ -71,7 +71,7 @@ class LevelActor extends FlxTypedSpriteGroup<FlxSprite>
     }
     
     inline function progress(now:Float, start:Float, len:Float):Float
-        return Math.max(0, Math.min(1, (now - start) / len));
+        return len <= 0 ? 1 : Math.max(0, Math.min(1, (now - start) / len));
         
     public function hits(obj:FlxSprite):Bool
         return false;

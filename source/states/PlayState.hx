@@ -87,25 +87,33 @@ class PlayState extends MusicSyncedState
         player = new Player();
         player.screenCenter();
         
-        platform = new FlxSprite();
-        platform.makeGraphic(FlxG.width - 128, 48, 0xFFFFFFFF);
-        platform.updateHitbox();
-        platform.immovable = true;
-        platform.y = FlxG.height - 28;
-        platform.screenCenter(X);
-        platform.visible = false;
+        /*
+            platform = new FlxSprite();
+            platform.makeGraphic(FlxG.width - 128, 48, 0xFFFFFFFF);
+            platform.updateHitbox();
+            platform.immovable = true;
+            platform.y = FlxG.height - 28;
+            platform.screenCenter(X);
+            platform.visible = false; 
+         */
         
         platformSprite = new FlxSprite();
         platformSprite.loadGraphic("assets/images/game/platform.png");
-        platform.updateHitbox();
-        platformSprite.y = FlxG.height - 28;
+        platformSprite.updateHitbox();
+        platformSprite.y = (FlxG.height - platformSprite.height * 0.5) + 64;
         platformSprite.immovable = true;
         platformSprite.screenCenter(X);
         
+        background = new FlxSprite();
+        background.loadGraphic("assets/images/backgrounds/game_bg07.png");
+        background.updateHitbox();
+        background.screenCenter();
+        background.color = 0xFFA65094;
+        
         levelActors = new FlxTypedGroup<LevelActor>();
         
+        add(background);
         add(player);
-        add(platform);
         add(platformSprite);
         add(levelActors);
         
@@ -123,7 +131,7 @@ class PlayState extends MusicSyncedState
         
         super.update(elapsed);
         
-        FlxG.collide(player, platform);
+        FlxG.collide(player, platformSprite);
         
         timeline.update(Conductor.songPosition, (e:TimelineEvent) ->
         {
