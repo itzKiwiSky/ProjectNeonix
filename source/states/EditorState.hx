@@ -1,5 +1,6 @@
 package states;
 
+import flixel.graphics.FlxGraphic;
 import flixel.util.FlxColor;
 import flixel.FlxCamera;
 import flixel.FlxSprite;
@@ -37,10 +38,16 @@ class EditorState extends MusicSyncedState implements ui.GameUIEventController.E
         hudCam = new FlxCamera();
         editorGameCamera = new FlxCamera();
         
-        FlxG.cameras.add(hudCam);
+        editorGameCamera.bgColor = FlxColor.BLACK;
+        editorGameCamera.visible = false;
+        hudCam.bgColor = FlxColor.TRANSPARENT;
+        
         FlxG.cameras.add(editorGameCamera);
+        FlxG.cameras.add(hudCam);
         
         ActorManager.init();
+        
+        FlxG.cameras.setDefaultDrawTarget(editorGameCamera, true);
         
         activeActors = new FlxTypedGroup<LevelActor>();
         levelActors = new FlxTypedGroup<LevelActor>();
@@ -49,6 +56,26 @@ class EditorState extends MusicSyncedState implements ui.GameUIEventController.E
         for (a in ActorManager.createAll(level))
             levelActors.add(a);
             
+        createPreviewSprites();
+        add(activeActors);
+        
+        timeText = new FlxText();
+        timeText.size = 35;
+        timeText.setPosition(32, 32);
+        timeText.cameras = [hudCam];
+        add(timeText);
+        
+        FlxG.sound.playMusic("assets/music/life_is_game_kay.ogg");
+        FlxG.sound.music.pause(); // o editor começa pausado
+        
+        Conductor.changeBPM(110);
+        
+        super.create();
+    }
+    
+    // will create the platform and the spritebg //
+    function createPreviewSprites()
+    {
         platformSprite = new FlxSprite();
         platformSprite.loadGraphic("assets/images/game/platform.png");
         platformSprite.updateHitbox();
@@ -65,20 +92,6 @@ class EditorState extends MusicSyncedState implements ui.GameUIEventController.E
         
         add(background);
         add(platformSprite);
-        add(activeActors);
-        
-        timeText = new FlxText();
-        timeText.size = 35;
-        timeText.setPosition(32, 32);
-        timeText.camera = hudCam;
-        add(timeText);
-        
-        FlxG.sound.playMusic("assets/music/life_is_game_kay.ogg");
-        FlxG.sound.music.pause(); // o editor começa pausado
-        
-        Conductor.changeBPM(110);
-        
-        super.create();
     }
     
     override function update(elapsed:Float)
