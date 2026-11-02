@@ -58,23 +58,25 @@ class PulseBlock extends LevelActor
     override function update(elapsed:Float)
     {
         super.update(elapsed); // roda a troca de fase primeiro
-        
-        var now = Conductor.songPosition;
-        
-        switch (phase)
-        {
-            case Warning:
-                var t:Float = progress(now, time - warningTime, 200);
-                setScale(warningSprite, FlxEase.backOut(t));
-            case Active:
-                var t:Float = progress(now, time, 150);
-                setScale(activeSprite, FlxEase.backOut(t));
-            case Outro:
-                var t:Float = progress(now, time + duration, outroDuration);
-                activeSprite.alpha = 1 - FlxEase.quadIn(t);
-                setScale(activeSprite, 1 - FlxEase.quadIn(t));
-            default:
-        }
+    }
+    
+    override function onWarningUpdate()
+    {
+        var t:Float = progress(currentTime, time - warningTime, 200);
+        setScale(warningSprite, FlxEase.backOut(t));
+    }
+    
+    override function onActiveUpdate()
+    {
+        var t:Float = progress(currentTime, time, 150);
+        setScale(activeSprite, FlxEase.backOut(t));
+    }
+    
+    override function onOutroUpdate()
+    {
+        var t:Float = progress(currentTime, time + duration, outroDuration);
+        activeSprite.alpha = 1 - FlxEase.quadIn(t);
+        setScale(activeSprite, 1 - FlxEase.quadIn(t));
     }
     
     override function onWarning()

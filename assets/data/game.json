@@ -1,4 +1,14 @@
 {
+    "meta" : {
+        "title":"",
+        "artist":"",
+        "songID":"",
+        "backgroundID":7,
+        "backgroundColor":[62, 118, 158],
+        "platformColor":[186, 211, 230],
+        "bpm":110,
+        "songEnding":-1
+    },
     "events": [
         {
             "time": 4000,
@@ -7,29 +17,7 @@
             "params": {
                 "x": 300,
                 "y": 600,
-                "duration": 1250,
-                "outro": 500
-            }
-        },
-        {
-            "time": 6000,
-            "object": "pulse_square",
-            "lead": 750,
-            "params": {
-                "x": 1000,
-                "y": 600,
-                "duration": 1250,
-                "outro": 500
-            }
-        },
-        {
-            "time": 6000,
-            "object": "pulse_square",
-            "lead": 750,
-            "params": {
-                "x": 700,
-                "y": 600,
-                "duration": 1250,
+                "duration":300,
                 "outro": 500
             }
         }

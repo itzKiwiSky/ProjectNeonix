@@ -1,6 +1,6 @@
 package states;
 
-import flixel.graphics.FlxGraphic;
+import editor.EditorTimeline;
 import flixel.util.FlxColor;
 import flixel.FlxCamera;
 import flixel.FlxSprite;
@@ -13,16 +13,23 @@ import core.Conductor;
 import flixel.FlxG;
 import flixel.text.FlxText;
 import core.MusicSyncedState;
+import core.Timeline.TimelineEvent;
 
 class EditorState extends MusicSyncedState implements ui.GameUIEventController.EngineUIEvent
 {
     var timeText:FlxText;
-    var activeActors:FlxTypedGroup<LevelActor>; // só os que estão dentro da janela de tempo
-    var levelActors:FlxTypedGroup<LevelActor>; // todos os atores (nunca é adicionado ao state)
-    var cursorMusicTime:Float = 0; // o cursor: única fonte de verdade do tempo
+    var activeActors:FlxTypedGroup<LevelActor>; // Only show the objects that are inside the time window
+    var levelActors:FlxTypedGroup<LevelActor>; // all level actors
+    var cursorMusicTime:Float = 0; // the music cursor, the truth source
+    
+    var levelData:LevelData;
+    
+    var selectedEvent:TimelineEvent;
     
     var hudCam:FlxCamera;
     var editorGameCamera:FlxCamera;
+    
+    var editorTimeline:EditorTimeline;
     
     // decoration objects
     var platformSprite:FlxSprite;
@@ -30,20 +37,19 @@ class EditorState extends MusicSyncedState implements ui.GameUIEventController.E
     
     override function create()
     {
-        if (FlxG.sound.music != null)
-            FlxG.sound.music.stop();
-            
         persistentDraw = persistentUpdate = true;
         
-        hudCam = new FlxCamera();
-        editorGameCamera = new FlxCamera();
+        cameraWorldConfig();
         
-        editorGameCamera.bgColor = FlxColor.BLACK;
-        editorGameCamera.visible = false;
+        hudCam = new FlxCamera();
         hudCam.bgColor = FlxColor.TRANSPARENT;
         
-        FlxG.cameras.add(editorGameCamera);
-        FlxG.cameras.add(hudCam);
+        editorGameCamera = new FlxCamera();
+        editorGameCamera.bgColor = FlxColor.BLACK;
+        editorGameCamera.visible = false;
+        
+        FlxG.cameras.add(editorGameCamera, true);
+        FlxG.cameras.add(hudCam, false);
         
         ActorManager.init();
         
@@ -52,25 +58,73 @@ class EditorState extends MusicSyncedState implements ui.GameUIEventController.E
         activeActors = new FlxTypedGroup<LevelActor>();
         levelActors = new FlxTypedGroup<LevelActor>();
         
-        final level:LevelData = Level.loadJsonData("game.json");
-        for (a in ActorManager.createAll(level))
-            levelActors.add(a);
-            
+        // FlxG.debugger.drawDebug = true;
+        
         createPreviewSprites();
+        
+        // list of all events objects //
         add(activeActors);
         
+        // timeline for editor //
+        loadLevel();
+        
+        editorTimeline = new EditorTimeline();
+        editorTimeline.setEvents(levelData.events);
+        editorTimeline.cameras = [hudCam];
+        add(editorTimeline);
+        
+        // for debug //
         timeText = new FlxText();
         timeText.size = 35;
         timeText.setPosition(32, 32);
         timeText.cameras = [hudCam];
         add(timeText);
         
+        super.create();
+    }
+    
+    function cameraWorldConfig()
+    {
+        FlxG.worldBounds.set(0, 0, FlxG.width * 2, FlxG.height * 1.5);
+    }
+    
+    function resetEditor()
+    {
+        // if there's any music playing, stop now //
+        if (FlxG.sound.music != null)
+            FlxG.sound.music.stop();
+            
+        // predefined bpm //
+        Conductor.changeBPM(100);
+        
+        // we clear both groups just to make sure no actor will last //
+        activeActors.clear();
+        levelActors.clear();
+        
+        // reset colors //
+        platformSprite.color = FlxColor.WHITE;
+        background.color = FlxColor.WHITE;
+    }
+    
+    // this function will take the params and will load and update the editor state //
+    function loadLevel()
+    {
+        resetEditor();
+        
+        levelData = Level.loadJsonData("game.json");
+        Conductor.changeBPM(levelData.meta.bpm ?? 110);
+        
         FlxG.sound.playMusic("assets/music/life_is_game_kay.ogg");
         FlxG.sound.music.pause(); // o editor começa pausado
         
-        Conductor.changeBPM(110);
+        for (a in ActorManager.createAll(levelData))
+            levelActors.add(a);
+            
+        final bgColor:Array<Int> = levelData.meta.backgroundColor;
+        background.color = FlxColor.fromRGB(bgColor[0], bgColor[1], bgColor[2]);
         
-        super.create();
+        final platColor:Array<Int> = levelData.meta.platformColor;
+        platformSprite.color = FlxColor.fromRGB(platColor[0], platColor[1], platColor[2]);
     }
     
     // will create the platform and the spritebg //
@@ -86,6 +140,7 @@ class EditorState extends MusicSyncedState implements ui.GameUIEventController.E
         
         background = new FlxSprite();
         background.loadGraphic("assets/images/backgrounds/game_bg07.png");
+        background.setGraphicSize(FlxG.width * 1.2, FlxG.height * 1.2);
         background.updateHitbox();
         background.screenCenter();
         background.color = 0xFF6784D3;
@@ -101,6 +156,8 @@ class EditorState extends MusicSyncedState implements ui.GameUIEventController.E
         if (music.playing)
             cursorMusicTime = music.time;
             
+        editorTimeline.cursorMusicTime = cursorMusicTime;
+        
         // setas: movem o cursor (shift = mais rápido)
         var dir = (FlxG.keys.pressed.RIGHT ? 1 : 0) - (FlxG.keys.pressed.LEFT ? 1 : 0);
         if (dir != 0)
@@ -118,6 +175,13 @@ class EditorState extends MusicSyncedState implements ui.GameUIEventController.E
                 music.play();
             }
             
+        // event management //
+        if (FlxG.keys.justPressed.N)
+            createEventAtCursor();
+            
+        if (FlxG.keys.justPressed.DELETE)
+            deleteSelected();
+            
         Conductor.songPosition = cursorMusicTime;
         refreshActors(cursorMusicTime);
         
@@ -128,7 +192,7 @@ class EditorState extends MusicSyncedState implements ui.GameUIEventController.E
     
     override function onBeatHit() {}
     
-    // único caminho para pular no tempo
+    // the only way to move on the time //
     function setSongTime(time:Float)
     {
         cursorMusicTime = FlxMath.bound(time, 0, FlxG.sound.music.length);
@@ -137,10 +201,9 @@ class EditorState extends MusicSyncedState implements ui.GameUIEventController.E
             FlxG.sound.music.time = cursorMusicTime;
             
         Conductor.songPosition = cursorMusicTime;
-        refreshActors(cursorMusicTime);
     }
     
-    // decide quem entra e quem sai de activeActors para o tempo dado
+    // decide who will appear on the activeActors //
     function refreshActors(time:Float)
     {
         for (a in levelActors)
@@ -154,6 +217,64 @@ class EditorState extends MusicSyncedState implements ui.GameUIEventController.E
             {
                 activeActors.remove(a);
                 a.phase = null;
+            }
+        }
+    }
+    
+    function snapTime(t:Float):Float
+        return Math.round(t / Conductor.stepCrochet) * Conductor.stepCrochet;
+        
+    function createEventAtCursor()
+    {
+        var e:TimelineEvent = {
+            time: snapTime(cursorMusicTime),
+            object: "pulse_square",
+            lead: 750,
+            params: {
+                x: FlxG.width * 0.5,
+                y: FlxG.height * 0.5,
+                duration: 1250,
+                outro: 500
+            }
+        };
+        
+        levelData.events.push(e);
+        editorTimeline.addEvent(e);
+        rebuildActor(e);
+        selectedEvent = e;
+    }
+    
+    function deleteSelected()
+    {
+        if (selectedEvent == null)
+            return;
+            
+        removeActorOf(selectedEvent);
+        editorTimeline.removeEvent(selectedEvent);
+        levelData.events.remove(selectedEvent);
+        selectedEvent = null;
+    }
+    
+    // the actor that hold the values //
+    function rebuildActor(e:TimelineEvent)
+    {
+        removeActorOf(e);
+        
+        var actor = ActorManager.createActor(e);
+        if (actor != null)
+            levelActors.add(actor);
+    }
+    
+    function removeActorOf(e:TimelineEvent)
+    {
+        for (a in levelActors.members)
+        {
+            if (a != null && a.event == e)
+            {
+                activeActors.remove(a, true);
+                levelActors.remove(a, true);
+                a.destroy();
+                return;
             }
         }
     }

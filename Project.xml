@@ -41,60 +41,19 @@
 	<!-- _______________________________ Libraries ______________________________ -->
 
 	<haxelib name="flixel" />
-
-	<!--In
-	case you want to use the addons package-->
 	<haxelib name="flixel-addons" />
-
-	<!--In
-	case you want to use the ui package-->
-	<haxelib name="flixel-ui" />
-
+	<!-- <haxelib name="flixel-ui" />-->
 	<haxelib name="flixel-waveform" />
-
-	<!--In
-	case you want to use nape with flixel-->
-	<!--<haxelib
-	name="nape-haxe4" />-->
 
 	<!-- ______________________________ Haxedefines _____________________________ -->
 
-	<!--Remove
-	the legacy health system-->
 	<haxedef name="FLX_NO_HEALTH" />
-
-	<!--Enable
-	the Flixel core recording system-->
-	<!--<haxedef
-	name="FLX_RECORD" />-->
-
-	<!--Disable
-	the right and middle mouse buttons-->
-	<!--<haxedef
-	name="FLX_NO_MOUSE_ADVANCED" />-->
-
-	<!--Disable
-	the native cursor API on Flash-->
-	<!--<haxedef
-	name="FLX_NO_NATIVE_CURSOR" />-->
 
 	<!--Optimise
 	inputs, be careful you will get null errors if you don't use conditionals in your game-->
 	<haxedef name="FLX_NO_MOUSE" if="mobile" />
 	<haxedef name="FLX_NO_KEYBOARD" if="mobile" />
 	<haxedef name="FLX_NO_TOUCH" if="desktop" />
-	<!--<haxedef
-	name="FLX_NO_GAMEPAD" />-->
-
-	<!--Disable
-	the Flixel core sound tray-->
-	<!--<haxedef
-	name="FLX_NO_SOUND_TRAY" />-->
-
-	<!--Disable
-	the Flixel sound management code-->
-	<!--<haxedef
-	name="FLX_NO_SOUND_SYSTEM" />-->
 
 	<!--Disable
 	the Flixel core focus lost screen-->
@@ -105,10 +64,6 @@
 	the Flixel core debugger. Automatically gets set whenever you compile in release mode!-->
 	<haxedef name="FLX_NO_DEBUG" unless="debug" />
 
-	<!--Enable
-	this for Nape release builds for a serious peformance improvement-->
-	<haxedef name="NAPE_RELEASE_BUILD" unless="debug" />
-
 	<!-- Haxe 4.3.0+: Enable pretty syntax errors and stuff. -->
 	<!-- pretty (haxeflixel default), indent, classic (haxe compiler default) -->
 	<haxedef name="message.reporting" value="pretty" />
@@ -117,4 +72,5 @@
 
 	<!--Place
 	custom nodes like icons here-->
+	<haxeflag name="-v" if="debug" />
 </project>

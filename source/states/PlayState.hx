@@ -74,7 +74,7 @@ class PlayState extends MusicSyncedState
         
         ActorManager.init();
         
-        FlxG.worldBounds.set(0, 0, FlxG.width, FlxG.height);
+        FlxG.worldBounds.set(0, 0, FlxG.width * 2, FlxG.height * 1.5);
         
         FlxG.debugger.drawDebug = true;
         

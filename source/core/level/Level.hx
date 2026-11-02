@@ -10,8 +10,9 @@ typedef LevelMetaData =
     var artist:String;
     var songID:String;
     var backgroundID:Int;
-    var backgroudColor:Array<Int>;
+    var backgroundColor:Array<Int>;
     var platformColor:Array<Int>;
+    var actorsColor:Array<Int>;
     var bpm:Float;
     var songEnding:Float;
 }

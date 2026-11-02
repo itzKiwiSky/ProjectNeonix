@@ -25,6 +25,7 @@ class LevelActor extends FlxTypedSpriteGroup<FlxSprite>
     public var cx:Float;
     public var cy:Float;
     public var event:TimelineEvent;
+    public var currentTime:Float = 0;
     
     public function new(x:Float = 0, y:Float = 0, time:Float = 0, warningTime:Float = 1000, duration:Float = 500, outroDuration:Float = 200)
     {
@@ -50,7 +51,8 @@ class LevelActor extends FlxTypedSpriteGroup<FlxSprite>
     
     override function update(elapsed:Float)
     {
-        var p = phaseAt(Conductor.songPosition);
+        currentTime = Conductor.songPosition;
+        var p = phaseAt(currentTime);
         if (p != phase)
         {
             phase = p;
@@ -68,6 +70,20 @@ class LevelActor extends FlxTypedSpriteGroup<FlxSprite>
                     onDead();
             }
         }
+        
+        switch (p)
+        {
+            case Waiting:
+                onWaitingUpdate();
+            case Warning:
+                onWarningUpdate();
+            case Active:
+                onActiveUpdate();
+            case Outro:
+                onOutroUpdate();
+            case _:
+        }
+        
         super.update(elapsed);
     }
     
@@ -94,4 +110,12 @@ class LevelActor extends FlxTypedSpriteGroup<FlxSprite>
     public function onOutro() {}
     
     public function onDead() {}
+    
+    public function onWaitingUpdate() {}
+    
+    public function onWarningUpdate() {}
+    
+    public function onActiveUpdate() {}
+    
+    public function onOutroUpdate() {}
 }

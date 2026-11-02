@@ -1,5 +1,6 @@
 package;
 
+import flixel.FlxG;
 import states.PlayState;
 import flixel.FlxGame;
 import openfl.display.Sprite;
@@ -17,5 +18,6 @@ class Main extends Sprite
         game = new FlxGame(screenWidth, screenHeight, states.EditorState, updateFrameRate, updateFrameRate, true, false);
         
         addChild(game);
+        FlxG.autoPause = false;
     }
 }
