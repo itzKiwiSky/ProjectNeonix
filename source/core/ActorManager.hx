@@ -6,14 +6,12 @@ import core.level.Level.LevelData;
 
 typedef ActorFactory = TimelineEvent->LevelActor;
 
-// NOVO
 enum EventCategory
 {
     Obstacle;
     Map;
 }
 
-// NOVO
 typedef ActorEntry =
 {
     var factory:ActorFactory;
@@ -22,7 +20,7 @@ typedef ActorEntry =
 
 class ActorManager
 {
-    static var registeredActors:Map<String, ActorEntry> = []; // MUDOU o tipo
+    static var registeredActors:Map<String, ActorEntry> = [];
     static var initialized:Bool = false;
     
     public static function init()
@@ -45,14 +43,14 @@ class ActorManager
     
     public static function createActor(e:TimelineEvent):Null<LevelActor>
     {
-        var entry = registeredActors.get(e.object); // MUDOU
+        var entry = registeredActors.get(e.object);
         if (entry == null)
         {
             trace('Actor "${e.object}" não registrado, ignorando.');
             return null;
         }
         
-        var actor:LevelActor = entry.factory(e); // MUDOU
+        var actor:LevelActor = entry.factory(e);
         actor.event = e;
         return actor;
     }

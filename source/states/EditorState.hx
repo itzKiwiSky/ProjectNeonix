@@ -1,12 +1,12 @@
 package states;
 
+import flixel.FlxBasic;
+import lime.app.Application;
+import flixel.addons.ui.FlxUIPopup;
 import openfl.media.Sound;
 import flixel.sound.FlxSound;
 import lime.ui.FileDialogType;
 import lime.ui.FileDialog;
-import openfl.display.Loader;
-import openfl.events.Event;
-import openfl.net.FileReference;
 import ui.GameUIButton;
 import editor.EditorTimeline;
 import flixel.util.FlxColor;
@@ -43,10 +43,14 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     
     // ui //
     var btnLoadLevel:GameUIButton;
+    var btnSaveLevel:GameUIButton;
+    var btnLoadSong:GameUIButton;
+    
+    var loadedMusicPath:String = "";
     
     override function create()
     {
-        persistentDraw = persistentUpdate = true;
+        // persistentDraw = persistentUpdate = true;
         
         cameraWorldConfig();
         
@@ -74,13 +78,12 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         // list of all events objects //
         add(activeActors);
         
-        // timeline for editor //
-        resetEditor();
-        
         editorTimeline = new EditorTimeline();
-        editorTimeline.setEvents(levelData.events);
         editorTimeline.cameras = [hudCam];
         add(editorTimeline);
+        
+        // timeline for editor //
+        resetEditor();
         
         // for debug //
         timeText = new FlxText();
@@ -94,14 +97,39 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         super.create();
     }
     
+    inline function setUICamera(obj:FlxBasic, camera:FlxCamera)
+        obj.cameras = [camera];
+        
     function addUI()
     {
-        btnLoadLevel = new GameUIButton(8, 8, "Load Level", () ->
+        var padding:Float = 8;
+        var space:Float = padding;
+        
+        btnLoadLevel = new GameUIButton(space, 8, "Load Level", () -> openLoadLevelDialog());
+        
+        space = padding + btnLoadLevel.x + btnLoadLevel.width;
+        
+        btnSaveLevel = new GameUIButton(space, 8, "Save Level", () ->
         {
-            openLevelDialog();
+            if (loadedMusicPath == "" || loadLevel == null) {}
+            {
+                Application.current.window.alert("You cant save a level without a song.", "Error on saving level!");
+                return;
+            }
+            openSaveLevelDialog();
         });
         
+        space = padding + btnSaveLevel.x + btnSaveLevel.width;
+        
+        btnLoadSong = new GameUIButton(space, 8, "Load song", () -> {});
+        
+        setUICamera(btnLoadLevel, hudCam);
+        setUICamera(btnSaveLevel, hudCam);
+        setUICamera(btnLoadSong, hudCam);
+        
         add(btnLoadLevel);
+        add(btnSaveLevel);
+        add(btnLoadSong);
     }
     
     function cameraWorldConfig()
@@ -266,15 +294,26 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         }
     }
     
-    function openLevelDialog()
+    function openLoadLevelDialog()
     {
         if (FlxG.sound.music != null)
             FlxG.sound.music.pause(); // o diálogo congela o jogo, melhor pausar antes
             
-        var dialog = new FileDialog();
+        var dialog:FileDialog = new FileDialog();
         dialog.onSelect.add((path:String) -> loadLevel(path));
         dialog.onCancel.add(() -> trace("cancelado"));
         dialog.browse(FileDialogType.OPEN_DIRECTORY, null, null, "Load level");
+    }
+    
+    function openSaveLevelDialog()
+    {
+        if (FlxG.sound.music != null)
+            FlxG.sound.music.pause(); // o diálogo congela o jogo, melhor pausar antes
+            
+        var dialog:FileDialog = new FileDialog();
+        dialog.onCancel.add(() -> {});
+        dialog.onSave.add((path:String) -> {});
+        dialog.browse(FileDialogType.SAVE, null, null, "Save level");
     }
     
     function resetEditor()
@@ -283,7 +322,11 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         if (FlxG.sound.music != null)
             FlxG.sound.music.stop();
             
+        // we set the level data as empty level
         levelData = Level.emptyLevel();
+        
+        // and update the timeline to remove all the spritesv//
+        editorTimeline.destroyEventSprites();
         
         // predefined bpm //
         Conductor.changeBPM(100);
@@ -296,6 +339,8 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         platformSprite.color = FlxColor.WHITE;
         background.color = FlxColor.WHITE;
     }
+    
+    function saveLevel() {}
     
     // this function will take the params and will load and update the editor state //
     function loadLevel(path:String)

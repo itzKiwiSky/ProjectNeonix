@@ -29,9 +29,9 @@ class Level
     {
         return {
             meta: {
-                title: "",
-                artist: "",
-                songID: "",
+                title: "Unnamed Level",
+                artist: "unnamed artist",
+                songID: "0",
                 backgroundID: 5,
                 backgroundColor: [62, 118, 158],
                 platformColor: [186, 211, 230],

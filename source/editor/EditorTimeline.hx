@@ -42,12 +42,17 @@ class EditorTimeline extends FlxTypedSpriteGroup<FlxSprite>
         add(cursor);
     }
     
-    // recria todas as barras a partir de uma lista de eventos
-    public function setEvents(events:Array<TimelineEvent>)
+    public function destroyEventSprites()
     {
         for (s in eventSprites)
             destroyBars(s);
         eventSprites = [];
+    }
+    
+    // recria todas as barras a partir de uma lista de eventos
+    public function setEvents(events:Array<TimelineEvent>)
+    {
+        destroyEventSprites();
         
         for (e in events)
             addEvent(e, false);

@@ -47,7 +47,7 @@
 
 	<haxelib name="flixel" />
 	<haxelib name="flixel-addons" />
-	<!-- <haxelib name="flixel-ui" />-->
+	<haxelib name="flixel-ui" />
 	<haxelib name="flixel-waveform" />
 
 	<haxelib name="hxdiscord_rpc" version="1.3.0" if="DISCORD_ALLOWED" />
