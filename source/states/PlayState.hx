@@ -1,12 +1,12 @@
 package states;
 
-import objects.ActorManager;
+import core.ActorManager;
 import core.level.Level;
 import objects.PulseBlock;
 import flixel.tweens.FlxTween;
 import core.Conductor;
 import flixel.sound.FlxSound;
-import objects.LevelActor;
+import core.LevelActor;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import core.Timeline;
 import objects.Player;

@@ -25,9 +25,27 @@ typedef LevelData =
 
 class Level
 {
+    public static function emptyLevel()
+    {
+        return {
+            meta: {
+                title: "",
+                artist: "",
+                songID: "",
+                backgroundID: 5,
+                backgroundColor: [62, 118, 158],
+                platformColor: [186, 211, 230],
+                actorsColor: [255, 255, 255],
+                bpm: 100.0,
+                songEnding: -1.0,
+            },
+            events: [],
+        };
+    }
+    
     public static function loadJsonData(filename:String):LevelData
     {
-        final data:LevelData = Json.parse(File.getContent("assets/data/" + filename));
+        final data:LevelData = Json.parse(File.getContent(filename));
         return data;
     }
 }

@@ -1,3 +1,0 @@
-package editor;
-
-class EditorLayer {}

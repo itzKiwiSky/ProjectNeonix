@@ -1,5 +1,7 @@
 package editor;
 
+import core.ActorManager;
+import core.ActorManager.EventCategory;
 import flixel.util.FlxSpriteUtil;
 import core.Timeline.TimelineEvent;
 import core.Conductor;
@@ -14,6 +16,9 @@ class EditorTimeline extends FlxTypedSpriteGroup<FlxSprite>
     public var cursorMusicTime:Float = 0;
     
     static inline var MAX_TICKS:Int = 64;
+    static inline var LANES_TOP:Float = 48; // onde começam as linhas, abaixo dos traços
+    static inline var LANE_HEIGHT:Float = 36; // 32 da barra + 4 de espaço
+    static inline var MAX_LANES:Int = 5; // (256 - 48) / 36
     
     var ticks:Array<FlxSprite> = [];
     var eventSprites:Array<EditorTimelineEvent> = [];
@@ -45,12 +50,15 @@ class EditorTimeline extends FlxTypedSpriteGroup<FlxSprite>
         eventSprites = [];
         
         for (e in events)
-            addEvent(e);
+            addEvent(e, false);
+            
+        relayout();
     }
     
-    public function addEvent(e:TimelineEvent)
+    public function addEvent(e:TimelineEvent, doLayout:Bool = true)
     {
         var s = new EditorTimelineEvent(e);
+        s.setColors(colorFor(ActorManager.categoryOf(e.object)));
         s.addTo(this);
         
         // barras criadas depois do `cameras = [hudCam]` não herdam a câmera
@@ -58,6 +66,9 @@ class EditorTimeline extends FlxTypedSpriteGroup<FlxSprite>
             b.cameras = cameras;
             
         eventSprites.push(s);
+        
+        if (doLayout)
+            relayout();
     }
     
     public function removeEvent(e:TimelineEvent)
@@ -68,6 +79,7 @@ class EditorTimeline extends FlxTypedSpriteGroup<FlxSprite>
             {
                 destroyBars(s);
                 eventSprites.remove(s);
+                relayout();
                 return;
             }
         }
@@ -82,6 +94,52 @@ class EditorTimeline extends FlxTypedSpriteGroup<FlxSprite>
         }
     }
     
+    function colorFor(c:Null<EventCategory>):FlxColor
+    {
+        if (c == null)
+            return 0xFFFF3030; // o jogo não reconhece esse object, tem algo errado no JSON
+            
+        return switch (c)
+        {
+            case Obstacle: FlxColor.MAGENTA;
+            case Map: 0xFF30C0FF;
+        }
+    }
+    
+    // distribui os eventos em linhas para que nenhum fique em cima de outro
+    // chame de novo se algum evento mudar de tempo, lead, duration ou outro
+    public function relayout()
+    {
+        var sorted = eventSprites.copy();
+        sorted.sort((a, b) ->
+        {
+            var d = startOf(a.event) - startOf(b.event);
+            return d < 0 ? -1 : (d > 0 ? 1 : 0);
+        });
+        
+        var laneEnds:Array<Float> = []; // até quando cada linha está ocupada
+        for (s in sorted)
+        {
+            var start = startOf(s.event);
+            var lane = 0;
+            while (lane < laneEnds.length && laneEnds[lane] > start)
+                lane++;
+                
+            if (lane == laneEnds.length)
+                laneEnds.push(endOf(s.event));
+            else
+                laneEnds[lane] = endOf(s.event);
+                
+            s.lane = Std.int(Math.min(lane, MAX_LANES - 1)); // passou de 5 linhas, as últimas se sobrepõem
+        }
+    }
+    
+    inline function startOf(e:TimelineEvent):Float
+        return e.time - (e.lead == null ? 0 : e.lead);
+        
+    inline function endOf(e:TimelineEvent):Float
+        return e.time + param(e, "duration") + param(e, "outro");
+        
     override function update(elapsed:Float)
     {
         super.update(elapsed);
@@ -108,21 +166,22 @@ class EditorTimeline extends FlxTypedSpriteGroup<FlxSprite>
             var lead:Float = e.lead == null ? 0 : e.lead;
             var duration = param(e, "duration");
             var outro = param(e, "outro");
+            var barY = this.y + LANES_TOP + s.lane * LANE_HEIGHT;
             
-            placeBar(s.warn, e.time - lead, lead);
-            placeBar(s.attack, e.time, duration, 6);
-            placeBar(s.outro, e.time + duration, outro);
+            placeBar(s.warn, e.time - lead, lead, barY);
+            placeBar(s.attack, e.time, duration, barY, 6);
+            placeBar(s.outro, e.time + duration, outro, barY);
         }
     }
     
-    function placeBar(bar:FlxSprite, startMs:Float, lenMs:Float, minPx:Float = 0)
+    function placeBar(bar:FlxSprite, startMs:Float, lenMs:Float, barY:Float, minPx:Float = 0)
     {
         var x = timeToX(startMs);
         var w = Math.max(minPx, lenMs * pixelsPerMs);
         
         bar.visible = w > 0 && x + w >= 0 && x <= FlxG.width;
         bar.x = x;
-        bar.y = this.y + 100;
+        bar.y = barY;
         bar.scale.set(w, 1);
     }
     

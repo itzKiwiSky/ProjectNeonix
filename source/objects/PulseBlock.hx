@@ -1,5 +1,6 @@
 package objects;
 
+import core.LevelActor;
 import flixel.FlxBasic;
 import core.Conductor;
 import flixel.FlxSprite;

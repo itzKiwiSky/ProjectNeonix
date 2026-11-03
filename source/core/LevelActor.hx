@@ -1,4 +1,4 @@
-package objects;
+package core;
 
 import flixel.FlxBasic;
 import core.Timeline.TimelineEvent;
