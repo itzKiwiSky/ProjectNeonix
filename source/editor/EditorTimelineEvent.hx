@@ -11,7 +11,13 @@ class EditorTimelineEvent
     public var warn:FlxSprite;
     public var attack:FlxSprite;
     public var outro:FlxSprite;
-    public var lane:Int = 0; // só do editor, não é serializado
+    public var lane:Int = 0; // non serializable
+    
+    var baseColor:FlxColor = FlxColor.WHITE;
+    
+    public var eventSelected(default, null):Bool = false;
+    
+    static inline var SELECTED_COLOR:FlxColor = 0xFFFFE030;
     
     public function new(event:TimelineEvent)
     {
@@ -32,12 +38,27 @@ class EditorTimelineEvent
     
     public function setColors(c:FlxColor)
     {
+        baseColor = c;
+        applyColors();
+    }
+    
+    public function setSelected(v:Bool)
+    {
+        eventSelected = v;
+        applyColors();
+    }
+    
+    function applyColors()
+    {
+        var c = eventSelected ? SELECTED_COLOR : baseColor;
+        var dim = eventSelected ? 0.6 : 0.4;
+        
         warn.color = c;
-        warn.alpha = 0.4;
+        warn.alpha = dim;
         attack.color = c;
         attack.alpha = 1;
         outro.color = c;
-        outro.alpha = 0.4;
+        outro.alpha = dim;
     }
     
     public function addTo(group:FlxTypedSpriteGroup<FlxSprite>)

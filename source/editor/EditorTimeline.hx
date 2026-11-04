@@ -49,6 +49,28 @@ class EditorTimeline extends FlxTypedSpriteGroup<FlxSprite>
         eventSprites = [];
     }
     
+    public function eventAt(mouseX:Float, mouseY:Float):Null<TimelineEvent>
+    {
+        var t = xToTime(mouseX);
+        
+        // de trás pra frente: o último da lista é o que está desenhado por cima
+        var i = eventSprites.length - 1;
+        while (i >= 0)
+        {
+            var s = eventSprites[i];
+            var barY = this.y + LANES_TOP + s.lane * LANE_HEIGHT;
+            
+            var insideTime = t >= startOf(s.event) && t <= endOf(s.event);
+            var insideLane = mouseY >= barY && mouseY <= barY + 32;
+            
+            if (insideTime && insideLane)
+                return s.event;
+                
+            i--;
+        }
+        return null;
+    }
+    
     // recria todas as barras a partir de uma lista de eventos
     public function setEvents(events:Array<TimelineEvent>)
     {
@@ -102,13 +124,19 @@ class EditorTimeline extends FlxTypedSpriteGroup<FlxSprite>
     function colorFor(c:Null<EventCategory>):FlxColor
     {
         if (c == null)
-            return 0xFFFF3030; // o jogo não reconhece esse object, tem algo errado no JSON
+            return 0xFFF13131; // o jogo não reconhece esse object, tem algo errado no JSON
             
         return switch (c)
         {
             case Obstacle: FlxColor.MAGENTA;
             case Map: 0xFF30C0FF;
         }
+    }
+    
+    public function setSelected(e:Null<TimelineEvent>)
+    {
+        for (s in eventSprites)
+            s.setSelected(s.event == e);
     }
     
     // distribui os eventos em linhas para que nenhum fique em cima de outro

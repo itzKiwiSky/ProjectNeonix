@@ -1,8 +1,9 @@
 package states;
 
+import flixel.math.FlxPoint;
+import ui.GameUIBox;
 import flixel.FlxBasic;
 import lime.app.Application;
-import flixel.addons.ui.FlxUIPopup;
 import openfl.media.Sound;
 import flixel.sound.FlxSound;
 import lime.ui.FileDialogType;
@@ -32,7 +33,6 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     var levelActors:FlxTypedGroup<LevelActor>; // all level actors
     var cursorMusicTime:Float = 0; // the music cursor, the truth source
     var levelData:LevelData;
-    var selectedEvent:TimelineEvent;
     var hudCam:FlxCamera;
     var editorGameCamera:FlxCamera;
     var editorTimeline:EditorTimeline;
@@ -46,7 +46,11 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     var btnSaveLevel:GameUIButton;
     var btnLoadSong:GameUIButton;
     
+    var boxCurrentSelectedEvent:GameUIBox;
+    
     var loadedMusicPath:String = "";
+    
+    public var selectedEvent(default, set):TimelineEvent;
     
     override function create()
     {
@@ -94,6 +98,8 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         
         addUI();
         
+        addEventSelectUI();
+        
         super.create();
     }
     
@@ -130,6 +136,14 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         add(btnLoadLevel);
         add(btnSaveLevel);
         add(btnLoadSong);
+    }
+    
+    function addEventSelectUI()
+    {
+        boxCurrentSelectedEvent = new GameUIBox(FlxG.width - 260, 10, 256, cast(FlxG.height - editorTimeline.height) + 24);
+        
+        setUICamera(boxCurrentSelectedEvent, hudCam);
+        add(boxCurrentSelectedEvent);
     }
     
     function cameraWorldConfig()
@@ -196,6 +210,17 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
             if (FlxG.keys.justPressed.DELETE)
                 deleteSelected();
                 
+            // select event //
+            if (FlxG.mouse.justPressed && FlxG.mouse.viewY >= editorTimeline.y)
+            {
+                var hit = editorTimeline.eventAt(FlxG.mouse.viewX, FlxG.mouse.viewY);
+                if (hit != null)
+                {
+                    selectedEvent = hit;
+                    trace("evento selecionado " + hit.object);
+                }
+            }
+            
             Conductor.songPosition = cursorMusicTime;
             refreshActors(cursorMusicTime);
             timeText.text = 'CurrentTime:${Math.round(cursorMusicTime)} | step: $curStep | playing: ${music.playing}';
@@ -297,7 +322,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     function openLoadLevelDialog()
     {
         if (FlxG.sound.music != null)
-            FlxG.sound.music.pause(); // o diálogo congela o jogo, melhor pausar antes
+            FlxG.sound.music.pause();
             
         var dialog:FileDialog = new FileDialog();
         dialog.onSelect.add((path:String) -> loadLevel(path));
@@ -308,7 +333,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     function openSaveLevelDialog()
     {
         if (FlxG.sound.music != null)
-            FlxG.sound.music.pause(); // o diálogo congela o jogo, melhor pausar antes
+            FlxG.sound.music.pause();
             
         var dialog:FileDialog = new FileDialog();
         dialog.onCancel.add(() -> {});
@@ -325,7 +350,10 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         // we set the level data as empty level
         levelData = Level.emptyLevel();
         
-        // and update the timeline to remove all the spritesv//
+        // clear the selected one //
+        selectedEvent = null;
+        
+        // and update the timeline to remove all the sprites//
         editorTimeline.destroyEventSprites();
         
         // predefined bpm //
@@ -347,15 +375,13 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     {
         resetEditor();
         
-        trace(path);
-        
         levelData = Level.loadJsonData(path + "/data.json");
         Conductor.changeBPM(levelData.meta.bpm ?? 110);
         
         var rawSoundData:Sound = Sound.fromFile(path + "/audio.ogg");
         
         FlxG.sound.music = FlxG.sound.create(rawSoundData);
-        FlxG.sound.music.pause(); // o editor começa pausado
+        FlxG.sound.music.pause();
         
         editorTimeline.setEvents(levelData.events);
         
@@ -367,6 +393,14 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         
         final platColor:Array<Int> = levelData.meta.platformColor;
         platformSprite.color = FlxColor.fromRGB(platColor[0], platColor[1], platColor[2]);
+    }
+    
+    function set_selectedEvent(v:TimelineEvent):TimelineEvent
+    {
+        selectedEvent = v;
+        if (editorTimeline != null)
+            editorTimeline.setSelected(v);
+        return v;
     }
     
     public function UIEvent(id:String, sender:Dynamic) {}
