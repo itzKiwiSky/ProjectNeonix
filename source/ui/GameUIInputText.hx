@@ -1,10 +1,11 @@
 package ui;
 
+import flixel.FlxG;
+import flixel.util.FlxColor;
+import flixel.text.FlxText;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
-import flixel.FlxObject;
 import flixel.input.keyboard.FlxKey;
-import flixel.util.FlxDestroyUtil;
 import flash.events.KeyboardEvent;
 import lime.system.Clipboard;
 
@@ -447,7 +448,7 @@ class GameUIInputText extends FlxTypedSpriteGroup<FlxSprite>
                 caretIndex = 0;
                 var lastBound:Float = 0;
                 var textObjX:Float = textObj.getScreenPosition(camera).x;
-                var mousePosX:Float = FlxG.mouse.getScreenPosition(camera).x;
+                var mousePosX:Float = FlxG.mouse.getViewPosition(camera).x;
                 var txtX:Float = textObjX - textObj.textField.scrollH;
                 
                 for (i => bound in _boundaries)

@@ -41,6 +41,9 @@
 
 	<set name="BUILD_DIR" value="export" />
 	<source path="source" />
+
+	<assets path="assets/embed" exclude="*.ogg" if="web" embed="true" />
+
 	<assets path="assets" />
 
 	<!-- _______________________________ Libraries ______________________________ -->

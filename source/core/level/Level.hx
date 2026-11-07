@@ -17,10 +17,17 @@ typedef LevelMetaData =
     var songEnding:Float;
 }
 
+typedef EditorMeta =
+{
+    var audioPath:String;
+    var lastSavedTime:Float;
+}
+
 typedef LevelData =
 {
     var meta:LevelMetaData;
     var events:Array<TimelineEvent>;
+    var ?editorMeta:EditorMeta;
 }
 
 class Level
@@ -40,7 +47,16 @@ class Level
                 songEnding: -1.0,
             },
             events: [],
+            editorMeta: emptyEditorMetadata(),
         };
+    }
+    
+    public static function emptyEditorMetadata():EditorMeta
+    {
+        return {
+            audioPath: "",
+            lastSavedTime: 0,
+        }
     }
     
     public static function loadJsonData(filename:String):LevelData

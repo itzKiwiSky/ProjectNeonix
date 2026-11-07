@@ -6,7 +6,6 @@ import flixel.text.FlxText;
 import flixel.group.FlxSpriteGroup;
 import flixel.FlxSprite;
 import flixel.util.FlxDestroyUtil;
-import flixel.math.FlxPoint;
 
 class GameUITab extends FlxSprite
 {

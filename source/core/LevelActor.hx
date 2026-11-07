@@ -1,5 +1,6 @@
 package core;
 
+import flixel.FlxG;
 import flixel.FlxBasic;
 import core.Timeline.TimelineEvent;
 import core.Conductor;
@@ -26,10 +27,18 @@ class LevelActor extends FlxTypedSpriteGroup<FlxSprite>
     public var cy:Float;
     public var event:TimelineEvent;
     public var currentTime:Float = 0;
+    public var useRandomX:Bool = false;
+    public var useRandomY:Bool = false;
     
     public function new(x:Float = 0, y:Float = 0, time:Float = 0, warningTime:Float = 1000, duration:Float = 500, outroDuration:Float = 200)
     {
         super(x, y);
+        if (useRandomX)
+            x = FlxG.random.int(64, FlxG.width - 128);
+            
+        if (useRandomY)
+            y = FlxG.random.int(64, FlxG.height - 128);
+            
         this.time = time;
         this.warningTime = warningTime;
         this.duration = duration;
