@@ -36,6 +36,8 @@ typedef FieldDef =
     var ?step:Float; // quanto o stepper anda (padrão 10)
     var ?active:Bool;
     var ?defaultValue:Dynamic; // usado quando o campo não existe no evento
+    var ?min:Float; // menor valor do stepper (padrão 0)
+    var ?decimals:Int; // casas decimais exibidas (padrão 0)
 }
 
 typedef ActorEntry =
@@ -102,6 +104,9 @@ class ActorManager
     public static inline function registerActor(id:String, factory:ActorFactory, category:EventCategory = Obstacle, fields:Array<FieldDef> = null)
         registeredActors.set(id, {factory: factory, category: category, fields: fields ?? []});
         
+    public static inline function registerMapEvent(id:String, fields:Array<FieldDef>)
+        registeredActors.set(id, {factory: null, category: Map, fields: fields});
+        
     public static function categoryOf(id:String):Null<EventCategory>
     {
         var entry = registeredActors.get(id);
@@ -117,6 +122,9 @@ class ActorManager
             return null;
         }
         
+        if (entry.factory == null)
+            return null;
+            
         var actor:LevelActor = entry.factory(e);
         actor.event = e;
         return actor;

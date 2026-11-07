@@ -1,5 +1,6 @@
 package states;
 
+import core.EffectManager;
 import core.Timeline;
 import ui.GameUIInputText;
 import ui.GameUICheckbox;
@@ -63,6 +64,8 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     
     var lastCopiedEvent:Null<TimelineEvent> = null;
     
+    var effects:EffectManager;
+    
     var rootFields:Array<FieldDef> = [
         {
             key: "time",
@@ -109,6 +112,8 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         
         createPreviewSprites();
         
+        createEffects();
+        
         // list of all events objects //
         add(activeActors);
         
@@ -132,6 +137,41 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         addUI();
         
         super.create();
+    }
+    
+    function createEffects()
+    {
+        effects = new EffectManager();
+        effects.add(EffectManager.colorEffect("bg_color", background));
+        effects.add(EffectManager.colorEffect("platform_color", platformSprite));
+        effects.add(new TrackEffect("camera_zoom", [
+            {
+                key: "zoom",
+                label: "Zoom",
+                def: 1,
+                step: 0.1,
+                min: 0.1,
+                decimals: 2
+            }
+        ], v -> editorGameCamera.zoom = v[0]));
+        effects.add(new TrackEffect("camera_angle", [
+            {
+                key: "angle",
+                label: "Angle",
+                def: 0,
+                step: 5,
+                min: -360
+            }
+        ], v -> editorGameCamera.angle = v[0]));
+    }
+    
+    // as cores do level; se faltarem no meta, usa as cores originais do preview
+    function applyBaseColors()
+    {
+        var bg:Array<Int> = levelData.meta.backgroundColor ?? [103, 132, 211];
+        var plat:Array<Int> = levelData.meta.platformColor ?? [175, 227, 248];
+        effects.setBase("bg_color", [bg[0], bg[1], bg[2]]);
+        effects.setBase("platform_color", [plat[0], plat[1], plat[2]]);
     }
     
     function createEventUI()
@@ -235,73 +275,64 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     override function update(elapsed:Float)
     {
         var music:FlxSound = FlxG.sound.music;
-        if (music != null)
-            if (music.playing)
-                cursorMusicTime = music.time;
-                
+        if (music != null && music.playing)
+            cursorMusicTime = music.time;
+            
         editorTimeline.cursorMusicTime = cursorMusicTime;
+        Conductor.songPosition = cursorMusicTime;
         
-        // arrows, move the time //
+        // arrows and wheel, move the time //
         var dir = (FlxG.keys.pressed.RIGHT || FlxG.mouse.wheel > 0 ? 1 : 0) - (FlxG.keys.pressed.LEFT || FlxG.mouse.wheel < 0 ? 1 : 0);
         if (dir != 0)
         {
-            var speed = 0; // ms por segundo
+            var speed = 1000; // ms por segundo
             if (FlxG.keys.pressed.SHIFT)
                 speed = 5000;
             else if (FlxG.keys.pressed.ALT)
                 speed = 500;
-            else
-                speed = 1000;
             setSongTime(cursorMusicTime + dir * speed * elapsed);
         }
         
-        // pause or stop the music //
-        if (music != null)
+        // pause or play //
+        if (music != null && FlxG.keys.justPressed.SPACE)
         {
-            if (FlxG.keys.justPressed.SPACE)
-                if (music.playing)
-                    music.pause();
-                else
-                {
-                    music.time = cursorMusicTime;
-                    music.play();
-                }
-                
-            // create event //
+            if (music.playing)
+                music.pause();
+            else
+            {
+                music.time = cursorMusicTime;
+                music.play();
+            }
+        }
+        
+        // atalhos não valem enquanto você digita num campo de texto //
+        if (GameUIInputText.focusOn == null)
+        {
             if (FlxG.keys.justPressed.N)
                 createEventAtCursor();
-                
-            // destroy event//
             if (FlxG.keys.justPressed.DELETE)
                 deleteSelected();
-                
-            if (isEventUIDirty && boxCurrentSelectedEvent != null)
-                rebuildEventUI();
-                
-            // select event //
-            if (FlxG.mouse.justPressed && FlxG.mouse.viewY >= editorTimeline.y)
-            {
-                var hit = editorTimeline.eventAt(FlxG.mouse.viewX, FlxG.mouse.viewY);
-                if (hit != null)
-                {
-                    selectedEvent = hit;
-                    isEventUIDirty = true;
-                    trace("evento selecionado " + hit.object);
-                }
-            }
-            
-            // copy and paste events //
-            if (FlxG.keys.justPressed.C)
-                if (selectedEvent != null)
-                    lastCopiedEvent = Reflect.copy(selectedEvent);
-                    
+            if (FlxG.keys.justPressed.C && selectedEvent != null)
+                lastCopiedEvent = cloneEvent(selectedEvent);
             if (FlxG.keys.justPressed.V)
                 createEventCopyAtCursor();
-                
-            Conductor.songPosition = cursorMusicTime;
-            refreshActors(cursorMusicTime);
-            timeText.text = 'CurrentTime:${Math.round(cursorMusicTime)} | step: $curStep | playing: ${music.playing} | Copied event: ${lastCopiedEvent?.object}';
         }
+        
+        // select event //
+        if (FlxG.mouse.justPressed && FlxG.mouse.viewY >= editorTimeline.y)
+        {
+            var hit = editorTimeline.eventAt(FlxG.mouse.viewX, FlxG.mouse.viewY);
+            if (hit != null)
+                selectedEvent = hit;
+        }
+        
+        if (isEventUIDirty && boxCurrentSelectedEvent != null)
+            rebuildEventUI();
+            
+        refreshActors(cursorMusicTime);
+        effects.apply(cursorMusicTime);
+        
+        timeText.text = 'CurrentTime:${Math.round(cursorMusicTime)} | step: $curStep | playing: ${music != null && music.playing} | Copied event: ${lastCopiedEvent?.object}';
         
         super.update(elapsed);
     }
@@ -361,6 +392,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         editorTimeline.addEvent(e);
         rebuildActor(e);
         selectedEvent = e;
+        onEventsChanged();
     }
     
     inline function cloneEvent(e:TimelineEvent):TimelineEvent
@@ -385,6 +417,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         editorTimeline.removeEvent(selectedEvent);
         levelData.events.remove(selectedEvent);
         selectedEvent = null;
+        onEventsChanged();
     }
     
     // the actor that hold the values //
@@ -418,6 +451,9 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         
         // we set the level data as empty level
         levelData = Level.emptyLevel();
+        
+        applyBaseColors();
+        effects.rebuild([]);
         
         // clear the selected one //
         selectedEvent = null;
@@ -469,13 +505,13 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         for (a in ActorManager.createAll(levelData))
             levelActors.add(a);
             
-        final bgColor:Array<Int> = levelData.meta.backgroundColor;
-        background.color = FlxColor.fromRGB(bgColor[0], bgColor[1], bgColor[2]);
-        
-        final platColor:Array<Int> = levelData.meta.platformColor;
-        platformSprite.color = FlxColor.fromRGB(platColor[0], platColor[1], platColor[2]);
+        applyBaseColors();
+        onEventsChanged();
     }
     
+    function onEventsChanged()
+        effects.rebuild(levelData.events);
+        
     function getParam(key:String):Dynamic
     {
         if (selectedEvent == null || selectedEvent.params == null)
@@ -551,6 +587,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         
         rebuildActor(selectedEvent); // o ator guarda cópias dos valores
         editorTimeline.relayout(); // time, duration ou outro mudam a largura e a linha
+        onEventsChanged();
     }
     
     function createFieldWidgets()
@@ -576,10 +613,12 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     function addNumberRow(f:FieldDef, rowY:Float)
     {
         var step:Float = f.step ?? 10;
+        var decimals:Int = f.decimals ?? 0;
+        var minValue:Float = f.min ?? 0;
         var boxW:Float = boxCurrentSelectedEvent.bg.width;
         
         inline function show():String
-            return Std.string(Math.round(getValue(f) ?? 0));
+            return Std.string(FlxMath.roundDecimal(getValue(f) ?? 0, decimals));
             
         var label:FlxText = new FlxText(8, rowY, 80, f.label, 14);
         var valueText:FlxText = new FlxText(boxW - 130, rowY, 60, show(), 14);
@@ -587,13 +626,13 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         
         var minus:GameUIButton = new GameUIButton(boxW - 164, rowY, "-", () ->
         {
-            setValue(f, Math.max(0, (getValue(f) ?? 0) - step));
+            setValue(f, FlxMath.roundDecimal(Math.max(minValue, (getValue(f) ?? 0) - step), decimals));
             valueText.text = show();
         }, 32, 24);
         
         var plus:GameUIButton = new GameUIButton(boxW - 64, rowY, "+", () ->
         {
-            setValue(f, (getValue(f) ?? 0) + step);
+            setValue(f, FlxMath.roundDecimal((getValue(f) ?? 0) + step, decimals));
             valueText.text = show();
         }, 32, 24);
         
@@ -633,9 +672,12 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
                     
         selectedEvent.object = newType;
         selectedEvent.params = fresh;
-        
+        if (ActorManager.categoryOf(newType) == EventCategory.Map)
+            selectedEvent.lead = 0;
+            
         rebuildActor(selectedEvent);
         editorTimeline.refreshEvent(selectedEvent);
+        onEventsChanged();
         isEventUIDirty = true;
     }
     

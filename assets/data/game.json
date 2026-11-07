@@ -5,7 +5,7 @@
     },
     "meta": {
         "title": "",
-        "songID": "",
+        "songFilename": "builtin:life_is_game_kay.ogg",
         "platformColor": [
             186,
             211,
@@ -72,9 +72,9 @@
             "params": {
                 "x": 640,
                 "y": 290,
-                "spread": 360,
                 "angle": 15,
                 "outro": 500,
+                "spread": 360,
                 "life": 3000,
                 "duration": 250,
                 "interval": 150,
@@ -99,15 +99,15 @@
             "time": 15945
         },
         {
-            "lead": 450,
+            "lead": 400,
             "params": {
                 "x": 750,
                 "duration": 250,
                 "y": 490,
                 "useRandomX": true,
-                "outro": 500
+                "outro": 400
             },
-            "time": 16554,
+            "time": 16254,
             "object": "pulse_square"
         },
         {
@@ -133,6 +133,86 @@
             },
             "time": 9454,
             "object": "pulse_square"
+        },
+        {
+            "lead": 400,
+            "params": {
+                "duration": 250,
+                "x": 750,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 400
+            },
+            "time": 17131,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 400,
+            "params": {
+                "duration": 250,
+                "x": 750,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 400
+            },
+            "time": 17268,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 400,
+            "params": {
+                "duration": 250,
+                "x": 750,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 400
+            },
+            "time": 17404,
+            "object": "pulse_square"
+        },
+        {
+            "params": {
+                "duration": 1250,
+                "b": 0,
+                "r": 255,
+                "g": 255
+            },
+            "object": "bg_color",
+            "lead": 0,
+            "time": 1090.90909090909
+        },
+        {
+            "params": {
+                "duration": 0,
+                "b": 255,
+                "r": 255,
+                "g": 255
+            },
+            "object": "bg_color",
+            "lead": 0,
+            "time": 6545.45454545454
+        },
+        {
+            "params": {
+                "duration": 0,
+                "b": 255,
+                "r": 255,
+                "g": 255
+            },
+            "lead": 0,
+            "object": "bg_color",
+            "time": 6545.45454545454
+        },
+        {
+            "params": {
+                "duration": 300,
+                "b": 210,
+                "r": 190,
+                "g": 185
+            },
+            "lead": 0,
+            "object": "bg_color",
+            "time": 6581
         }
     ]
 }
