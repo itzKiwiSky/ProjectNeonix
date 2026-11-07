@@ -16,6 +16,11 @@ enum Phase
     Dead;
 }
 
+interface ILevelActor
+{
+    public function selfRegister():Void;
+}
+
 class LevelActor extends FlxTypedSpriteGroup<FlxSprite>
 {
     public var time:Float = 0;
@@ -58,6 +63,12 @@ class LevelActor extends FlxTypedSpriteGroup<FlxSprite>
         return Dead;
     }
     
+    public function lifeEnd():Float
+        return time + duration + outroDuration;
+        
+    public function isInside(now:Float):Bool
+        return now >= time - warningTime && now < lifeEnd();
+        
     override function update(elapsed:Float)
     {
         currentTime = Conductor.songPosition;
@@ -102,13 +113,6 @@ class LevelActor extends FlxTypedSpriteGroup<FlxSprite>
     public function hits(obj:FlxBasic):Bool
         return false;
         
-    public function isInside(now:Float):Bool
-    {
-        var start = time - warningTime;
-        var end = time + duration + outroDuration;
-        return now >= start && now < end;
-    }
-    
     // events //
     public function onWaiting() {}
     

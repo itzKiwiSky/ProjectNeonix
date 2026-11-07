@@ -1,1 +1,138 @@
-{"editorMeta":{"lastSavedTime":0,"audioPath":"assets/music/life_is_game_kay.ogg"},"meta":{"title":"","songID":"","platformColor":[186,211,230],"songEnding":-1,"backgroundID":7,"backgroundColor":[62,118,158],"artist":"","bpm":110},"events":[{"lead":750,"params":{"x":240,"duration":300,"y":490,"outro":500},"time":6600,"object":"pulse_square"},{"lead":600,"params":{"x":900,"duration":250,"y":490,"outro":500},"time":7227,"object":"pulse_square"},{"lead":700,"params":{"x":640,"duration":250,"y":490,"outro":500},"time":7722,"object":"pulse_square"},{"lead":600,"params":{"x":640,"duration":250,"y":360,"outro":500},"time":8131,"object":"pulse_square"},{"params":{"duration":250,"x":640,"outro":400,"y":490},"object":"pulse_square","lead":600,"time":8304},{"params":{"duration":250,"x":1160,"outro":500,"y":490},"object":"pulse_square","lead":450,"time":8340}]}
+{
+    "editorMeta": {
+        "lastSavedTime": 0,
+        "audioPath": "assets/music/life_is_game_kay.ogg"
+    },
+    "meta": {
+        "title": "",
+        "songID": "",
+        "platformColor": [
+            186,
+            211,
+            230
+        ],
+        "songEnding": -1,
+        "backgroundID": 7,
+        "backgroundColor": [
+            62,
+            118,
+            158
+        ],
+        "artist": "",
+        "bpm": 110
+    },
+    "events": [
+        {
+            "lead": 750,
+            "params": {
+                "x": 240,
+                "duration": 300,
+                "y": 490,
+                "outro": 500
+            },
+            "time": 6600,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 600,
+            "params": {
+                "x": 900,
+                "duration": 250,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 500
+            },
+            "time": 7227,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 700,
+            "params": {
+                "x": 640,
+                "duration": 250,
+                "y": 490,
+                "outro": 500
+            },
+            "time": 7722,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 600,
+            "params": {
+                "x": 640,
+                "duration": 250,
+                "y": 360,
+                "outro": 500
+            },
+            "time": 8131,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "y": 290,
+                "spread": 360,
+                "angle": 15,
+                "outro": 500,
+                "life": 3000,
+                "duration": 250,
+                "interval": 150,
+                "randomX": true,
+                "randomY": false,
+                "count": 13,
+                "speed": 575
+            },
+            "time": 15359,
+            "object": "bullet_emitter"
+        },
+        {
+            "params": {
+                "x": 900,
+                "duration": 250,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 500
+            },
+            "lead": 600,
+            "object": "pulse_square",
+            "time": 15945
+        },
+        {
+            "lead": 450,
+            "params": {
+                "x": 750,
+                "duration": 250,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 500
+            },
+            "time": 16554,
+            "object": "pulse_square"
+        },
+        {
+            "params": {
+                "x": 750,
+                "duration": 250,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 500
+            },
+            "lead": 450,
+            "object": "pulse_square",
+            "time": 8763
+        },
+        {
+            "lead": 450,
+            "params": {
+                "x": 750,
+                "duration": 250,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 500
+            },
+            "time": 9454,
+            "object": "pulse_square"
+        }
+    ]
+}

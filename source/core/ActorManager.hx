@@ -1,5 +1,6 @@
 package core;
 
+import objects.BulletEmitter;
 import flixel.FlxG;
 import objects.PulseBlock;
 import core.Timeline.TimelineEvent;
@@ -59,46 +60,8 @@ class ActorManager
             return;
         initialized = true;
         
-        registerActor("pulse_square", e -> new PulseBlock(e.params.x, e.params.y, e.time, e.lead, e.params.duration, e.params.outro), Obstacle, [
-            {
-                key: "randomX",
-                label: "Random X",
-                kind: Checkbox,
-                defaultValue: false
-            },
-            {
-                key: "randomY",
-                label: "Random Y",
-                kind: Checkbox,
-                defaultValue: false
-            },
-            {
-                key: "x",
-                label: "X",
-                kind: Number,
-                defaultValue: 640
-            },
-            {
-                key: "y",
-                label: "Y",
-                kind: Number,
-                defaultValue: 360
-            },
-            {
-                key: "duration",
-                label: "Duration",
-                kind: Number,
-                step: 250,
-                defaultValue: 1250
-            },
-            {
-                key: "outro",
-                label: "Outro",
-                kind: Number,
-                step: 100,
-                defaultValue: 500
-            }
-        ]);
+        PulseBlock.selfRegister();
+        BulletEmitter.selfRegister();
     }
     
     public static function getActorNames():Array<String>
@@ -157,6 +120,12 @@ class ActorManager
         var actor:LevelActor = entry.factory(e);
         actor.event = e;
         return actor;
+    }
+    
+    public static function num(e:TimelineEvent, key:String, def:Float):Float
+    {
+        var v:Dynamic = paramOf(e, key);
+        return v == null ? def : v;
     }
     
     public static function namesOf(category:EventCategory):Array<String>

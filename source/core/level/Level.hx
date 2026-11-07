@@ -8,7 +8,7 @@ typedef LevelMetaData =
 {
     var title:String;
     var artist:String;
-    var songID:String;
+    var songFilename:String;
     var backgroundID:Int;
     var backgroundColor:Array<Int>;
     var platformColor:Array<Int>;
@@ -36,10 +36,10 @@ class Level
     {
         return {
             meta: {
-                title: "Unnamed Level",
-                artist: "unnamed artist",
-                songID: "0",
-                backgroundID: 5,
+                title: "",
+                artist: "",
+                songFilename: "",
+                backgroundID: 2,
                 backgroundColor: [62, 118, 158],
                 platformColor: [186, 211, 230],
                 actorsColor: [255, 255, 255],

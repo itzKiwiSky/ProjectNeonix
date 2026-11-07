@@ -1,12 +1,11 @@
 package objects;
 
+import core.ActorManager;
 import core.LevelActor;
 import flixel.FlxBasic;
-import core.Conductor;
 import flixel.FlxSprite;
 import flixel.FlxG;
 import flixel.tweens.FlxEase;
-import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxSpriteUtil;
 
@@ -33,6 +32,50 @@ class PulseBlock extends LevelActor
         activeSprite.visible = false;
         warningSprite.alpha = 0.5;
         add(activeSprite);
+    }
+    
+    public static function selfRegister():Void
+    {
+        ActorManager.registerActor("pulse_square", e -> new PulseBlock(e.params.x, e.params.y, e.time, e.lead, e.params.duration, e.params.outro), Obstacle, [
+            {
+                key: "useRandomX",
+                label: "Random X",
+                kind: Checkbox,
+                defaultValue: false
+            },
+            {
+                key: "useRandomY",
+                label: "Random Y",
+                kind: Checkbox,
+                defaultValue: false
+            },
+            {
+                key: "x",
+                label: "X",
+                kind: Number,
+                defaultValue: 640
+            },
+            {
+                key: "y",
+                label: "Y",
+                kind: Number,
+                defaultValue: 360
+            },
+            {
+                key: "duration",
+                label: "Duration",
+                kind: Number,
+                step: 250,
+                defaultValue: 1250
+            },
+            {
+                key: "outro",
+                label: "Outro",
+                kind: Number,
+                step: 100,
+                defaultValue: 500
+            }
+        ]);
     }
     
     function makeBlock():FlxSprite

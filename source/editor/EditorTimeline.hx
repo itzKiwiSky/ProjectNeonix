@@ -112,6 +112,14 @@ class EditorTimeline extends FlxTypedSpriteGroup<FlxSprite>
         }
     }
     
+    public function refreshEvent(e:TimelineEvent)
+    {
+        for (s in eventSprites)
+            if (s.event == e)
+                s.setColors(colorFor(ActorManager.categoryOf(e.object)));
+        relayout();
+    }
+    
     function destroyBars(s:EditorTimelineEvent)
     {
         for (b in [s.warn, s.attack, s.outro])

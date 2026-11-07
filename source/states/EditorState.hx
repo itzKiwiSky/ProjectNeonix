@@ -1,5 +1,7 @@
 package states;
 
+import core.Timeline;
+import ui.GameUIInputText;
 import ui.GameUICheckbox;
 import ui.GameUINumericStepper;
 import ui.GameUIDropdownMenu;
@@ -58,6 +60,8 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     public var selectedEvent(default, set):TimelineEvent;
     
     var isEventUIDirty:Bool = false; // set if the ui need to be rebuilt
+    
+    var lastCopiedEvent:Null<TimelineEvent> = null;
     
     var rootFields:Array<FieldDef> = [
         {
@@ -138,10 +142,6 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         add(boxCurrentSelectedEvent);
         
         boxCurrentSelectedEvent.visible = true;
-        var eventType:GameUIDropdownMenu = new GameUIDropdownMenu(8, 8, ActorManager.getActorNames(), (idx:Int, data:String) -> {});
-        
-        setUICamera(eventType, hudCam);
-        boxCurrentSelectedEvent.add(eventType);
     }
     
     inline function setUICamera(obj:FlxBasic, camera:FlxCamera)
@@ -176,7 +176,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
             var dialog:FileDialog = new FileDialog();
             dialog.onSelect.add((path:String) ->
             {
-                var data:String = Json.stringify(levelData);
+                var data:String = Json.stringify(levelData, null, "    ");
                 File.saveContent(path, data);
             });
             dialog.browse(FileDialogType.SAVE, "json", null, "Save Level");
@@ -242,10 +242,16 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         editorTimeline.cursorMusicTime = cursorMusicTime;
         
         // arrows, move the time //
-        var dir = (FlxG.keys.pressed.RIGHT ? 1 : 0) - (FlxG.keys.pressed.LEFT ? 1 : 0);
+        var dir = (FlxG.keys.pressed.RIGHT || FlxG.mouse.wheel > 0 ? 1 : 0) - (FlxG.keys.pressed.LEFT || FlxG.mouse.wheel < 0 ? 1 : 0);
         if (dir != 0)
         {
-            var speed = FlxG.keys.pressed.SHIFT ? 5000 : 1000; // ms por segundo
+            var speed = 0; // ms por segundo
+            if (FlxG.keys.pressed.SHIFT)
+                speed = 5000;
+            else if (FlxG.keys.pressed.ALT)
+                speed = 500;
+            else
+                speed = 1000;
             setSongTime(cursorMusicTime + dir * speed * elapsed);
         }
         
@@ -284,9 +290,17 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
                 }
             }
             
+            // copy and paste events //
+            if (FlxG.keys.justPressed.C)
+                if (selectedEvent != null)
+                    lastCopiedEvent = Reflect.copy(selectedEvent);
+                    
+            if (FlxG.keys.justPressed.V)
+                createEventCopyAtCursor();
+                
             Conductor.songPosition = cursorMusicTime;
             refreshActors(cursorMusicTime);
-            timeText.text = 'CurrentTime:${Math.round(cursorMusicTime)} | step: $curStep | playing: ${music.playing}';
+            timeText.text = 'CurrentTime:${Math.round(cursorMusicTime)} | step: $curStep | playing: ${music.playing} | Copied event: ${lastCopiedEvent?.object}';
         }
         
         super.update(elapsed);
@@ -330,7 +344,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         
     function createEventAtCursor()
     {
-        var type:String = "pulse_square";
+        final type:String = "pulse_square";
         var e:TimelineEvent = {
             time: snapTime(cursorMusicTime),
             object: type,
@@ -338,10 +352,28 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
             params: ActorManager.defaultParams(type)
         };
         
+        pushEvents(e);
+    }
+    
+    function pushEvents(e:TimelineEvent)
+    {
         levelData.events.push(e);
         editorTimeline.addEvent(e);
         rebuildActor(e);
         selectedEvent = e;
+    }
+    
+    inline function cloneEvent(e:TimelineEvent):TimelineEvent
+        return Json.parse(Json.stringify(e));
+        
+    function createEventCopyAtCursor()
+    {
+        if (lastCopiedEvent == null)
+            return;
+            
+        var e = cloneEvent(lastCopiedEvent); // um clone novo a cada colagem
+        e.time = snapTime(cursorMusicTime);
+        pushEvents(e);
     }
     
     function deleteSelected()
@@ -460,23 +492,22 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
             
         Reflect.setField(selectedEvent.params, key, value);
         
-        rebuildActor(selectedEvent); // o ator guarda cópias dos valores
-        editorTimeline.relayout(); // duration ou outro podem ter mudado a largura
+        rebuildActor(selectedEvent);
+        editorTimeline.relayout();
     }
     
     function rebuildEventUI()
     {
+        isEventUIDirty = false;
         clearEventUI();
         
-        // sem evento selecionado, o painel fica vazio
         if (selectedEvent == null)
             return;
             
         boxCurrentSelectedEvent.visible = true;
         
         createFieldWidgets();
-        
-        isEventUIDirty = false;
+        createTypeDropdown();
     }
     
     function clearEventUI()
@@ -484,6 +515,8 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         for (w in eventWidgets)
         {
             boxCurrentSelectedEvent.remove(w, true);
+            if (Std.isOfType(w, GameUIInputText) && GameUIInputText.focusOn == cast(w, GameUIInputText))
+                GameUIInputText.focusOn = null;
             w.destroy();
         }
         eventWidgets = [];
@@ -533,6 +566,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
                     addNumberRow(f, rowY);
                 case Checkbox:
                     var box:GameUICheckbox = new GameUICheckbox(8, rowY, f.label, null, (checked:Bool) -> setValue(f, checked));
+                    box.checked = getValue(f);
                     addWidget(box);
             }
             rowY += ROW_HEIGHT;
@@ -574,6 +608,35 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         setUICamera(w, hudCam);
         boxCurrentSelectedEvent.add(w);
         eventWidgets.push(w);
+    }
+    
+    function createTypeDropdown()
+    {
+        var dd:GameUIDropdownMenu = new GameUIDropdownMenu(8, 8, ActorManager.getActorNames(), (idx:Int, name:String) -> changeEventType(name), 140);
+        dd.selectedLabel = selectedEvent.object;
+        addWidget(dd);
+    }
+    
+    function changeEventType(newType:String)
+    {
+        if (selectedEvent == null || selectedEvent.object == newType)
+            return;
+            
+        var old:Dynamic = selectedEvent.params;
+        var fresh:Dynamic = ActorManager.defaultParams(newType);
+        
+        // keep the data that has equal fields
+        if (old != null)
+            for (k in Reflect.fields(fresh))
+                if (Reflect.hasField(old, k))
+                    Reflect.setField(fresh, k, Reflect.field(old, k));
+                    
+        selectedEvent.object = newType;
+        selectedEvent.params = fresh;
+        
+        rebuildActor(selectedEvent);
+        editorTimeline.refreshEvent(selectedEvent);
+        isEventUIDirty = true;
     }
     
     function set_selectedEvent(v:TimelineEvent):TimelineEvent
