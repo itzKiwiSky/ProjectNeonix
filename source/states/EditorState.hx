@@ -236,13 +236,19 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
             dialog.browse(FileDialogType.OPEN, "ogg", null, "Load audio");
         });
         
+        space = padding + btnLoadSong.x + btnLoadSong.width;
+        
+        var btnCreateLevel:GameUIButton = new GameUIButton(space, 8, "Create level", () -> createEmptyLevel());
+        
         setUICamera(btnLoadLevel, hudCam);
         setUICamera(btnSaveLevel, hudCam);
         setUICamera(btnLoadSong, hudCam);
+        setUICamera(btnCreateLevel, hudCam);
         
         add(btnLoadLevel);
         add(btnSaveLevel);
         add(btnLoadSong);
+        add(btnCreateLevel);
     }
     
     function cameraWorldConfig()
@@ -492,6 +498,28 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         resetEditor();
         
         levelData = Level.loadJsonData(path);
+        Conductor.changeBPM(levelData.meta.bpm ?? 110);
+        
+        editorTimeline.setEvents(levelData.events);
+        
+        if (levelData?.editorMeta?.audioPath != null && levelData?.editorMeta?.audioPath != "")
+        {
+            loadedMusicPath = levelData?.editorMeta?.audioPath;
+            FlxG.sound.music = loadAudio(loadedMusicPath);
+        }
+        
+        for (a in ActorManager.createAll(levelData))
+            levelActors.add(a);
+            
+        applyBaseColors();
+        onEventsChanged();
+    }
+    
+    function createEmptyLevel()
+    {
+        resetEditor();
+        
+        levelData = Level.emptyLevel();
         Conductor.changeBPM(levelData.meta.bpm ?? 110);
         
         editorTimeline.setEvents(levelData.events);
