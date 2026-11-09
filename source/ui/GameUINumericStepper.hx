@@ -32,13 +32,13 @@ class GameUINumericStepper extends GameUIInputText
         this.step = step;
         _updateFilter();
         
-        buttonPlus = new FlxSprite(fieldWidth).loadGraphic('assets/embed/images/stepper_plus.png', true, 16, 16);
+        buttonPlus = new FlxSprite(fieldWidth).loadGraphic('assets/embed/images/gameUI/stepper_plus.png', true, 16, 16);
         buttonPlus.animation.add('normal', [0], false);
         buttonPlus.animation.add('pressed', [1], false);
         buttonPlus.animation.play('normal');
         add(buttonPlus);
         
-        buttonMinus = new FlxSprite(fieldWidth + buttonPlus.width).loadGraphic('assets/embed/images/stepper_minus.png', true, 16, 16);
+        buttonMinus = new FlxSprite(fieldWidth + buttonPlus.width).loadGraphic('assets/embed/images/gameUI/stepper_minus.png', true, 16, 16);
         buttonMinus.animation.add('normal', [0], false);
         buttonMinus.animation.add('pressed', [1], false);
         buttonMinus.animation.play('normal');

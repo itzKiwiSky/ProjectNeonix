@@ -1,0 +1,30 @@
+{
+    "events": [],
+    "editorMeta": {
+        "lastSavedTime": 0,
+        "audioPath": ""
+    },
+    "meta": {
+        "artist": "Sasha Ende",
+        "actorsColor": [
+            255,
+            255,
+            255
+        ],
+        "bpm": 100,
+        "platformColor": [
+            186,
+            211,
+            230
+        ],
+        "backgroundColor": [
+            62,
+            118,
+            158
+        ],
+        "title": "Cry",
+        "backgroundID": 2,
+        "songFilename": "builtin:cry.ogg",
+        "songEnding": -1
+    }
+}

@@ -1,5 +1,6 @@
 package;
 
+import states.EditorState;
 import flixel.FlxG;
 import states.PlayState;
 import flixel.FlxGame;
@@ -15,7 +16,7 @@ class Main extends Sprite
     public function new()
     {
         super();
-        game = new FlxGame(screenWidth, screenHeight, states.EditorState, updateFrameRate, updateFrameRate, true, false);
+        game = new FlxGame(screenWidth, screenHeight, EditorState, updateFrameRate, updateFrameRate, true, false);
         
         addChild(game);
         FlxG.autoPause = false;

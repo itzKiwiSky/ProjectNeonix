@@ -1,5 +1,6 @@
 package core;
 
+import flixel.FlxCamera;
 import core.ActorManager;
 import core.Timeline.TimelineEvent;
 import flixel.FlxSprite;
@@ -163,6 +164,35 @@ class EffectManager
     
     public function new() {}
     
+    // os efeitos do jogo; editor e jogo chamam isto, então a lista nunca diverge
+    public static function createDefault(background:FlxSprite, platform:FlxSprite, camera:FlxCamera, onActorsColor:FlxColor->Void):EffectManager
+    {
+        var m = new EffectManager();
+        m.add(colorEffect("bg_color", background));
+        m.add(colorEffect("platform_color", platform));
+        m.add(colorEffectFn("actors_color", onActorsColor));
+        m.add(new TrackEffect("camera_zoom", [
+            {
+                key: "zoom",
+                label: "Zoom",
+                def: 1,
+                step: 0.1,
+                min: 0.1,
+                decimals: 2
+            }
+        ], v -> camera.zoom = v[0]));
+        m.add(new TrackEffect("camera_angle", [
+            {
+                key: "angle",
+                label: "Angle",
+                def: 0,
+                step: 5,
+                min: -360
+            }
+        ], v -> camera.angle = v[0]));
+        return m;
+    }
+    
     public function add(effect:Effect):Effect
     {
         effects.push(effect);
@@ -191,7 +221,8 @@ class EffectManager
     }
     
     // atalho: um efeito de cor (R, G, B) para qualquer sprite
-    public static function colorEffect(id:String, sprite:FlxSprite):TrackEffect
+    // cor aplicada por uma função: serve para um sprite, para os atores, para o que for
+    public static function colorEffectFn(id:String, apply:FlxColor->Void):TrackEffect
     {
         inline function ch(key:String, label:String):ChannelDef
             return {
@@ -205,6 +236,9 @@ class EffectManager
         inline function c(v:Float):Int
             return Std.int(FlxMath.bound(v, 0, 255));
             
-        return new TrackEffect(id, [ch("r", "Red"), ch("g", "Green"), ch("b", "Blue")], v -> sprite.color = FlxColor.fromRGB(c(v[0]), c(v[1]), c(v[2])));
+        return new TrackEffect(id, [ch("r", "Red"), ch("g", "Green"), ch("b", "Blue")], v -> apply(FlxColor.fromRGB(c(v[0]), c(v[1]), c(v[2]))));
     }
+    
+    public static function colorEffect(id:String, sprite:FlxSprite):TrackEffect
+        return colorEffectFn(id, c -> sprite.color = c);
 }

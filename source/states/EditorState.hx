@@ -1,10 +1,11 @@
 package states;
 
-import core.EffectManager;
-import core.Timeline;
+import ui.GameUINumericStepper;
+import core.Paths;
+import haxe.io.Path;
+import core.LevelRuntime;
 import ui.GameUIInputText;
 import ui.GameUICheckbox;
-import ui.GameUINumericStepper;
 import ui.GameUIDropdownMenu;
 import haxe.Json;
 import sys.io.File;
@@ -22,8 +23,6 @@ import flixel.FlxSprite;
 import core.ActorManager;
 import core.level.Level;
 import flixel.math.FlxMath;
-import core.LevelActor;
-import flixel.group.FlxGroup.FlxTypedGroup;
 import core.Conductor;
 import flixel.FlxG;
 import flixel.text.FlxText;
@@ -35,8 +34,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
 {
     var timeText:FlxText;
     
-    var activeActors:FlxTypedGroup<LevelActor>; // Only show the objects that are inside the time window
-    var levelActors:FlxTypedGroup<LevelActor>; // all level actors
+    var runtime:LevelRuntime; // atores em janela de tempo + efeitos: o mesmo código do jogo
     var cursorMusicTime:Float = 0; // the music cursor, the truth source
     var levelData:LevelData;
     var hudCam:FlxCamera;
@@ -53,10 +51,12 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     var btnLoadSong:GameUIButton;
     
     var boxCurrentSelectedEvent:GameUIBox;
+    var boxConfig:GameUIBox;
     
     var loadedMusicPath:String = "";
     
     var eventWidgets:Array<FlxSprite> = [];
+    var levelDataWidgets:Array<FlxSprite> = [];
     
     public var selectedEvent(default, set):TimelineEvent;
     
@@ -64,7 +64,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     
     var lastCopiedEvent:Null<TimelineEvent> = null;
     
-    var effects:EffectManager;
+    var currentLevelDir:String = ""; // pasta do level aberto; vazio enquanto não foi salvo ou aberto
     
     var rootFields:Array<FieldDef> = [
         {
@@ -101,21 +101,17 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         FlxG.cameras.add(hudCam, false);
         
         ActorManager.init();
-        ActorManager.randomizePositions = false;
+        ActorManager.randomizePositions = false; // no editor o bloco aparece onde está x/y
         
         FlxG.cameras.setDefaultDrawTarget(editorGameCamera, true);
-        
-        activeActors = new FlxTypedGroup<LevelActor>();
-        levelActors = new FlxTypedGroup<LevelActor>();
         
         // FlxG.debugger.drawDebug = true;
         
         createPreviewSprites();
         
-        createEffects();
-        
-        // list of all events objects //
-        add(activeActors);
+        // os efeitos precisam existir antes de qualquer load: é o que registra bg_color, camera_zoom...
+        runtime = new LevelRuntime(background, platformSprite, editorGameCamera);
+        add(runtime.active);
         
         editorTimeline = new EditorTimeline();
         editorTimeline.cameras = [hudCam];
@@ -132,46 +128,14 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         add(timeText);
         
         createEventUI();
+        createLevelConfigUI();
         
+        rebuildLevelUI();
         rebuildEventUI();
+        
         addUI();
         
         super.create();
-    }
-    
-    function createEffects()
-    {
-        effects = new EffectManager();
-        effects.add(EffectManager.colorEffect("bg_color", background));
-        effects.add(EffectManager.colorEffect("platform_color", platformSprite));
-        effects.add(new TrackEffect("camera_zoom", [
-            {
-                key: "zoom",
-                label: "Zoom",
-                def: 1,
-                step: 0.1,
-                min: 0.1,
-                decimals: 2
-            }
-        ], v -> editorGameCamera.zoom = v[0]));
-        effects.add(new TrackEffect("camera_angle", [
-            {
-                key: "angle",
-                label: "Angle",
-                def: 0,
-                step: 5,
-                min: -360
-            }
-        ], v -> editorGameCamera.angle = v[0]));
-    }
-    
-    // as cores do level; se faltarem no meta, usa as cores originais do preview
-    function applyBaseColors()
-    {
-        var bg:Array<Int> = levelData.meta.backgroundColor ?? [103, 132, 211];
-        var plat:Array<Int> = levelData.meta.platformColor ?? [175, 227, 248];
-        effects.setBase("bg_color", [bg[0], bg[1], bg[2]]);
-        effects.setBase("platform_color", [plat[0], plat[1], plat[2]]);
     }
     
     function createEventUI()
@@ -182,6 +146,130 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         add(boxCurrentSelectedEvent);
         
         boxCurrentSelectedEvent.visible = true;
+    }
+    
+    function createLevelConfigUI()
+    {
+        boxConfig = new GameUIBox(0, 0, 480, FlxG.height - 128);
+        boxConfig.screenCenter();
+        setUICamera(boxConfig, hudCam);
+        boxConfig.visible = boxConfig.active = false; // abre pelo botão "Level settings"
+        add(boxConfig);
+    }
+    
+    // invisível não basta: o box continuaria recebendo clique
+    function toggleLevelSettings()
+    {
+        var open = !boxConfig.visible;
+        boxConfig.visible = boxConfig.active = open;
+    }
+    
+    function addLevelWidget(w:FlxSprite)
+    {
+        setUICamera(w, hudCam);
+        boxConfig.add(w);
+        levelDataWidgets.push(w);
+    }
+    
+    function clearLevelUI()
+    {
+        for (w in levelDataWidgets)
+        {
+            boxConfig.remove(w, true);
+            if (Std.isOfType(w, GameUIInputText) && GameUIInputText.focusOn == cast(w, GameUIInputText))
+                GameUIInputText.focusOn = null;
+            w.destroy();
+        }
+        levelDataWidgets = [];
+    }
+    
+    // recria o painel a partir do levelData; chame depois de carregar ou criar um level
+    function rebuildLevelUI()
+    {
+        clearLevelUI();
+        
+        // level antigo sem cores no meta: elas viram explícitas, assim o arquivo salvo já carrega o estado inicial
+        var meta = levelData.meta;
+        meta.backgroundColor = meta.backgroundColor ?? LevelRuntime.DEFAULT_BG.copy();
+        meta.platformColor = meta.platformColor ?? LevelRuntime.DEFAULT_PLATFORM.copy();
+        meta.actorsColor = meta.actorsColor ?? LevelRuntime.DEFAULT_ACTORS.copy();
+        runtime.applyMeta();
+        
+        var rowY:Float = 16;
+        addLabeledInputText(rowY, "Title", meta.title, (t:String) -> levelData.meta.title = t);
+        rowY += 36;
+        addLabeledInputText(rowY, "Artist", meta.artist, (t:String) -> levelData.meta.artist = t);
+        rowY += 36;
+        addLabeledInputText(rowY, "Song", meta.songFilename, (t:String) ->
+        {
+            levelData.meta.songFilename = t;
+            loadSongFromMeta(); // só troca quando o nome existe; enquanto você digita, falha em silêncio
+        });
+        rowY += 36;
+        addLabeledNumericStepper(rowY, "BPM", 1, meta.bpm, 0, 999, 2, (v:Float) ->
+        {
+            levelData.meta.bpm = v;
+            if (v > 0)
+                Conductor.changeBPM(v);
+        });
+        rowY += 52;
+        addColorRow("Background", meta.backgroundColor, rowY);
+        rowY += 36;
+        addColorRow("Platform", meta.platformColor, rowY);
+        rowY += 36;
+        addColorRow("Actors", meta.actorsColor, rowY);
+    }
+    
+    function addLabeledInputText(posY:Float, text:String, initial:String, changed:String->Void)
+    {
+        addLevelWidget(new FlxText(8, posY, 100, text, 18));
+        
+        var input:GameUIInputText = new GameUIInputText(120, posY + 4, 220, null, 14);
+        input.text = initial ?? "";
+        input.onChange = (old:String, cur:String) -> changed(cur); // depois de preencher o texto, senão dispara na criação
+        addLevelWidget(input);
+    }
+    
+    function addLabeledNumericStepper(posY:Float, text:String, step:Float, defValue:Float, min:Float, max:Float, decimals:Int, onChange:Float->Void)
+    {
+        addLevelWidget(new FlxText(8, posY, 100, text, 18));
+        
+        var numeric:GameUINumericStepper = new GameUINumericStepper(128, posY + 4, step, defValue, min, max, decimals);
+        numeric.onValueChange = () -> onChange(numeric.value);
+        addLevelWidget(numeric);
+    }
+    
+    // uma cor RGB com um quadradinho de prévia; altera o array do próprio meta
+    function addColorRow(label:String, rgb:Array<Int>, rowY:Float)
+    {
+        addLevelWidget(new FlxText(8, rowY, 110, label, 16));
+        
+        var swatch:FlxSprite = new FlxSprite(124, rowY);
+        swatch.makeGraphic(24, 24, FlxColor.WHITE);
+        inline function refresh()
+            swatch.color = FlxColor.fromRGB(rgb[0], rgb[1], rgb[2]);
+            
+        refresh();
+        addLevelWidget(swatch);
+        
+        for (i in 0...3)
+        {
+            var x0:Float = 160 + i * 104;
+            var value:FlxText = new FlxText(x0 + 30, rowY, 40, Std.string(rgb[i]), 14);
+            value.alignment = FlxTextAlign.CENTER;
+            
+            function change(delta:Int)
+            {
+                rgb[i] = Std.int(FlxMath.bound(rgb[i] + delta, 0, 255));
+                value.text = Std.string(rgb[i]);
+                refresh();
+                runtime.applyMeta();
+            }
+            
+            addLevelWidget(new GameUIButton(x0, rowY, "-", () -> change(-5), 28, 24));
+            addLevelWidget(value);
+            addLevelWidget(new GameUIButton(x0 + 72, rowY, "+", () -> change(5), 28, 24));
+        }
     }
     
     inline function setUICamera(obj:FlxBasic, camera:FlxCamera)
@@ -214,11 +302,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         {
             pauseSong();
             var dialog:FileDialog = new FileDialog();
-            dialog.onSelect.add((path:String) ->
-            {
-                var data:String = Json.stringify(levelData, null, "    ");
-                File.saveContent(path, data);
-            });
+            dialog.onSelect.add((path:String) -> saveLevel(path));
             dialog.browse(FileDialogType.SAVE, "json", null, "Save Level");
         });
         
@@ -230,7 +314,11 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
             dialog.onSelect.add((path:String) ->
             {
                 loadedMusicPath = path;
-                FlxG.sound.music = loadAudio(loadedMusicPath);
+                levelData.meta.songFilename = ""; // música nova: o Save vai copiar para audio.ogg
+                if (FlxG.sound.music != null)
+                    FlxG.sound.music.destroy();
+                FlxG.sound.music = loadAudio(path);
+                rebuildLevelUI(); // o campo Song passa a mostrar vazio
             });
             
             dialog.browse(FileDialogType.OPEN, "ogg", null, "Load audio");
@@ -240,15 +328,20 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         
         var btnCreateLevel:GameUIButton = new GameUIButton(space, 8, "Create level", () -> createEmptyLevel());
         
+        space = padding + btnCreateLevel.x + btnCreateLevel.width;
+        var btnLevelSettings:GameUIButton = new GameUIButton(space, 8, "Level settings", () -> toggleLevelSettings());
+        
         setUICamera(btnLoadLevel, hudCam);
         setUICamera(btnSaveLevel, hudCam);
         setUICamera(btnLoadSong, hudCam);
         setUICamera(btnCreateLevel, hudCam);
+        setUICamera(btnLevelSettings, hudCam);
         
         add(btnLoadLevel);
         add(btnSaveLevel);
         add(btnLoadSong);
         add(btnCreateLevel);
+        add(btnLevelSettings);
     }
     
     function cameraWorldConfig()
@@ -265,11 +358,12 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         platformSprite.y = (FlxG.height - platformSprite.height * 0.5) + 64;
         platformSprite.immovable = true;
         platformSprite.screenCenter(X);
-        platformSprite.color = 0xFFAFE3F8;
+        platformSprite.color = 0xFFFFFFFF;
         
         background = new FlxSprite();
         background.loadGraphic("assets/images/backgrounds/game_bg07.png");
         background.setGraphicSize(FlxG.width * 1.2, FlxG.height * 1.2);
+        background.scrollFactor.set(0.75, 0.75);
         background.updateHitbox();
         background.screenCenter();
         background.color = 0xFF6784D3;
@@ -335,8 +429,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         if (isEventUIDirty && boxCurrentSelectedEvent != null)
             rebuildEventUI();
             
-        refreshActors(cursorMusicTime);
-        effects.apply(cursorMusicTime);
+        runtime.update(cursorMusicTime); // janela de atores + efeitos, igual ao jogo
         
         timeText.text = 'CurrentTime:${Math.round(cursorMusicTime)} | step: $curStep | playing: ${music != null && music.playing} | Copied event: ${lastCopiedEvent?.object}';
         
@@ -356,24 +449,6 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
             
         FlxG.sound.music.time = cursorMusicTime;
         Conductor.songPosition = cursorMusicTime;
-    }
-    
-    // decide who will appear on the activeActors //
-    function refreshActors(time:Float)
-    {
-        for (a in levelActors)
-        {
-            if (a.isInside(time))
-            {
-                if (!activeActors.members.contains(a))
-                    activeActors.add(a);
-            }
-            else if (activeActors.members.contains(a))
-            {
-                activeActors.remove(a);
-                a.phase = null;
-            }
-        }
     }
     
     inline function snapTime(t:Float):Float
@@ -426,30 +501,16 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         onEventsChanged();
     }
     
-    // the actor that hold the values //
+    // o runtime é dono dos atores e dos efeitos; o editor só avisa quando o dado muda
     function rebuildActor(e:TimelineEvent)
-    {
-        removeActorOf(e);
+        runtime.rebuildActor(e);
         
-        var actor = ActorManager.createActor(e);
-        if (actor != null)
-            levelActors.add(actor);
-    }
-    
     function removeActorOf(e:TimelineEvent)
-    {
-        for (a in levelActors.members)
-        {
-            if (a != null && a.event == e)
-            {
-                activeActors.remove(a, true);
-                levelActors.remove(a, true);
-                a.destroy();
-                return;
-            }
-        }
-    }
-    
+        runtime.removeActorOf(e);
+        
+    function onEventsChanged()
+        runtime.eventsChanged();
+        
     function resetEditor()
     {
         // if there's any music playing, stop now //
@@ -457,32 +518,26 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         
         // we set the level data as empty level
         levelData = Level.emptyLevel();
-        
-        applyBaseColors();
-        effects.rebuild([]);
+        runtime.load(levelData);
         
         // clear the selected one //
         selectedEvent = null;
+        cursorMusicTime = 0;
         
         // we clear the song preloaded cuz we destroy it too //
         loadedMusicPath = "";
         
         if (FlxG.sound.music != null)
+        {
             FlxG.sound.music.destroy();
-            
+            FlxG.sound.music = null;
+        }
+        
         // and update the timeline to remove all the sprites//
         editorTimeline.destroyEventSprites();
         
         // predefined bpm //
         Conductor.changeBPM(100);
-        
-        // we clear both groups just to make sure no actor will last //
-        activeActors.clear();
-        levelActors.clear();
-        
-        // reset colors //
-        platformSprite.color = FlxColor.WHITE;
-        background.color = FlxColor.WHITE;
     }
     
     inline function loadAudio(path:String)
@@ -492,72 +547,62 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         return snd;
     }
     
-    // this function will take the params and will load and update the editor state //
-    function loadLevel(path:String)
+    // carregar e criar um level vazio passam pelo mesmo caminho
+    function applyLevel(data:LevelData, levelDir:String = "")
     {
         resetEditor();
         
-        levelData = Level.loadJsonData(path);
+        currentLevelDir = levelDir;
+        levelData = data;
+        runtime.load(levelData);
         Conductor.changeBPM(levelData.meta.bpm ?? 110);
         
+        var bgID:Int = levelData.meta.backgroundID;
+        if (bgID > 0)
+            updateBackground(bgID);
+            
         editorTimeline.setEvents(levelData.events);
         
-        if (levelData?.editorMeta?.audioPath != null && levelData?.editorMeta?.audioPath != "")
+        if (!loadSongFromMeta() && levelDir != "")
         {
-            loadedMusicPath = levelData?.editorMeta?.audioPath;
-            FlxG.sound.music = loadAudio(loadedMusicPath);
+            var ref = Paths.songRef(levelData.meta.songFilename);
+            trace('Música não encontrada: ref="$ref", procurei em "${Paths.resolve(ref, levelDir)}"');
         }
         
-        for (a in ActorManager.createAll(levelData))
-            levelActors.add(a);
-            
-        applyBaseColors();
-        onEventsChanged();
+        rebuildLevelUI();
     }
     
-    function createEmptyLevel()
+    inline function loadLevel(path:String)
+        applyLevel(Level.loadJsonData(path), Path.directory(path));
+        
+    inline function createEmptyLevel()
+        applyLevel(Level.emptyLevel());
+        
+    function updateBackground(id:Int)
     {
-        resetEditor();
-        
-        levelData = Level.emptyLevel();
-        Conductor.changeBPM(levelData.meta.bpm ?? 110);
-        
-        editorTimeline.setEvents(levelData.events);
-        
-        if (levelData?.editorMeta?.audioPath != null && levelData?.editorMeta?.audioPath != "")
+        background.loadGraphic('assets/images/backgrounds/game_bg${StringTools.lpad(Std.string(id), "0", 2)}.png');
+        background.setGraphicSize(FlxG.width * 1.2, FlxG.height * 1.2);
+        background.updateHitbox();
+        background.screenCenter();
+    }
+    
+    function saveLevel(path:String)
+    {
+        if (!StringTools.endsWith(path, ".json"))
+            path += ".json";
+            
+        // a música viaja junto com o level: copia para a pasta e aponta o meta para ela
+        var hasScheme = Paths.split(levelData.meta.songFilename ?? "").scheme != null;
+        if (loadedMusicPath != "" && !hasScheme)
         {
-            loadedMusicPath = levelData?.editorMeta?.audioPath;
-            FlxG.sound.music = loadAudio(loadedMusicPath);
+            var target = Path.join([Path.directory(path), "audio.ogg"]);
+            if (Path.normalize(loadedMusicPath) != Path.normalize(target))
+                File.copy(loadedMusicPath, target);
+            levelData.meta.songFilename = "audio.ogg";
         }
         
-        for (a in ActorManager.createAll(levelData))
-            levelActors.add(a);
-            
-        applyBaseColors();
-        onEventsChanged();
-    }
-    
-    function onEventsChanged()
-        effects.rebuild(levelData.events);
-        
-    function getParam(key:String):Dynamic
-    {
-        if (selectedEvent == null || selectedEvent.params == null)
-            return null;
-        return Reflect.field(selectedEvent.params, key);
-    }
-    
-    function setParam(key:String, value:Dynamic)
-    {
-        if (selectedEvent == null)
-            return;
-        if (selectedEvent.params == null)
-            selectedEvent.params = {};
-            
-        Reflect.setField(selectedEvent.params, key, value);
-        
-        rebuildActor(selectedEvent);
-        editorTimeline.relayout();
+        currentLevelDir = Path.directory(path);
+        File.saveContent(path, Json.stringify(levelData, null, "    "));
     }
     
     function rebuildEventUI()
@@ -631,7 +676,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
                     addNumberRow(f, rowY);
                 case Checkbox:
                     var box:GameUICheckbox = new GameUICheckbox(8, rowY, f.label, null, (checked:Bool) -> setValue(f, checked));
-                    box.checked = getValue(f);
+                    box.checked = getValue(f) == true;
                     addWidget(box);
             }
             rowY += ROW_HEIGHT;
@@ -716,6 +761,23 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         if (editorTimeline != null)
             editorTimeline.setSelected(v);
         return v;
+    }
+    
+    // carrega a música que o meta aponta; devolve se achou
+    function loadSongFromMeta():Bool
+    {
+        var ref = Paths.songRef(levelData.meta.songFilename);
+        var sound = Paths.loadSong(ref, currentLevelDir);
+        if (sound == null)
+            return false;
+            
+        if (FlxG.sound.music != null)
+            FlxG.sound.music.destroy();
+        FlxG.sound.music = FlxG.sound.create(sound);
+        
+        // arquivo em disco: o Save sabe copiar; builtin e embed ficam só como referência
+        loadedMusicPath = Paths.split(ref).scheme == null ? Path.join([currentLevelDir, ref]) : "";
+        return true;
     }
     
     public function UIEvent(id:String, sender:Dynamic) {}
