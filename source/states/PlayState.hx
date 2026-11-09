@@ -14,7 +14,7 @@ import objects.Player;
 class PlayState extends MusicSyncedState
 {
     public static var currentSong:String = "";
-    public static var levelPath:String = "assets/data/game.json"; // quem abrir o PlayState escolhe a fase aqui
+    public static var levelPath:String = "assets/data/cry.json"; // quem abrir o PlayState escolhe a fase aqui
     
     var player:Player;
     var platformSprite:FlxSprite;

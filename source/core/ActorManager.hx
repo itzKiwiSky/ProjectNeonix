@@ -80,14 +80,14 @@ class ActorManager
         
     public static function posX(e:TimelineEvent):Float
     {
-        if (randomizePositions && paramOf(e, "randomX") == true)
+        if (randomizePositions && paramOf(e, "useRandomX") == true)
             return FlxG.random.float(RANDOM_MARGIN, FlxG.width - RANDOM_MARGIN);
         return paramOf(e, "x") ?? FlxG.width * 0.5;
     }
     
     public static function posY(e:TimelineEvent):Float
     {
-        if (randomizePositions && paramOf(e, "randomY") == true)
+        if (randomizePositions && paramOf(e, "useRandomY") == true)
             return FlxG.random.float(RANDOM_MARGIN, FlxG.height - RANDOM_MARGIN);
         return paramOf(e, "y") ?? FlxG.height * 0.5;
     }

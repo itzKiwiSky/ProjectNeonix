@@ -192,9 +192,9 @@ class EditorTimeline extends FlxTypedSpriteGroup<FlxSprite>
         for (i in 0...MAX_TICKS)
         {
             var tick = new FlxSprite();
-            tick.makeGraphic(2, 1, FlxColor.WHITE);
+            tick.makeGraphic(3, 1, FlxColor.WHITE);
             tick.visible = false;
-            tick.origin.set(0, 0);
+            tick.origin.set(1, 0);
             add(tick);
             ticks.push(tick);
         }
@@ -248,8 +248,8 @@ class EditorTimeline extends FlxTypedSpriteGroup<FlxSprite>
             tick.visible = beat >= 0 && x >= -2 && x <= FlxG.width;
             tick.x = x - 1;
             tick.y = this.y;
-            tick.setGraphicSize(2, (beat % 4 == 0) ? 32 : 16);
-            tick.color = (beat % 4 == 0) ? FlxColor.MAGENTA : FlxColor.WHITE;
+            tick.setGraphicSize(3, (beat % 4 == 0) ? 32 : 16);
+            tick.color = (beat % 4 == 0) ? FlxColor.CYAN : FlxColor.WHITE;
         }
     }
     
@@ -258,4 +258,19 @@ class EditorTimeline extends FlxTypedSpriteGroup<FlxSprite>
         
     public function xToTime(px:Float):Float
         return cursorMusicTime + (px - FlxG.width * 0.5) / pixelsPerMs;
+}
+
+class EditorTimelineCursor extends FlxSprite
+{
+    public function new()
+    {
+        super();
+        makeGraphic(48, 256 + 48, FlxColor.TRANSPARENT);
+        updateHitbox();
+        FlxSpriteUtil.drawLine(this, width * 0.5, 48, width * 0.5, height, {
+            thickness: 2,
+            color: FlxColor.WHITE,
+        });
+        FlxSpriteUtil.drawCircle(this, width * 0.5, width * 0.5, width * 0.5, 0xFFDF66B6);
+    }
 }

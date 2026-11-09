@@ -16,7 +16,7 @@ class Main extends Sprite
     public function new()
     {
         super();
-        game = new FlxGame(screenWidth, screenHeight, EditorState, updateFrameRate, updateFrameRate, true, false);
+        game = new FlxGame(screenWidth, screenHeight, PlayState, updateFrameRate, updateFrameRate, true, false);
         
         addChild(game);
         FlxG.autoPause = false;
