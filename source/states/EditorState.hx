@@ -569,8 +569,6 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
             trace('Música não encontrada: ref="$ref", procurei em "${Paths.resolve(ref, levelDir)}"');
         }
         
-        trace(data);
-        
         rebuildLevelUI();
     }
     

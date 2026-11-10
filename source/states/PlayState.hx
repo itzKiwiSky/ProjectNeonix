@@ -41,8 +41,9 @@ class PlayState extends MusicSyncedState
         platformSprite.screenCenter(X);
         
         background = new FlxSprite();
-        background.makeGraphic(FlxG.width, FlxG.height, FlxColor.WHITE);
+        background.makeGraphic(FlxG.width, FlxG.height, FlxColor.TRANSPARENT);
         background.updateHitbox();
+        background.scrollFactor.set(0.5, 0.5);
         background.screenCenter();
         
         player = new Player();
@@ -55,8 +56,6 @@ class PlayState extends MusicSyncedState
         add(player);
         add(platformSprite);
         add(runtime.active);
-        
-        // updateBackground(runtime.data.meta.backgroundID);
         
         var level:LevelData = Level.loadJsonData(levelPath);
         runtime.load(level);
