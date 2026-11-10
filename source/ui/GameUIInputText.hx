@@ -92,7 +92,7 @@ class GameUIInputText extends FlxTypedSpriteGroup<FlxSprite>
     }
     
     public var selectIndex:Int = -1;
-    public var caretIndex(default, set):Int = -1;
+    public var caretIndex(default, set):Int = 0;
     
     var _caretTime:Float = 0;
     
@@ -523,22 +523,25 @@ class GameUIInputText extends FlxTypedSpriteGroup<FlxSprite>
             return;
             
         var textField = textObj.textField;
-        textField.setSelection(caretIndex, caretIndex);
+        var textLength:Int = textField.text.length;
+        var safeCaretIndex:Int = Std.int(Math.max(0, Math.min(textLength, caretIndex)));
+        var safeSelectIndex:Int = selectIndex < 0 ? -1 : Std.int(Math.min(textLength, selectIndex));
+        textField.setSelection(safeCaretIndex, safeCaretIndex);
         _caretTime = 0;
         if (caret != null && caret.exists)
         {
             caret.y = textObj.y + 2;
             caret.x = textObj.x + 1 - textObj.textField.scrollH;
-            if (caretIndex > 0)
-                caret.x += _boundaries[Std.int(Math.max(0, Math.min(_boundaries.length - 1, caretIndex - 1)))];
+            if (safeCaretIndex > 0 && _boundaries.length > 0)
+                caret.x += _boundaries[Std.int(Math.max(0, Math.min(_boundaries.length - 1, safeCaretIndex - 1)))];
         }
         
         if (selection != null && selection.exists)
         {
             selection.y = textObj.y + 2;
             selection.x = textObj.x + 1 - textObj.textField.scrollH;
-            if (selectIndex > 0)
-                selection.x += _boundaries[Std.int(Math.max(0, Math.min(_boundaries.length - 1, selectIndex - 1)))];
+            if (safeSelectIndex > 0 && _boundaries.length > 0)
+                selection.x += _boundaries[Std.int(Math.max(0, Math.min(_boundaries.length - 1, safeSelectIndex - 1)))];
                 
             selection.scale.y = textField.textHeight;
             selection.scale.x = caret.x - selection.x;
@@ -562,9 +565,9 @@ class GameUIInputText extends FlxTypedSpriteGroup<FlxSprite>
             if (text.length > 0)
             {
                 textObj.removeFormat(selectedFormat);
-                if (selectIndex != -1 && selectIndex != caretIndex)
+                if (safeSelectIndex != -1 && safeSelectIndex != safeCaretIndex)
                 {
-                    textObj.addFormat(selectedFormat, caretIndex < selectIndex ? caretIndex : selectIndex, caretIndex < selectIndex ? selectIndex : caretIndex);
+                    textObj.addFormat(selectedFormat, safeCaretIndex < safeSelectIndex ? safeCaretIndex : safeSelectIndex, safeCaretIndex < safeSelectIndex ? safeSelectIndex : safeCaretIndex);
                 }
             }
         }
@@ -602,6 +605,7 @@ class GameUIInputText extends FlxTypedSpriteGroup<FlxSprite>
     
     function set_caretIndex(v:Int)
     {
+        v = Std.int(Math.max(0, Math.min(text == null ? 0 : text.length, v)));
         caretIndex = v;
         updateCaret();
         return v;
@@ -692,6 +696,10 @@ class GameUIInputText extends FlxTypedSpriteGroup<FlxSprite>
             }
         }
         text = v;
+        if (caretIndex > v.length)
+            caretIndex = v.length;
+        if (selectIndex > v.length)
+            selectIndex = v.length;
         updateCaret();
         return v;
     }

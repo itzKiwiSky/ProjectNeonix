@@ -87,13 +87,13 @@ class BulletEmitter extends LevelActor
                 defaultValue: 360
             },
             {
-                key: "randomX",
+                key: "useRandomX",
                 label: "Random X",
                 kind: Checkbox,
                 defaultValue: false
             },
             {
-                key: "randomY",
+                key: "useRandomY",
                 label: "Random Y",
                 kind: Checkbox,
                 defaultValue: false

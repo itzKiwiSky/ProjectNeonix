@@ -1,5 +1,6 @@
 package states;
 
+import flixel.FlxCamera;
 import flixel.util.FlxColor;
 import openfl.media.Sound;
 import haxe.io.Path;
@@ -15,23 +16,31 @@ import objects.Player;
 
 class PlayState extends MusicSyncedState
 {
-    public static var currentSong:String = "";
-    public static var levelPath:String = "assets/data/game.json"; // quem abrir o PlayState escolhe a fase aqui
+    public static var levelPath:String = "assets/data/retro_blast.json"; // quem abrir o PlayState escolhe a fase aqui
     
     var player:Player;
     var platformSprite:FlxSprite;
     var background:FlxSprite;
     var runtime:LevelRuntime;
+    var gameCam:FlxCamera;
+    var cameraMotionTime:Float = 0;
+    
+    static inline var CAMERA_SWAY_X:Float = 7;
+    static inline var CAMERA_SWAY_Y:Float = 4;
     
     override public function create()
     {
         persistentDraw = persistentUpdate = true;
         
         ActorManager.init();
-        ActorManager.randomizePositions = true; // o editor desliga; o jogo sempre liga
+        ActorManager.randomizePositions = true; // o jogo sempre respeita Random X/Y
         
-        FlxG.worldBounds.set(0, 0, FlxG.width * 2, FlxG.height * 1.5);
-        // FlxG.debugger.drawDebug = true;
+        FlxG.worldBounds.set(-FlxG.width * 0.5, -FlxG.height * 0.5, FlxG.width * 2, FlxG.height * 1.5);
+        // FlxG.debugger.drawDebug = true
+        
+        gameCam = new FlxCamera();
+        FlxG.cameras.add(gameCam);
+        FlxG.cameras.setDefaultDrawTarget(gameCam, true);
         
         platformSprite = new FlxSprite();
         platformSprite.loadGraphic("assets/images/game/platform.png");
@@ -50,13 +59,31 @@ class PlayState extends MusicSyncedState
         player.screenCenter();
         
         // os efeitos precisam existir antes do load, é o que registra bg_color, camera_zoom...
-        runtime = new LevelRuntime(background, platformSprite, FlxG.camera);
+        runtime = new LevelRuntime(background, platformSprite, gameCam);
         
         add(background);
         add(player);
         add(platformSprite);
         add(runtime.active);
         
+        reloadLevelData();
+        
+        gameCam.setScrollBoundsRect(FlxG.worldBounds.x, FlxG.worldBounds.y, FlxG.worldBounds.width, FlxG.worldBounds.height, true);
+        // gameCam.follow(player, FlxCameraFollowStyle.TOPDOWN, 0.5);
+        
+        super.create();
+    }
+    
+    function updateBackground(id:Int)
+    {
+        background.loadGraphic('assets/images/backgrounds/game_bg${StringTools.lpad(Std.string(id), "0", 2)}.png');
+        background.setGraphicSize(FlxG.width * 1.2, FlxG.height * 1.2);
+        background.updateHitbox();
+        background.screenCenter();
+    }
+    
+    function reloadLevelData()
+    {
         var level:LevelData = Level.loadJsonData(levelPath);
         runtime.load(level);
         Conductor.changeBPM(level.meta.bpm ?? 110);
@@ -71,16 +98,6 @@ class PlayState extends MusicSyncedState
             FlxG.sound.music.volume = 0.2;
             FlxG.sound.music.play();
         }
-        
-        super.create();
-    }
-    
-    function updateBackground(id:Int)
-    {
-        background.loadGraphic('assets/images/backgrounds/game_bg${StringTools.lpad(Std.string(id), "0", 2)}.png');
-        background.setGraphicSize(FlxG.width * 1.2, FlxG.height * 1.2);
-        background.updateHitbox();
-        background.screenCenter();
     }
     
     override public function update(elapsed:Float)
@@ -89,6 +106,8 @@ class PlayState extends MusicSyncedState
         FlxG.watch.add(FlxG.sound.music, "time", "music time");
         
         runtime.update(Conductor.songPosition);
+        
+        gameCam.targetOffset.set(Math.sin(elapsed * 0.45) * CAMERA_SWAY_X, Math.sin(elapsed * 0.32) * CAMERA_SWAY_Y);
         
         super.update(elapsed);
         

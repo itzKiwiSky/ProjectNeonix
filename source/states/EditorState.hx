@@ -1,5 +1,6 @@
 package states;
 
+import flixel.tweens.FlxEase;
 import ui.GameUINumericStepper;
 import core.Paths;
 import haxe.io.Path;
@@ -72,14 +73,14 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
             label: "Time",
             kind: FieldKind.Number,
             target: FieldTarget.Root,
-            step: 50
+            step: 10
         },
         {
             key: "lead",
             label: "Lead",
             kind: FieldKind.Number,
             target: FieldTarget.Root,
-            step: 50,
+            step: 10,
             defaultValue: 0
         }
     ];
@@ -93,15 +94,13 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         hudCam = new FlxCamera();
         hudCam.bgColor = FlxColor.TRANSPARENT;
         
-        editorGameCamera = new FlxCamera();
+        editorGameCamera = FlxG.camera; // a câmera padrão passa a ser a do jogo
         editorGameCamera.bgColor = FlxColor.BLACK;
-        editorGameCamera.visible = false;
         
-        FlxG.cameras.add(editorGameCamera, true);
         FlxG.cameras.add(hudCam, false);
         
         ActorManager.init();
-        ActorManager.randomizePositions = false; // no editor o bloco aparece onde está x/y
+        ActorManager.randomizePositions = false; // as opções Random X/Y também valem no preview
         
         FlxG.cameras.setDefaultDrawTarget(editorGameCamera, true);
         
@@ -225,7 +224,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         addLevelWidget(new FlxText(8, posY, 100, text, 18));
         
         var input:GameUIInputText = new GameUIInputText(120, posY + 4, 220, null, 14);
-        input.text = "";
+        input.text = initial ?? "";
         input.onChange = (old:String, cur:String) -> changed(cur); // depois de preencher o texto, senão dispara na criação
         addLevelWidget(input);
     }
@@ -331,17 +330,24 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         space = padding + btnCreateLevel.x + btnCreateLevel.width;
         var btnLevelSettings:GameUIButton = new GameUIButton(space, 8, "Level settings", () -> toggleLevelSettings());
         
+        space = padding + btnLevelSettings.x + btnLevelSettings.width;
+        var btnPlayLevel:GameUIButton = new GameUIButton(space, 8, "Playtest", () -> {
+            // PlayState.levelPath = currentLevelDir;
+        });
+        
         setUICamera(btnLoadLevel, hudCam);
         setUICamera(btnSaveLevel, hudCam);
         setUICamera(btnLoadSong, hudCam);
         setUICamera(btnCreateLevel, hudCam);
         setUICamera(btnLevelSettings, hudCam);
+        setUICamera(btnPlayLevel, hudCam);
         
         add(btnLoadLevel);
         add(btnSaveLevel);
         add(btnLoadSong);
         add(btnCreateLevel);
         add(btnLevelSettings);
+        add(btnPlayLevel);
     }
     
     function cameraWorldConfig()
@@ -563,6 +569,8 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
             
         editorTimeline.setEvents(levelData.events);
         
+        trace(currentLevelDir);
+        
         if (!loadSongFromMeta() && levelDir != "")
         {
             var ref = Paths.songRef(levelData.meta.songFilename);
@@ -602,6 +610,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         }
         
         currentLevelDir = Path.directory(path);
+        trace(currentLevelDir);
         File.saveContent(path, Json.stringify(levelData, null, "    "));
     }
     
@@ -647,6 +656,10 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     {
         var holder = holderOf(f);
         var v:Dynamic = holder == null ? null : Reflect.field(holder, f.key);
+        if (v == null && holder != null && f.key == "useRandomX")
+            v = Reflect.field(holder, "randomX");
+        else if (v == null && holder != null && f.key == "useRandomY")
+            v = Reflect.field(holder, "randomY");
         return v ?? f.defaultValue;
     }
     
@@ -678,6 +691,19 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
                     var box:GameUICheckbox = new GameUICheckbox(8, rowY, f.label, null, (checked:Bool) -> setValue(f, checked));
                     box.checked = getValue(f) == true;
                     addWidget(box);
+                case DropdownString:
+                    final easings:Array<String> = Reflect.fields(FlxEase).filter(name -> Reflect.isFunction(Reflect.field(FlxEase, name)));
+                    easings.sort((a, b) -> a < b ? -1 : (a > b ? 1 : 0));
+                    var boxW:Float = boxCurrentSelectedEvent.bg.width;
+                    addWidget(new FlxText(8, rowY, 80, f.label, 14));
+                    var easingType:GameUIDropdownMenu = new GameUIDropdownMenu(boxW - 108, rowY, easings, (idx:Int, name:String) -> setValue(f, name));
+
+                    var selected:Dynamic = getValue(f);
+                    var selectedName:String = selected == null ? "" : Std.string(selected);
+                    if (easings.indexOf(selectedName) < 0)
+                        selectedName = easings.indexOf("linear") >= 0 ? "linear" : (easings.length > 0 ? easings[0] : "");
+                    easingType.selectedLabel = selectedName;
+                    addWidget(easingType);
             }
             rowY += ROW_HEIGHT;
         }
@@ -685,34 +711,19 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     
     function addNumberRow(f:FieldDef, rowY:Float)
     {
-        var step:Float = f.step ?? 10;
-        var decimals:Int = f.decimals ?? 0;
-        var minValue:Float = f.min ?? 0;
         var boxW:Float = boxCurrentSelectedEvent.bg.width;
+        var ev:TimelineEvent = selectedEvent;
         
-        inline function show():String
-            return Std.string(FlxMath.roundDecimal(getValue(f) ?? 0, decimals));
-            
-        var label:FlxText = new FlxText(8, rowY, 80, f.label, 14);
-        var valueText:FlxText = new FlxText(boxW - 130, rowY, 60, show(), 14);
-        valueText.alignment = FlxTextAlign.CENTER;
+        addWidget(new FlxText(8, rowY, 80, f.label, 14));
         
-        var minus:GameUIButton = new GameUIButton(boxW - 164, rowY, "-", () ->
+        // argumentos: x, y, step, valor inicial, min, max, casas decimais
+        var stepper:GameUINumericStepper = new GameUINumericStepper(boxW - 108, rowY, f.step ?? 10, getValue(f) ?? 0, f.min ?? 0, f.max ?? 999999, f.decimals ?? 0);
+        stepper.onValueChange = () ->
         {
-            setValue(f, FlxMath.roundDecimal(Math.max(minValue, (getValue(f) ?? 0) - step), decimals));
-            valueText.text = show();
-        }, 32, 24);
-        
-        var plus:GameUIButton = new GameUIButton(boxW - 64, rowY, "+", () ->
-        {
-            setValue(f, FlxMath.roundDecimal((getValue(f) ?? 0) + step, decimals));
-            valueText.text = show();
-        }, 32, 24);
-        
-        addWidget(label);
-        addWidget(valueText);
-        addWidget(minus);
-        addWidget(plus);
+            if (selectedEvent == ev) // o painel pode já ter mudado de evento quando o callback dispara
+                setValue(f, stepper.value);
+        };
+        addWidget(stepper);
     }
     
     function addWidget(w:FlxSprite)

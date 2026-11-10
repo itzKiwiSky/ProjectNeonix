@@ -13,6 +13,7 @@ typedef Keyframe =
     var time:Float;
     var duration:Float;
     var value:Float;
+    var easingType:String;
 }
 
 typedef ChannelDef =
@@ -23,6 +24,7 @@ typedef ChannelDef =
     var ?step:Float;
     var ?min:Float;
     var ?decimals:Int;
+    var ?easingType:String;
 }
 
 // um valor numérico que muda ao longo da música
@@ -33,11 +35,23 @@ class Track
     var keys:Array<Keyframe> = [];
     
     public function new() {}
+
+    inline function progress(now:Float, start:Float, len:Float):Float
+        return len <= 0 ? 1 : Math.max(0, Math.min(1, (now - start) / len));
     
     public function setKeys(k:Array<Keyframe>)
     {
         keys = k;
         keys.sort((a, b) -> a.time < b.time ? -1 : (a.time > b.time ? 1 : 0));
+    }
+
+    static function easedProgress(easingType:String, t:Float):Float
+    {
+        var easing:Dynamic = Reflect.field(FlxEase, easingType);
+        if (!Reflect.isFunction(easing))
+            easing = Reflect.field(FlxEase, "linear");
+        var ease:Float->Float = cast easing;
+        return ease(t);
     }
     
     public function valueAt(now:Float):Float
@@ -49,8 +63,8 @@ class Track
             if (k.time > now)
                 break;
                 
-            var t = k.duration <= 0 ? 1 : Math.min(1, (now - k.time) / k.duration);
-            result = from + (k.value - from) * FlxEase.quadOut(t);
+            var t = progress(now, k.time, k.duration);
+            result = from + (k.value - from) * easedProgress(k.easingType, t);
             from = k.value; // o próximo keyframe parte do destino deste (o salto)
         }
         return result;
@@ -78,6 +92,14 @@ class Effect
             return def;
         var v:Dynamic = Reflect.field(e.params, key);
         return v == null ? def : v;
+    }
+
+    static function stringParam(e:TimelineEvent, key:String, def:String):String
+    {
+        if (e.params == null)
+            return def;
+        var v:Dynamic = Reflect.field(e.params, key);
+        return Std.isOfType(v, String) ? v : def;
     }
 }
 
@@ -115,6 +137,7 @@ class TrackEffect extends Effect
     {
         var list:Array<FieldDef> = [];
         for (c in channels)
+        {
             list.push({
                 key: c.key,
                 label: c.label,
@@ -122,11 +145,19 @@ class TrackEffect extends Effect
                 step: c.step,
                 min: c.min,
                 decimals: c.decimals,
-                defaultValue: c.def
+                defaultValue: c.def,
+                easingType: c.easingType,
             });
+            list.push({
+                key: c.key + "Easing",
+                label: c.label + " Easing",
+                kind: FieldKind.DropdownString,
+                defaultValue: c.easingType ?? "linear",
+            });
+        }
         list.push({
             key: "duration",
-            label: "Fade",
+            label: "Duration",
             kind: FieldKind.Number,
             step: 100,
             defaultValue: 0 // 0 = salto seco
@@ -143,7 +174,15 @@ class TrackEffect extends Effect
                 continue;
             var d = Effect.param(e, "duration", 0);
             for (i in 0...channels.length)
-                keys[i].push({time: e.time, duration: d, value: Effect.param(e, channels[i].key, channels[i].def)});
+            {
+                var channel = channels[i];
+                keys[i].push({
+                    time: e.time,
+                    duration: d,
+                    value: Effect.param(e, channel.key, channel.def),
+                    easingType: Effect.stringParam(e, channel.key + "Easing", channel.easingType ?? "linear")
+                });
+            }
         }
         for (i in 0...tracks.length)
             tracks[i].setKeys(keys[i]);
@@ -178,7 +217,8 @@ class EffectManager
                 def: 1,
                 step: 0.1,
                 min: 0.1,
-                decimals: 2
+                decimals: 2,
+                easingType: "linear"
             }
         ], v -> camera.zoom = v[0]));
         m.add(new TrackEffect("camera_angle", [
@@ -187,7 +227,8 @@ class EffectManager
                 label: "Angle",
                 def: 0,
                 step: 5,
-                min: -360
+                min: -360,
+                easingType: "linear"
             }
         ], v -> camera.angle = v[0]));
         return m;

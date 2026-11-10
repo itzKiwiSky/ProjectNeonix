@@ -17,6 +17,8 @@ class Player extends FlxTypedSpriteGroup<FlxSprite>
     var hitCooldown:Float = 1.5;
     var cooldown:Float = 1.5;
     
+    var playerSize:Int = 48;
+    
     public var playerSkin:Int = 0;
     
     public function new()
@@ -24,7 +26,7 @@ class Player extends FlxTypedSpriteGroup<FlxSprite>
         super();
         
         hitbox = new FlxSprite();
-        hitbox.makeGraphic(64, 64, FlxColor.TRANSPARENT);
+        hitbox.makeGraphic(playerSize, playerSize, FlxColor.TRANSPARENT);
         hitbox.updateHitbox();
         hitbox.acceleration.y = 900;
         hitbox.maxVelocity.y = 2000;

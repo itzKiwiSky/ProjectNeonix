@@ -1,0 +1,274 @@
+{
+    "editorMeta": {
+        "lastSavedTime": 0,
+        "audioPath": ""
+    },
+    "events": [
+        {
+            "lead": 0,
+            "params": {
+                "r": 255,
+                "b": 255,
+                "duration": 3950,
+                "g": 255
+            },
+            "time": 0,
+            "object": "platform_color"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "y": 100,
+                "spread": 360,
+                "angle": 0,
+                "outro": 200,
+                "life": 5000,
+                "duration": 250,
+                "interval": 250,
+                "useRandomX": true,
+                "count": 15,
+                "speed": 300
+            },
+            "time": 4736.84210526316,
+            "object": "bullet_emitter"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "y": 100,
+                "angle": 0,
+                "outro": 200,
+                "spread": 360,
+                "life": 5000,
+                "duration": 250,
+                "interval": 250,
+                "useRandomX": true,
+                "count": 15,
+                "speed": 300
+            },
+            "time": 5789.47368421053,
+            "object": "bullet_emitter"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "y": 100,
+                "angle": 0,
+                "outro": 200,
+                "spread": 360,
+                "life": 5000,
+                "duration": 250,
+                "interval": 250,
+                "useRandomX": true,
+                "count": 15,
+                "speed": 300
+            },
+            "time": 6842.10526315789,
+            "object": "bullet_emitter"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "y": 100,
+                "angle": 0,
+                "outro": 200,
+                "spread": 360,
+                "life": 5000,
+                "duration": 250,
+                "interval": 250,
+                "useRandomX": true,
+                "count": 15,
+                "speed": 300
+            },
+            "time": 7894.73684210526,
+            "object": "bullet_emitter"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "y": 100,
+                "outro": 200,
+                "spread": 360,
+                "angle": 0,
+                "life": 5000,
+                "duration": 250,
+                "interval": 250,
+                "useRandomX": true,
+                "count": 15,
+                "speed": 300
+            },
+            "time": 9078.94736842105,
+            "object": "bullet_emitter"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "y": 100,
+                "outro": 200,
+                "spread": 360,
+                "angle": 0,
+                "life": 5000,
+                "duration": 250,
+                "interval": 250,
+                "useRandomX": true,
+                "count": 15,
+                "speed": 300
+            },
+            "time": 10000,
+            "object": "bullet_emitter"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "y": 100,
+                "outro": 200,
+                "spread": 360,
+                "angle": 0,
+                "life": 5000,
+                "duration": 250,
+                "interval": 250,
+                "useRandomX": true,
+                "count": 15,
+                "speed": 300
+            },
+            "time": 11052.6315789474,
+            "object": "bullet_emitter"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 200,
+                "y": 100,
+                "outro": 200,
+                "spread": 360,
+                "angle": 0,
+                "life": 5000,
+                "duration": 250,
+                "interval": 250,
+                "count": 20,
+                "speed": 675
+            },
+            "time": 12763.1578947368,
+            "object": "bullet_emitter"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 1100,
+                "y": 100,
+                "outro": 200,
+                "spread": 360,
+                "angle": 0,
+                "life": 5000,
+                "duration": 250,
+                "interval": 250,
+                "randomX": false,
+                "count": 20,
+                "speed": 675
+            },
+            "time": 12763.1578947368,
+            "object": "bullet_emitter"
+        },
+        {
+            "params": {
+                "duration": 250,
+                "b": 2,
+                "r": 255,
+                "g": 25
+            },
+            "object": "actors_color",
+            "lead": 0,
+            "time": 11447.3684210526
+        },
+        {
+            "params": {
+                "duration": 0,
+                "b": 255,
+                "r": 255,
+                "g": 255
+            },
+            "object": "actors_color",
+            "lead": 0,
+            "time": 12763.1578947368
+        },
+        {
+            "params": {
+                "duration": 150,
+                "b": 152,
+                "r": 255,
+                "g": 5
+            },
+            "object": "actors_color",
+            "lead": 0,
+            "time": 12783
+        },
+        {
+            "params": {
+                "duration": 1250,
+                "b": 39,
+                "r": 69,
+                "g": 20
+            },
+            "object": "bg_color",
+            "lead": 0,
+            "time": 12794
+        },
+        {
+            "params": {
+                "duration": 0,
+                "zoom": 3.5
+            },
+            "object": "camera_zoom",
+            "lead": 0,
+            "time": 0
+        },
+        {
+            "params": {
+                "duration": 0,
+                "zoom": 3.5
+            },
+            "lead": 0,
+            "object": "camera_zoom",
+            "time": 0
+        },
+        {
+            "params": {
+                "duration": 3000,
+                "zoom": 1
+            },
+            "lead": 0,
+            "object": "camera_zoom",
+            "time": 40
+        }
+    ],
+    "meta": {
+        "platformColor": [
+            0,
+            0,
+            0
+        ],
+        "title": "Retro Blast",
+        "backgroundID": 2,
+        "songEnding": -1,
+        "songFilename": "builtin:retro_blast_avenza.ogg",
+        "actorsColor": [
+            105,
+            255,
+            255
+        ],
+        "backgroundColor": [
+            0,
+            0,
+            0
+        ],
+        "artist": "Avenza",
+        "bpm": 114
+    }
+}
