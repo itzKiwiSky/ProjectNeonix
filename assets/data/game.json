@@ -1,7 +1,7 @@
 {
     "editorMeta": {
         "lastSavedTime": 0,
-        "audioPath": "assets/music/life_is_game_kay.ogg"
+        "audioPath": ""
     },
     "events": [
         {
@@ -53,9 +53,9 @@
             "params": {
                 "x": 640,
                 "y": 290,
-                "spread": 360,
                 "angle": 15,
                 "outro": 500,
+                "spread": 360,
                 "life": 3000,
                 "duration": 250,
                 "randomX": true,
@@ -86,7 +86,7 @@
                 "x": 750,
                 "y": 490,
                 "useRandomX": true,
-                "outro": 400
+                "outro": 200
             },
             "lead": 400,
             "object": "pulse_square",
@@ -122,7 +122,7 @@
                 "duration": 250,
                 "y": 490,
                 "useRandomX": true,
-                "outro": 400
+                "outro": 200
             },
             "lead": 400,
             "object": "pulse_square",
@@ -134,7 +134,7 @@
                 "duration": 250,
                 "y": 490,
                 "useRandomX": true,
-                "outro": 400
+                "outro": 200
             },
             "lead": 400,
             "object": "pulse_square",
@@ -146,7 +146,7 @@
                 "duration": 250,
                 "y": 490,
                 "useRandomX": true,
-                "outro": 400
+                "outro": 200
             },
             "lead": 400,
             "object": "pulse_square",
@@ -188,10 +188,10 @@
         {
             "lead": 0,
             "params": {
-                "r": 190,
-                "b": 210,
-                "duration": 300,
-                "g": 185
+                "r": 160,
+                "b": 110,
+                "duration": 200,
+                "g": 50
             },
             "time": 6581,
             "object": "bg_color"
@@ -206,24 +206,405 @@
             },
             "time": 0,
             "object": "bg_color"
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 750,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 500
+            },
+            "lead": 450,
+            "object": "pulse_square",
+            "time": 9954.54545454545
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 750,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 500
+            },
+            "lead": 450,
+            "object": "pulse_square",
+            "time": 10399
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 750,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 500
+            },
+            "lead": 450,
+            "object": "pulse_square",
+            "time": 11045.4545454545
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 750,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 500
+            },
+            "lead": 450,
+            "object": "pulse_square",
+            "time": 11590.9090909091
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 750,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 500
+            },
+            "lead": 450,
+            "object": "pulse_square",
+            "time": 12136.3636363636
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 750,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 500
+            },
+            "lead": 450,
+            "object": "pulse_square",
+            "time": 12681.8181818182
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 750,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 500
+            },
+            "lead": 450,
+            "object": "pulse_square",
+            "time": 13227.2727272727
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 750,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 500
+            },
+            "lead": 450,
+            "object": "pulse_square",
+            "time": 13772.7272727273
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 750,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 500
+            },
+            "lead": 450,
+            "object": "pulse_square",
+            "time": 14318.1818181818
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 750,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 500
+            },
+            "lead": 450,
+            "object": "pulse_square",
+            "time": 14863.6363636364
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 750,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 200
+            },
+            "lead": 400,
+            "object": "pulse_square",
+            "time": 18136.3636363636
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 750,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 200
+            },
+            "lead": 400,
+            "object": "pulse_square",
+            "time": 18681.8181818182
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 750,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 200
+            },
+            "lead": 400,
+            "object": "pulse_square",
+            "time": 19227.2727272727
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 750,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 200
+            },
+            "lead": 400,
+            "object": "pulse_square",
+            "time": 19909.0909090909
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 750,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 200
+            },
+            "lead": 400,
+            "object": "pulse_square",
+            "time": 20318.1818181818
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 750,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 200
+            },
+            "lead": 400,
+            "object": "pulse_square",
+            "time": 20863.6363636364
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 750,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 200
+            },
+            "lead": 400,
+            "object": "pulse_square",
+            "time": 21409.0909090909
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 750,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 200
+            },
+            "lead": 400,
+            "object": "pulse_square",
+            "time": 21954.5454545455
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 750,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 200
+            },
+            "lead": 400,
+            "object": "pulse_square",
+            "time": 22500
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 750,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 200
+            },
+            "lead": 400,
+            "object": "pulse_square",
+            "time": 23045.4545454545
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 750,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 200
+            },
+            "lead": 400,
+            "object": "pulse_square",
+            "time": 23590.9090909091
+        },
+        {
+            "params": {
+                "x": 260,
+                "y": 180,
+                "spread": 360,
+                "angle": 0,
+                "outro": 200,
+                "life": 5000,
+                "duration": 250,
+                "randomX": false,
+                "interval": 300,
+                "randomY": false,
+                "speed": 925,
+                "count": 9
+            },
+            "lead": 400,
+            "object": "bullet_emitter",
+            "time": 24495
+        },
+        {
+            "params": {
+                "x": 1080,
+                "y": 180,
+                "angle": 0,
+                "outro": 200,
+                "spread": 360,
+                "life": 5000,
+                "duration": 250,
+                "randomX": false,
+                "interval": 300,
+                "randomY": false,
+                "speed": 925,
+                "count": 9
+            },
+            "lead": 850,
+            "object": "bullet_emitter",
+            "time": 25722
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 750,
+                "y": 490,
+                "useRandomX": false,
+                "outro": 200
+            },
+            "lead": 600,
+            "object": "pulse_square",
+            "time": 25909.0909090909
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 550,
+                "y": 490,
+                "useRandomX": false,
+                "outro": 200
+            },
+            "lead": 600,
+            "object": "pulse_square",
+            "time": 26009
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 750,
+                "y": 490,
+                "useRandomX": false,
+                "outro": 200
+            },
+            "lead": 600,
+            "object": "pulse_square",
+            "time": 26181.8181818182
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 550,
+                "y": 490,
+                "useRandomX": false,
+                "outro": 200
+            },
+            "lead": 600,
+            "object": "pulse_square",
+            "time": 26318.1818181818
+        },
+        {
+            "params": {
+                "x": 260,
+                "y": 180,
+                "angle": 0,
+                "outro": 200,
+                "spread": 360,
+                "life": 5000,
+                "duration": 250,
+                "randomX": false,
+                "interval": 300,
+                "randomY": false,
+                "speed": 925,
+                "count": 9
+            },
+            "lead": 400,
+            "object": "bullet_emitter",
+            "time": 26863.6363636364
+        },
+        {
+            "params": {
+                "x": 1080,
+                "y": 180,
+                "outro": 200,
+                "spread": 360,
+                "angle": 0,
+                "life": 5000,
+                "duration": 250,
+                "randomX": false,
+                "interval": 300,
+                "randomY": false,
+                "speed": 925,
+                "count": 9
+            },
+            "lead": 850,
+            "object": "bullet_emitter",
+            "time": 27954.5454545455
         }
     ],
     "meta": {
-        "songEnding": -1,
         "platformColor": [
             186,
             211,
             230
         ],
+        "title": "Life is game",
+        "backgroundID": 2,
+        "songEnding": -1,
         "songFilename": "builtin:life_is_game_kay.ogg",
-        "title": "",
+        "actorsColor": [
+            255,
+            255,
+            255
+        ],
         "backgroundColor": [
             62,
             118,
             158
         ],
-        "backgroundID": 7,
-        "bpm": 110,
-        "artist": ""
+        "artist": "Kay",
+        "bpm": 110
     }
 }

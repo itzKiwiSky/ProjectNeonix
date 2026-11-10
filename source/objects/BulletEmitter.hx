@@ -47,7 +47,7 @@ class BulletEmitter extends LevelActor
         // o corpo do emissor
         body = new FlxSprite();
         body.makeGraphic(BODY_SIZE, BODY_SIZE, FlxColor.TRANSPARENT, true);
-        FlxSpriteUtil.drawCircle(body, -1, -1, BODY_SIZE * 0.5, FlxColor.MAGENTA);
+        FlxSpriteUtil.drawCircle(body, -1, -1, BODY_SIZE * 0.5, FlxColor.WHITE);
         add(body);
         body.setPosition(cx - BODY_SIZE * 0.5, cy - BODY_SIZE * 0.5); // depois do add: o grupo soma a posição dele
         body.visible = false;

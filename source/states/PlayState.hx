@@ -1,5 +1,7 @@
 package states;
 
+import flixel.util.FlxColor;
+import openfl.media.Sound;
 import haxe.io.Path;
 import core.Paths;
 import core.ActorManager;
@@ -14,7 +16,7 @@ import objects.Player;
 class PlayState extends MusicSyncedState
 {
     public static var currentSong:String = "";
-    public static var levelPath:String = "assets/data/cry.json"; // quem abrir o PlayState escolhe a fase aqui
+    public static var levelPath:String = "assets/data/game.json"; // quem abrir o PlayState escolhe a fase aqui
     
     var player:Player;
     var platformSprite:FlxSprite;
@@ -29,7 +31,7 @@ class PlayState extends MusicSyncedState
         ActorManager.randomizePositions = true; // o editor desliga; o jogo sempre liga
         
         FlxG.worldBounds.set(0, 0, FlxG.width * 2, FlxG.height * 1.5);
-        FlxG.debugger.drawDebug = true;
+        // FlxG.debugger.drawDebug = true;
         
         platformSprite = new FlxSprite();
         platformSprite.loadGraphic("assets/images/game/platform.png");
@@ -39,7 +41,7 @@ class PlayState extends MusicSyncedState
         platformSprite.screenCenter(X);
         
         background = new FlxSprite();
-        background.loadGraphic("assets/images/backgrounds/game_bg07.png");
+        background.makeGraphic(FlxG.width, FlxG.height, FlxColor.WHITE);
         background.updateHitbox();
         background.screenCenter();
         
@@ -54,12 +56,16 @@ class PlayState extends MusicSyncedState
         add(platformSprite);
         add(runtime.active);
         
+        // updateBackground(runtime.data.meta.backgroundID);
+        
         var level:LevelData = Level.loadJsonData(levelPath);
         runtime.load(level);
         Conductor.changeBPM(level.meta.bpm ?? 110);
         
-        var ref = Paths.songRef(level.meta.songFilename);
-        var sound = Paths.loadSong(ref, Path.directory(levelPath));
+        updateBackground(level.meta.backgroundID);
+        
+        var ref:String = Paths.songRef(level.meta.songFilename);
+        var sound:Sound = Paths.loadSong(ref, Path.directory(levelPath));
         if (sound != null)
         {
             FlxG.sound.music = FlxG.sound.create(sound);
@@ -68,6 +74,14 @@ class PlayState extends MusicSyncedState
         }
         
         super.create();
+    }
+    
+    function updateBackground(id:Int)
+    {
+        background.loadGraphic('assets/images/backgrounds/game_bg${StringTools.lpad(Std.string(id), "0", 2)}.png');
+        background.setGraphicSize(FlxG.width * 1.2, FlxG.height * 1.2);
+        background.updateHitbox();
+        background.screenCenter();
     }
     
     override public function update(elapsed:Float)
@@ -79,11 +93,18 @@ class PlayState extends MusicSyncedState
         
         super.update(elapsed);
         
-        FlxG.collide(player, platformSprite);
+        FlxG.collide(player.hitbox, platformSprite);
         
-        if (runtime.hits(player))
+        if (runtime.hits(player.hitbox))
             trace("hit!");
             
+        if (FlxG.keys.justPressed.SEVEN)
+        {
+            if (FlxG.sound.music != null)
+                FlxG.sound.music.stop();
+            FlxG.switchState(() -> new EditorState());
+        }
+        
         player.updatePlayer(elapsed);
     }
     

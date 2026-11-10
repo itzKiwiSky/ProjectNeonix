@@ -189,7 +189,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         clearLevelUI();
         
         // level antigo sem cores no meta: elas viram explícitas, assim o arquivo salvo já carrega o estado inicial
-        var meta = levelData.meta;
+        var meta:LevelMetaData = levelData.meta;
         meta.backgroundColor = meta.backgroundColor ?? LevelRuntime.DEFAULT_BG.copy();
         meta.platformColor = meta.platformColor ?? LevelRuntime.DEFAULT_PLATFORM.copy();
         meta.actorsColor = meta.actorsColor ?? LevelRuntime.DEFAULT_ACTORS.copy();
@@ -220,17 +220,17 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         addColorRow("Actors", meta.actorsColor, rowY);
     }
     
-    function addLabeledInputText(posY:Float, text:String, initial:String, changed:String->Void)
+    function addLabeledInputText(posY:Float, text:String = "", initial:String = "", changed:String->Void)
     {
         addLevelWidget(new FlxText(8, posY, 100, text, 18));
         
         var input:GameUIInputText = new GameUIInputText(120, posY + 4, 220, null, 14);
-        input.text = initial ?? "";
+        input.text = "";
         input.onChange = (old:String, cur:String) -> changed(cur); // depois de preencher o texto, senão dispara na criação
         addLevelWidget(input);
     }
     
-    function addLabeledNumericStepper(posY:Float, text:String, step:Float, defValue:Float, min:Float, max:Float, decimals:Int, onChange:Float->Void)
+    function addLabeledNumericStepper(posY:Float, text:String = "", step:Float, defValue:Float, min:Float, max:Float, decimals:Int, onChange:Float->Void)
     {
         addLevelWidget(new FlxText(8, posY, 100, text, 18));
         
@@ -568,6 +568,8 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
             var ref = Paths.songRef(levelData.meta.songFilename);
             trace('Música não encontrada: ref="$ref", procurei em "${Paths.resolve(ref, levelDir)}"');
         }
+        
+        trace(data);
         
         rebuildLevelUI();
     }

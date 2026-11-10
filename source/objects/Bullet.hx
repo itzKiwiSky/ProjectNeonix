@@ -23,11 +23,12 @@ class Bullet extends FlxSprite
         if (!FlxG.bitmap.checkCache(key))
         {
             makeGraphic(SIZE, SIZE, FlxColor.TRANSPARENT, true, key);
-            FlxSpriteUtil.drawCircle(this, -1, -1, SIZE * 0.5, FlxColor.MAGENTA);
+            FlxSpriteUtil.drawCircle(this, -1, -1, SIZE * 0.5, FlxColor.WHITE);
         }
         else
             loadGraphic(FlxG.bitmap.get(key));
             
         visible = false;
+        updateHitbox();
     }
 }

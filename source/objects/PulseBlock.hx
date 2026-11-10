@@ -36,7 +36,7 @@ class PulseBlock extends LevelActor
     
     public static function selfRegister():Void
     {
-        ActorManager.registerActor("pulse_square", e -> new PulseBlock(e.params.x, e.params.y, e.time, e.lead, e.params.duration, e.params.outro), Obstacle, [
+        ActorManager.registerActor("pulse_square", e -> new PulseBlock(ActorManager.posX(e), ActorManager.posY(e), e.time, e.lead, e.params.duration, e.params.outro), Obstacle, [
             {
                 key: "useRandomX",
                 label: "Random X",
@@ -82,7 +82,7 @@ class PulseBlock extends LevelActor
     {
         var s = new FlxSprite();
         s.makeGraphic(BASE_SIZE, BASE_SIZE, FlxColor.TRANSPARENT, true);
-        FlxSpriteUtil.drawRoundRect(s, 0, 0, BASE_SIZE, BASE_SIZE, 16, 16, FlxColor.MAGENTA);
+        FlxSpriteUtil.drawRoundRect(s, 0, 0, BASE_SIZE, BASE_SIZE, 16, 16, FlxColor.WHITE);
         s.updateHitbox();
         return s;
     }
@@ -97,11 +97,6 @@ class PulseBlock extends LevelActor
     {
         s.scale.set(v, v);
         syncActive(s);
-    }
-    
-    override function update(elapsed:Float)
-    {
-        super.update(elapsed); // roda a troca de fase primeiro
     }
     
     override function onWarningUpdate()
