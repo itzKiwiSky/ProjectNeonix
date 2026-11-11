@@ -388,7 +388,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         Conductor.songPosition = cursorMusicTime;
         
         // arrows and wheel, move the time //
-        var dir = (FlxG.keys.pressed.RIGHT || FlxG.mouse.wheel > 0 ? 1 : 0) - (FlxG.keys.pressed.LEFT || FlxG.mouse.wheel < 0 ? 1 : 0);
+        var dir:Float = (FlxG.keys.pressed.RIGHT || FlxG.mouse.wheel > 0 ? 1 : 0) - (FlxG.keys.pressed.LEFT || FlxG.mouse.wheel < 0 ? 1 : 0);
         if (dir != 0)
         {
             var speed = 1000; // ms por segundo
@@ -697,7 +697,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
                     var boxW:Float = boxCurrentSelectedEvent.bg.width;
                     addWidget(new FlxText(8, rowY, 80, f.label, 14));
                     var easingType:GameUIDropdownMenu = new GameUIDropdownMenu(boxW - 108, rowY, easings, (idx:Int, name:String) -> setValue(f, name));
-
+                    
                     var selected:Dynamic = getValue(f);
                     var selectedName:String = selected == null ? "" : Std.string(selected);
                     if (easings.indexOf(selectedName) < 0)

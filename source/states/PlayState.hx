@@ -69,7 +69,7 @@ class PlayState extends MusicSyncedState
         reloadLevelData();
         
         gameCam.setScrollBoundsRect(FlxG.worldBounds.x, FlxG.worldBounds.y, FlxG.worldBounds.width, FlxG.worldBounds.height, true);
-        // gameCam.follow(player, FlxCameraFollowStyle.TOPDOWN, 0.5);
+        gameCam.follow(player, FlxCameraFollowStyle.TOPDOWN, 0.5);
         
         super.create();
     }
@@ -114,7 +114,7 @@ class PlayState extends MusicSyncedState
         FlxG.collide(player.hitbox, platformSprite);
         
         if (runtime.hits(player.hitbox))
-            trace("hit!");
+            player.testHit();
             
         if (FlxG.keys.justPressed.SEVEN)
         {
