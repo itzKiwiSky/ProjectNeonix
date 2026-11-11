@@ -24,7 +24,6 @@ typedef ChannelDef =
     var ?step:Float;
     var ?min:Float;
     var ?decimals:Int;
-    var ?easingType:String;
 }
 
 // um valor numérico que muda ao longo da música
@@ -33,8 +32,55 @@ class Track
     public var base:Float = 0;
     
     var keys:Array<Keyframe> = [];
+
+    static final easingFunctions:Map<String, Float->Float> = [
+        "backIn" => FlxEase.backIn,
+        "backInOut" => FlxEase.backInOut,
+        "backOut" => FlxEase.backOut,
+        "bounceIn" => FlxEase.bounceIn,
+        "bounceInOut" => FlxEase.bounceInOut,
+        "bounceOut" => FlxEase.bounceOut,
+        "circIn" => FlxEase.circIn,
+        "circInOut" => FlxEase.circInOut,
+        "circOut" => FlxEase.circOut,
+        "cubeIn" => FlxEase.cubeIn,
+        "cubeInOut" => FlxEase.cubeInOut,
+        "cubeOut" => FlxEase.cubeOut,
+        "elasticIn" => FlxEase.elasticIn,
+        "elasticInOut" => FlxEase.elasticInOut,
+        "elasticOut" => FlxEase.elasticOut,
+        "expoIn" => FlxEase.expoIn,
+        "expoInOut" => FlxEase.expoInOut,
+        "expoOut" => FlxEase.expoOut,
+        "linear" => FlxEase.linear,
+        "quadIn" => FlxEase.quadIn,
+        "quadInOut" => FlxEase.quadInOut,
+        "quadOut" => FlxEase.quadOut,
+        "quartIn" => FlxEase.quartIn,
+        "quartInOut" => FlxEase.quartInOut,
+        "quartOut" => FlxEase.quartOut,
+        "quintIn" => FlxEase.quintIn,
+        "quintInOut" => FlxEase.quintInOut,
+        "quintOut" => FlxEase.quintOut,
+        "sineIn" => FlxEase.sineIn,
+        "sineInOut" => FlxEase.sineInOut,
+        "sineOut" => FlxEase.sineOut,
+        "smoothStepIn" => FlxEase.smoothStepIn,
+        "smoothStepInOut" => FlxEase.smoothStepInOut,
+        "smoothStepOut" => FlxEase.smoothStepOut,
+        "smootherStepIn" => FlxEase.smootherStepIn,
+        "smootherStepInOut" => FlxEase.smootherStepInOut,
+        "smootherStepOut" => FlxEase.smootherStepOut
+    ];
     
     public function new() {}
+
+    public static function easingNames():Array<String>
+    {
+        var names = [for (name in easingFunctions.keys()) name];
+        names.sort((a, b) -> a < b ? -1 : (a > b ? 1 : 0));
+        return names;
+    }
 
     inline function progress(now:Float, start:Float, len:Float):Float
         return len <= 0 ? 1 : Math.max(0, Math.min(1, (now - start) / len));
@@ -47,10 +93,9 @@ class Track
 
     static function easedProgress(easingType:String, t:Float):Float
     {
-        var easing:Dynamic = Reflect.field(FlxEase, easingType);
-        if (!Reflect.isFunction(easing))
-            easing = Reflect.field(FlxEase, "linear");
-        var ease:Float->Float = cast easing;
+        var ease = easingFunctions.get(easingType);
+        if (ease == null)
+            ease = easingFunctions.get("linear");
         return ease(t);
     }
     
@@ -110,12 +155,14 @@ class TrackEffect extends Effect
     var tracks:Array<Track> = [];
     var values:Array<Float> = [];
     var onApply:Array<Float>->Void;
+    var supportsEasing:Bool;
     
-    public function new(id:String, channels:Array<ChannelDef>, onApply:Array<Float>->Void)
+    public function new(id:String, channels:Array<ChannelDef>, onApply:Array<Float>->Void, supportsEasing:Bool = false)
     {
         super(id);
         this.channels = channels;
         this.onApply = onApply;
+        this.supportsEasing = supportsEasing;
         for (c in channels)
         {
             var t = new Track();
@@ -146,15 +193,15 @@ class TrackEffect extends Effect
                 min: c.min,
                 decimals: c.decimals,
                 defaultValue: c.def,
-                easingType: c.easingType,
-            });
-            list.push({
-                key: c.key + "Easing",
-                label: c.label + " Easing",
-                kind: FieldKind.DropdownString,
-                defaultValue: c.easingType ?? "linear",
             });
         }
+        if (supportsEasing)
+            list.push({
+                key: "easing",
+                label: "Easing",
+                kind: FieldKind.DropdownString,
+                defaultValue: "linear",
+            });
         list.push({
             key: "duration",
             label: "Duration",
@@ -173,6 +220,7 @@ class TrackEffect extends Effect
             if (e.object != id)
                 continue;
             var d = Effect.param(e, "duration", 0);
+            var easingType = supportsEasing ? Effect.stringParam(e, "easing", "linear") : "linear";
             for (i in 0...channels.length)
             {
                 var channel = channels[i];
@@ -180,7 +228,7 @@ class TrackEffect extends Effect
                     time: e.time,
                     duration: d,
                     value: Effect.param(e, channel.key, channel.def),
-                    easingType: Effect.stringParam(e, channel.key + "Easing", channel.easingType ?? "linear")
+                    easingType: easingType
                 });
             }
         }
@@ -202,6 +250,9 @@ class EffectManager
     var byId:Map<String, Effect> = [];
     
     public function new() {}
+
+    public static function easingNames():Array<String>
+        return Track.easingNames();
     
     // os efeitos do jogo; editor e jogo chamam isto, então a lista nunca diverge
     public static function createDefault(background:FlxSprite, platform:FlxSprite, camera:FlxCamera, onActorsColor:FlxColor->Void):EffectManager
@@ -217,20 +268,18 @@ class EffectManager
                 def: 1,
                 step: 0.1,
                 min: 0.1,
-                decimals: 2,
-                easingType: "linear"
+                decimals: 2
             }
-        ], v -> camera.zoom = v[0]));
+        ], v -> camera.zoom = v[0], true));
         m.add(new TrackEffect("camera_angle", [
             {
                 key: "angle",
                 label: "Angle",
                 def: 0,
                 step: 5,
-                min: -360,
-                easingType: "linear"
+                min: -360
             }
-        ], v -> camera.angle = v[0]));
+        ], v -> camera.angle = v[0], true));
         return m;
     }
     

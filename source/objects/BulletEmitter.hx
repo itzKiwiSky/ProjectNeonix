@@ -3,8 +3,8 @@ package objects;
 import core.ActorManager;
 import core.Conductor;
 import core.LevelActor;
+import core.utils.Collision;
 import flixel.FlxBasic;
-import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.tweens.FlxEase;
 import flixel.util.FlxColor;
@@ -232,18 +232,16 @@ class BulletEmitter extends LevelActor
     // círculo contra círculo, contando só as balas visíveis
     override public function hits(obj:FlxBasic):Bool
     {
-        var o:FlxObject = cast obj;
-        var px = o.x + o.width * 0.5;
-        var py = o.y + o.height * 0.5;
-        var r = Bullet.SIZE * 0.5 + Math.min(o.width, o.height) * 0.4;
+        var playerRect = Collision.rectShapeFromFlxSprite(cast obj);
+        var bulletCircle = Collision.createCircleShape(0, 0, Bullet.SIZE * 0.5);
         
         for (b in bullets)
         {
             if (!b.visible)
                 continue;
-            var dx = b.x + Bullet.SIZE * 0.5 - px;
-            var dy = b.y + Bullet.SIZE * 0.5 - py;
-            if (dx * dx + dy * dy < r * r)
+            bulletCircle.x = b.x + Bullet.SIZE * 0.5;
+            bulletCircle.y = b.y + Bullet.SIZE * 0.5;
+            if (Collision.rectCircle(playerRect, bulletCircle))
                 return true;
         }
         return false;

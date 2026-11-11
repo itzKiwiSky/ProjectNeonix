@@ -79,8 +79,8 @@ class PlayState extends MusicSyncedState
         gameCam.follow(player, FlxCameraFollowStyle.TOPDOWN, 0.5);
         var bloomShader = new GlowShader(4.0, 2.5, 0.65);
         grayscale = new GrayscaleShader();
-        gameCam.filters = [new ShaderFilter(bloomShader), new ShaderFilter(grayscale)];
-        grayscale.strength = 0;
+        // gameCam.filters = [new ShaderFilter(bloomShader), new ShaderFilter(grayscale)];
+        // grayscale.strength = 0;
         
         player.onKill = () ->
         {

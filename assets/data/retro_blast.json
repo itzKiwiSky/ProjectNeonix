@@ -20,9 +20,9 @@
             "params": {
                 "x": 640,
                 "y": 100,
-                "angle": 0,
                 "outro": 200,
                 "spread": 360,
+                "angle": 0,
                 "life": 5000,
                 "duration": 250,
                 "interval": 250,
@@ -38,9 +38,9 @@
             "params": {
                 "x": 640,
                 "y": 100,
-                "outro": 200,
                 "spread": 360,
                 "angle": 0,
+                "outro": 200,
                 "life": 5000,
                 "duration": 250,
                 "interval": 250,
@@ -56,9 +56,9 @@
             "params": {
                 "x": 640,
                 "y": 100,
-                "outro": 200,
                 "spread": 360,
                 "angle": 0,
+                "outro": 200,
                 "life": 5000,
                 "duration": 250,
                 "interval": 250,
@@ -74,9 +74,9 @@
             "params": {
                 "x": 640,
                 "y": 100,
-                "outro": 200,
                 "spread": 360,
                 "angle": 0,
+                "outro": 200,
                 "life": 5000,
                 "duration": 250,
                 "interval": 250,
@@ -92,9 +92,9 @@
             "params": {
                 "x": 640,
                 "y": 100,
-                "spread": 360,
                 "angle": 0,
                 "outro": 200,
+                "spread": 360,
                 "life": 5000,
                 "duration": 250,
                 "interval": 250,
@@ -110,9 +110,9 @@
             "params": {
                 "x": 640,
                 "y": 100,
-                "spread": 360,
                 "angle": 0,
                 "outro": 200,
+                "spread": 360,
                 "life": 5000,
                 "duration": 250,
                 "interval": 250,
@@ -128,9 +128,9 @@
             "params": {
                 "x": 640,
                 "y": 100,
-                "spread": 360,
                 "angle": 0,
                 "outro": 200,
+                "spread": 360,
                 "life": 5000,
                 "duration": 250,
                 "interval": 250,
@@ -146,9 +146,9 @@
             "params": {
                 "x": 200,
                 "y": 100,
-                "spread": 360,
                 "angle": 0,
                 "outro": 200,
+                "spread": 360,
                 "life": 5000,
                 "duration": 250,
                 "interval": 250,
@@ -163,9 +163,9 @@
             "params": {
                 "x": 1100,
                 "y": 100,
-                "spread": 360,
                 "angle": 0,
                 "outro": 200,
+                "spread": 360,
                 "life": 5000,
                 "duration": 250,
                 "interval": 250,
@@ -241,6 +241,7 @@
         {
             "params": {
                 "duration": 3000,
+                "easing": "sineOut",
                 "zoom": 1
             },
             "lead": 0,
@@ -252,9 +253,9 @@
             "params": {
                 "x": 640,
                 "y": 100,
-                "angle": 0,
                 "outro": 200,
                 "spread": 360,
+                "angle": 0,
                 "life": 5000,
                 "duration": 250,
                 "interval": 250,
@@ -270,9 +271,9 @@
             "params": {
                 "x": 640,
                 "y": 100,
-                "angle": 0,
                 "outro": 200,
                 "spread": 360,
+                "angle": 0,
                 "life": 5000,
                 "duration": 250,
                 "interval": 250,
@@ -288,9 +289,9 @@
             "params": {
                 "x": 640,
                 "y": 100,
-                "angle": 0,
                 "outro": 200,
                 "spread": 360,
+                "angle": 0,
                 "life": 5000,
                 "duration": 250,
                 "interval": 250,
@@ -306,9 +307,9 @@
             "params": {
                 "x": 640,
                 "y": 100,
-                "angle": 0,
                 "outro": 200,
                 "spread": 360,
+                "angle": 0,
                 "life": 5000,
                 "duration": 250,
                 "interval": 250,
@@ -324,9 +325,9 @@
             "params": {
                 "x": 640,
                 "y": 100,
-                "angle": 0,
                 "outro": 200,
                 "spread": 360,
+                "angle": 0,
                 "life": 5000,
                 "duration": 250,
                 "interval": 250,
@@ -342,9 +343,9 @@
             "params": {
                 "x": 640,
                 "y": 100,
-                "angle": 0,
                 "outro": 200,
                 "spread": 360,
+                "angle": 0,
                 "life": 5000,
                 "duration": 250,
                 "interval": 250,
@@ -360,9 +361,9 @@
             "params": {
                 "x": 640,
                 "y": 100,
-                "angle": 0,
                 "outro": 200,
                 "spread": 360,
+                "angle": 0,
                 "life": 5000,
                 "duration": 250,
                 "interval": 250,

@@ -1,10 +1,10 @@
 package states;
 
-import flixel.tweens.FlxEase;
 import ui.GameUINumericStepper;
 import core.Paths;
 import haxe.io.Path;
 import core.LevelRuntime;
+import core.EffectManager;
 import ui.GameUIInputText;
 import ui.GameUICheckbox;
 import ui.GameUIDropdownMenu;
@@ -692,8 +692,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
                     box.checked = getValue(f) == true;
                     addWidget(box);
                 case DropdownString:
-                    final easings:Array<String> = Reflect.fields(FlxEase).filter(name -> Reflect.isFunction(Reflect.field(FlxEase, name)));
-                    easings.sort((a, b) -> a < b ? -1 : (a > b ? 1 : 0));
+                    final easings:Array<String> = EffectManager.easingNames();
                     var boxW:Float = boxCurrentSelectedEvent.bg.width;
                     addWidget(new FlxText(8, rowY, 80, f.label, 14));
                     var easingType:GameUIDropdownMenu = new GameUIDropdownMenu(boxW - 108, rowY, easings, (idx:Int, name:String) -> setValue(f, name));

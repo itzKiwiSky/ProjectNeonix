@@ -40,7 +40,6 @@ typedef FieldDef =
     var ?min:Float; // menor valor do stepper (padrão 0)
     var ?decimals:Int; // casas decimais exibidas (padrão 0)
     var ?max:Float;
-    var ?easingType:String;
 }
 
 typedef ActorEntry =
