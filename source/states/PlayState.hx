@@ -1,5 +1,10 @@
 package states;
 
+import core.shaders.GrayscaleShader;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
+import openfl.filters.ShaderFilter;
+import core.shaders.GlowShader;
 import flixel.FlxCamera;
 import flixel.util.FlxColor;
 import openfl.media.Sound;
@@ -27,6 +32,8 @@ class PlayState extends MusicSyncedState
     
     static inline var CAMERA_SWAY_X:Float = 7;
     static inline var CAMERA_SWAY_Y:Float = 4;
+    
+    var grayscale:GrayscaleShader;
     
     override public function create()
     {
@@ -70,6 +77,20 @@ class PlayState extends MusicSyncedState
         
         gameCam.setScrollBoundsRect(FlxG.worldBounds.x, FlxG.worldBounds.y, FlxG.worldBounds.width, FlxG.worldBounds.height, true);
         gameCam.follow(player, FlxCameraFollowStyle.TOPDOWN, 0.5);
+        var bloomShader = new GlowShader(4.0, 2.5, 0.65);
+        grayscale = new GrayscaleShader();
+        gameCam.filters = [new ShaderFilter(bloomShader), new ShaderFilter(grayscale)];
+        grayscale.strength = 0;
+        
+        player.onKill = () ->
+        {
+            FlxTween.tween(FlxG.sound.music, {pitch: 0}, 1.2, {
+                ease: FlxEase.linear,
+                type: ONESHOT,
+            }).onComplete = (t:FlxTween) -> {
+                // open the substate //
+            };
+        }
         
         super.create();
     }

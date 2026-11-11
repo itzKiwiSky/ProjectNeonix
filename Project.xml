@@ -54,8 +54,6 @@
 
 	<haxelib name="hxdiscord_rpc" version="1.3.0" if="DISCORD_ALLOWED" />
 
-	<haxelib name="hxcpp-debug-server" if="debug" />
-
 	<!-- ______________________________ Haxedefines _____________________________ -->
 
 	<haxedef name="FLX_NO_HEALTH" />

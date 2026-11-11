@@ -1,36 +1,39 @@
 package objects;
 
-import flixel.graphics.frames.FlxFrame;
-import flixel.graphics.FlxGraphic;
-import flixel.addons.display.FlxPieDial;
-import flixel.addons.display.FlxPieDial.FlxPieDialShape;
 import core.save.UserPreferences;
-import flixel.util.FlxColor;
-import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 import flixel.FlxG;
 import flixel.FlxSprite;
-
-using StringTools;
+import flixel.addons.display.FlxPieDial;
+import flixel.addons.display.FlxPieDial.FlxPieDialShape;
+import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
+import flixel.math.FlxMath;
+import flixel.tweens.FlxEase;
+import flixel.util.FlxColor;
 
 class Player extends FlxTypedSpriteGroup<FlxSprite>
 {
     var playerSprite:FlxSprite;
+    var playerFadeSprite:FlxSprite;
     
     public var hitbox:FlxSprite;
     
-    var dialHealth:FlxPieDial;
+    var dialHealth:DamageDial;
     
     public var health:Int = 6;
     public var maxHealth:Int = 6;
     
     var wasHit:Bool = false;
     var hitCooldown:Float = 1.5;
-    var cooldown:Float = 1.5;
+    var cooldown:Float = 0; // 0: o jogador não nasce todo branco
     
     var playerSpeed:Float = 350;
     var playerSize:Int = 48;
     
+    var isKilled:Bool = false;
+    
     public var playerSkin:Int = 0;
+    
+    public var onKill:Void->Void;
     
     public function new()
     {
@@ -43,14 +46,24 @@ class Player extends FlxTypedSpriteGroup<FlxSprite>
         hitbox.maxVelocity.y = 2400;
         
         add(hitbox);
+        
         playerSprite = new FlxSprite();
         playerSprite.loadGraphic('assets/images/skins/char_${UserPreferences.icon}.png');
         playerSprite.setGraphicSize(hitbox.width, hitbox.height);
         playerSprite.updateHitbox();
-        
         add(playerSprite);
         
-        dialHealth = new FlxPieDial(playerSprite.width * 0.5, playerSprite.height * 0.5, playerSize, FlxColor.BLACK, maxHealth, SQUARE, false, 0);
+        // frames = maxHealth: o frame N mostra N/maxHealth do quadrado preenchido, o frame 0 é o cheio
+        dialHealth = new DamageDial(0, 0, Math.floor(playerSize / 2), FlxColor.BLACK, maxHealth, SQUARE, false, 0);
+        add(dialHealth);
+        updateHealthDial(); // vida cheia: o dial começa invisível
+        
+        playerFadeSprite = new FlxSprite();
+        playerFadeSprite.makeGraphic(1, 1, FlxColor.WHITE);
+        playerFadeSprite.setGraphicSize(hitbox.width, hitbox.height);
+        playerFadeSprite.updateHitbox();
+        playerFadeSprite.alpha = 0;
+        add(playerFadeSprite);
     }
     
     public function updatePlayer(elapsed:Float)
@@ -64,8 +77,17 @@ class Player extends FlxTypedSpriteGroup<FlxSprite>
         
         hitbox.velocity.x = dir * playerSpeed;
         
-        playerSprite.x = hitbox.x;
-        playerSprite.y = hitbox.y;
+        playerSprite.setPosition(hitbox.x, hitbox.y);
+        playerFadeSprite.setPosition(hitbox.x, hitbox.y);
+        dialHealth.setPosition(hitbox.x, hitbox.y);
+        
+        if (cooldown > 0)
+            cooldown -= elapsed;
+            
+        if (wasHit && cooldown <= 0)
+            wasHit = false;
+            
+        playerFadeSprite.alpha = FlxEase.linear(Math.max(0, cooldown) / hitCooldown);
         
         // update graphic //
         
@@ -76,22 +98,50 @@ class Player extends FlxTypedSpriteGroup<FlxSprite>
             var angle:Float = Math.ffloor(playerSprite.angle % 360);
             playerSprite.angle = 90 * Math.round(angle / 90);
         }
+        
+        if (health <= 0 && !isKilled)
+        {
+            isKilled = true;
+            if (onKill != null)
+                onKill();
+        }
+        
+        playerFadeSprite.angle = playerSprite.angle;
+        dialHealth.angle = playerSprite.angle;
     }
     
     public function testHit()
     {
-        if (!wasHit)
-        {
-            wasHit = true;
-            cooldown = hitCooldown;
-            health--;
-        }
+        if (wasHit || health <= 0)
+            return;
+            
+        wasHit = true;
+        cooldown = hitCooldown;
+        health--;
+        
+        updateHealthDial();
     }
     
-    function updateSprite()
+    // o único lugar que mexe no dial; chame de novo se a vida mudar por outro caminho (cura, restart)
+    function updateHealthDial()
+        dialHealth.setDamage(maxHealth - health, maxHealth);
+}
+
+// dial de dano: preenche conforme a vida cai
+private class DamageDial extends FlxPieDial
+{
+    // 0 = invisível; 1..max-1 = fatia crescente; max = quadrado inteiro (o frame 0 da biblioteca é o cheio)
+    public function setDamage(damage:Int, max:Int)
     {
-        // we try take the sprite from the flxdial and apply on the player graphic using flxspriteutils //
+        var d:Int = Std.int(FlxMath.bound(damage, 0, max));
+        visible = d > 0;
+        animation.frameIndex = (d >= max) ? 0 : d;
     }
     
-    public function onKill() {}
+    // o construtor da biblioteca faz amount = 1.0, que mandava o frame para fora do intervalo e gerava o aviso
+    override function set_amount(f:Float):Float
+    {
+        @:bypassAccessor amount = FlxMath.bound(f, 0, 1);
+        return amount;
+    }
 }
