@@ -2,7 +2,7 @@ package core.level;
 
 import sys.io.File;
 import haxe.Json;
-import core.Timeline.TimelineEvent;
+import core.managers.Timeline.TimelineEvent;
 
 typedef LevelMetaData =
 {

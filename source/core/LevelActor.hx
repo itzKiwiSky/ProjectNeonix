@@ -3,7 +3,7 @@ package core;
 import flixel.FlxObject;
 import flixel.FlxG;
 import flixel.FlxBasic;
-import core.Timeline.TimelineEvent;
+import core.managers.Timeline.TimelineEvent;
 import core.Conductor;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;

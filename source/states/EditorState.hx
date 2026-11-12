@@ -4,7 +4,7 @@ import ui.GameUINumericStepper;
 import core.Paths;
 import haxe.io.Path;
 import core.LevelRuntime;
-import core.EffectManager;
+import core.managers.EffectManager;
 import ui.GameUIInputText;
 import ui.GameUICheckbox;
 import ui.GameUIDropdownMenu;
@@ -21,14 +21,14 @@ import editor.EditorTimeline;
 import flixel.util.FlxColor;
 import flixel.FlxCamera;
 import flixel.FlxSprite;
-import core.ActorManager;
+import core.managers.ActorManager;
 import core.level.Level;
 import flixel.math.FlxMath;
 import core.Conductor;
 import flixel.FlxG;
 import flixel.text.FlxText;
 import core.MusicSyncedState;
-import core.Timeline.TimelineEvent;
+import core.managers.Timeline.TimelineEvent;
 import ui.GameUIEventController.EngineUIEvent;
 
 typedef EditorPlaytestSession =
@@ -305,14 +305,14 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     inline function stopSong()
         if (music != null)
             music.stop();
-
+            
     function replaceMusic(sound:Sound)
     {
         destroyMusic();
         musicAsset = sound;
         music = FlxG.sound.create(sound);
     }
-
+    
     function destroyMusic()
     {
         if (music != null)
@@ -323,7 +323,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         }
         musicAsset = null;
     }
-            
+    
     function addUI()
     {
         var padding:Float = 8;
@@ -387,7 +387,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         add(btnLevelSettings);
         add(btnPlayLevel);
     }
-
+    
     function startPlaytest()
     {
         playtestSession = {
@@ -401,17 +401,17 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
             musicAsset: musicAsset,
             selectedEvent: selectedEvent
         };
-
+        
         if (music != null)
         {
             music.pause();
             music.destroy();
             music = null;
         }
-
+        
         FlxG.switchState(() -> new PlayState(levelData, musicAsset));
     }
-
+    
     function restorePlaytestSession(session:EditorPlaytestSession)
     {
         levelData = session.levelData;
@@ -420,19 +420,19 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         cursorMusicTime = session.cursorMusicTime;
         musicAsset = session.musicAsset;
         music = musicAsset == null ? null : FlxG.sound.create(musicAsset);
-
+        
         runtime.load(levelData);
         Conductor.changeBPM(levelData.meta.bpm ?? 110);
-
+        
         if (levelData.meta.backgroundID > 0)
             updateBackground(levelData.meta.backgroundID);
-
+            
         var laneOverrides:Array<Null<Int>> = levelData.editorMeta == null ? null : levelData.editorMeta.eventLanes;
         editorTimeline.setEvents(levelData.events, laneOverrides);
         editorTimeline.cursorMusicTime = cursorMusicTime;
         Conductor.songPosition = cursorMusicTime;
         selectedEvent = session.selectedEvent;
-
+        
         if (music != null)
         {
             music.time = session.musicTime;
@@ -484,7 +484,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         var scrollLanes = overTimeline && FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel != 0;
         if (scrollLanes)
             editorTimeline.scrollLanes(-FlxG.mouse.wheel);
-
+            
         // arrows and wheel, move the time //
         var wheel = scrollLanes ? 0 : FlxG.mouse.wheel;
         var dir:Float = (FlxG.keys.pressed.RIGHT || wheel > 0 ? 1 : 0) - (FlxG.keys.pressed.LEFT || wheel < 0 ? 1 : 0);
@@ -561,17 +561,17 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         music.time = cursorMusicTime;
         Conductor.songPosition = cursorMusicTime;
     }
-
+    
     function goToLastEvent()
     {
         if (levelData.events.length == 0)
             return;
-
+            
         var lastEventTime:Float = levelData.events[0].time;
         for (event in levelData.events)
             if (event.time > lastEventTime)
                 lastEventTime = event.time;
-
+                
         setSongTime(lastEventTime);
     }
     
@@ -662,7 +662,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     
     inline function loadAudio(path:String):Sound
         return Sound.fromFile(path);
-    
+        
     // carregar e criar um level vazio passam pelo mesmo caminho
     function applyLevel(data:LevelData, levelDir:String = "")
     {
@@ -719,7 +719,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
                 File.copy(loadedMusicPath, target);
             levelData.meta.songFilename = "audio.ogg";
         }
-
+        
         if (levelData.editorMeta == null)
             levelData.editorMeta = Level.emptyEditorMetadata();
         levelData.editorMeta.eventLanes = editorTimeline.getLaneOverrides();
@@ -887,7 +887,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
             editorTimeline.setSelected(v);
         return v;
     }
-
+    
     override public function destroy()
     {
         if (playtestSession == null)

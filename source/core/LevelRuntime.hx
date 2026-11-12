@@ -1,7 +1,9 @@
 package core;
 
+import core.managers.ActorManager;
+import core.managers.EffectManager;
 import flixel.FlxObject;
-import core.Timeline.TimelineEvent;
+import core.managers.Timeline.TimelineEvent;
 import core.level.Level.LevelData;
 import flixel.FlxBasic;
 import flixel.FlxCamera;

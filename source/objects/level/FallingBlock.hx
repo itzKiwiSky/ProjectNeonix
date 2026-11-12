@@ -1,7 +1,7 @@
 package objects.level;
 
 import flixel.FlxSprite;
-import core.ActorManager;
+import core.managers.ActorManager;
 import flixel.FlxBasic;
 import core.LevelActor;
 

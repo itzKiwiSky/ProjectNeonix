@@ -24,6 +24,7 @@ class Spike extends FlxTypedSpriteGroup<FlxSprite>
         
         spikeBlock = new FlxSprite();
         spikeBlock.loadGraphic("assets/images/game/movable_block.png");
+        spikeBlock.setGraphicSize(96, 96);
         spikeBlock.updateHitbox();
         spikeBlock.setPosition(0, 96);
         add(spikeBlock);

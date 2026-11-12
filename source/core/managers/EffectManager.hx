@@ -1,8 +1,8 @@
-package core;
+package core.managers;
 
 import flixel.FlxCamera;
-import core.ActorManager;
-import core.Timeline.TimelineEvent;
+import core.managers.ActorManager;
+import core.managers.Timeline.TimelineEvent;
 import flixel.FlxSprite;
 import flixel.math.FlxMath;
 import flixel.tweens.FlxEase;

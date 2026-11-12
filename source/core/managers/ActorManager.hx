@@ -1,7 +1,7 @@
-package core;
+package core.managers;
 
 import flixel.FlxG;
-import core.Timeline.TimelineEvent;
+import core.managers.Timeline.TimelineEvent;
 import core.level.Level.LevelData;
 
 typedef ActorFactory = TimelineEvent->LevelActor;

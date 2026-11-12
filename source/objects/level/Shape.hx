@@ -1,9 +1,9 @@
 package objects.level;
 
 import flixel.FlxG;
-import core.ActorManager;
-import core.ActorManager.EventCategory;
-import core.ActorManager.FieldKind;
+import core.managers.ActorManager;
+import core.managers.ActorManager.EventCategory;
+import core.managers.ActorManager.FieldKind;
 import core.LevelActor;
 import flixel.FlxBasic;
 import flixel.FlxObject;

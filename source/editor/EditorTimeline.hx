@@ -1,9 +1,9 @@
 package editor;
 
-import core.ActorManager;
-import core.ActorManager.EventCategory;
+import core.managers.ActorManager;
+import core.managers.ActorManager.EventCategory;
 import flixel.util.FlxSpriteUtil;
-import core.Timeline.TimelineEvent;
+import core.managers.Timeline.TimelineEvent;
 import core.Conductor;
 import flixel.util.FlxColor;
 import flixel.FlxG;

@@ -1,4 +1,4 @@
-package core;
+package core.managers;
 
 #if macro
 import haxe.io.Path;

@@ -1,6 +1,6 @@
 package editor;
 
-import core.Timeline.TimelineEvent;
+import core.managers.Timeline.TimelineEvent;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 import flixel.text.FlxText;
@@ -41,7 +41,7 @@ class EditorTimelineEvent
         nameLabel.text = displayName(event.object);
         naturalNameWidth = nameLabel.width;
     }
-        
+    
     inline static function displayName(name:String):String
         return name.split("_").join(" ");
         

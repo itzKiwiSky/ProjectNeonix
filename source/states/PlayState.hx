@@ -12,7 +12,7 @@ import flixel.util.FlxColor;
 import openfl.media.Sound;
 import haxe.io.Path;
 import core.Paths;
-import core.ActorManager;
+import core.managers.ActorManager;
 import core.Conductor;
 import core.LevelRuntime;
 import core.MusicSyncedState;
