@@ -30,10 +30,12 @@ class LevelActor extends FlxTypedSpriteGroup<FlxSprite>
     public var phase:Null<Phase> = null;
     public var cx:Float;
     public var cy:Float;
-    public var event:TimelineEvent;
+    public var event(default, set):TimelineEvent;
     public var currentTime:Float = 0;
     public var useRandomX:Bool = false;
     public var useRandomY:Bool = false;
+    
+    var trackSet:TrackSet = new TrackSet(null);
     
     public var tintByActorsColor:Bool = true; // no LevelActor; a piscina põe false se o spike.png tem cores próprias
     
@@ -114,6 +116,16 @@ class LevelActor extends FlxTypedSpriteGroup<FlxSprite>
         
     public function hits(obj:FlxBasic):Bool
         return false;
+        
+    function set_event(e:TimelineEvent):TimelineEvent
+    {
+        event = e;
+        trackSet = new TrackSet(e == null ? null : e.tracks);
+        return e;
+    }
+    
+    public inline function channel(name:String, def:Float):Float
+        return trackSet.valueAt(name, currentTime - time, def);
         
     // events //
     public function onWaiting() {}

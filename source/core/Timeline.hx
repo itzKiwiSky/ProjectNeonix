@@ -6,6 +6,7 @@ typedef TimelineEvent =
     var object:String;
     var ?lead:Float; // quanto antes (ms) o objeto deve nascer
     var ?params:Dynamic;
+    var ?tracks:Dynamic; // animações do evento: {canal: [{t, value, dur?, ease?}]}
 }
 
 class Timeline

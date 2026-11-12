@@ -32,70 +32,30 @@ class Track
     public var base:Float = 0;
     
     var keys:Array<Keyframe> = [];
-
-    static final easingFunctions:Map<String, Float->Float> = [
-        "backIn" => FlxEase.backIn,
-        "backInOut" => FlxEase.backInOut,
-        "backOut" => FlxEase.backOut,
-        "bounceIn" => FlxEase.bounceIn,
-        "bounceInOut" => FlxEase.bounceInOut,
-        "bounceOut" => FlxEase.bounceOut,
-        "circIn" => FlxEase.circIn,
-        "circInOut" => FlxEase.circInOut,
-        "circOut" => FlxEase.circOut,
-        "cubeIn" => FlxEase.cubeIn,
-        "cubeInOut" => FlxEase.cubeInOut,
-        "cubeOut" => FlxEase.cubeOut,
-        "elasticIn" => FlxEase.elasticIn,
-        "elasticInOut" => FlxEase.elasticInOut,
-        "elasticOut" => FlxEase.elasticOut,
-        "expoIn" => FlxEase.expoIn,
-        "expoInOut" => FlxEase.expoInOut,
-        "expoOut" => FlxEase.expoOut,
-        "linear" => FlxEase.linear,
-        "quadIn" => FlxEase.quadIn,
-        "quadInOut" => FlxEase.quadInOut,
-        "quadOut" => FlxEase.quadOut,
-        "quartIn" => FlxEase.quartIn,
-        "quartInOut" => FlxEase.quartInOut,
-        "quartOut" => FlxEase.quartOut,
-        "quintIn" => FlxEase.quintIn,
-        "quintInOut" => FlxEase.quintInOut,
-        "quintOut" => FlxEase.quintOut,
-        "sineIn" => FlxEase.sineIn,
-        "sineInOut" => FlxEase.sineInOut,
-        "sineOut" => FlxEase.sineOut,
-        "smoothStepIn" => FlxEase.smoothStepIn,
-        "smoothStepInOut" => FlxEase.smoothStepInOut,
-        "smoothStepOut" => FlxEase.smoothStepOut,
-        "smootherStepIn" => FlxEase.smootherStepIn,
-        "smootherStepInOut" => FlxEase.smootherStepInOut,
-        "smootherStepOut" => FlxEase.smootherStepOut
-    ];
     
     public function new() {}
-
+    
     public static function easingNames():Array<String>
     {
-        var names = [for (name in easingFunctions.keys()) name];
+        var names = [for (name in Shared.easingFunctions.keys()) name];
         names.sort((a, b) -> a < b ? -1 : (a > b ? 1 : 0));
         return names;
     }
-
+    
     inline function progress(now:Float, start:Float, len:Float):Float
         return len <= 0 ? 1 : Math.max(0, Math.min(1, (now - start) / len));
-    
+        
     public function setKeys(k:Array<Keyframe>)
     {
         keys = k;
         keys.sort((a, b) -> a.time < b.time ? -1 : (a.time > b.time ? 1 : 0));
     }
-
+    
     static function easedProgress(easingType:String, t:Float):Float
     {
-        var ease = easingFunctions.get(easingType);
+        var ease = Shared.easingFunctions.get(easingType);
         if (ease == null)
-            ease = easingFunctions.get("linear");
+            ease = Shared.easingFunctions.get("linear");
         return ease(t);
     }
     
@@ -138,7 +98,7 @@ class Effect
         var v:Dynamic = Reflect.field(e.params, key);
         return v == null ? def : v;
     }
-
+    
     static function stringParam(e:TimelineEvent, key:String, def:String):String
     {
         if (e.params == null)
@@ -250,10 +210,10 @@ class EffectManager
     var byId:Map<String, Effect> = [];
     
     public function new() {}
-
+    
     public static function easingNames():Array<String>
         return Track.easingNames();
-    
+        
     // os efeitos do jogo; editor e jogo chamam isto, então a lista nunca diverge
     public static function createDefault(background:FlxSprite, platform:FlxSprite, camera:FlxCamera, onActorsColor:FlxColor->Void):EffectManager
     {

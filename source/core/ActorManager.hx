@@ -65,9 +65,7 @@ class ActorManager
             return;
         initialized = true;
         
-        PulseBlock.selfRegister();
-        BulletEmitter.selfRegister();
-        SpikePit.selfRegister();
+        ActorAutoRegisterMacro.run("objects");
     }
     
     public static function getActorNames():Array<String>
