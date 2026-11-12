@@ -1,4 +1,4 @@
-package objects;
+package objects.core;
 
 import core.save.UserPreferences;
 import flixel.FlxG;

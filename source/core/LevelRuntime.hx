@@ -1,5 +1,6 @@
 package core;
 
+import flixel.FlxObject;
 import core.Timeline.TimelineEvent;
 import core.level.Level.LevelData;
 import flixel.FlxBasic;
@@ -109,6 +110,15 @@ class LevelRuntime
         for (a in active)
             if (a.tintByActorsColor)
                 a.color = actorsColor;
+    }
+    
+    public function collide(obj:FlxObject):Bool
+    {
+        var any:Bool = false;
+        for (a in active)
+            if (a.alive && a.collide(obj))
+                any = true;
+        return any;
     }
     
     public function hits(obj:FlxBasic):Bool

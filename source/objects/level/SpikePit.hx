@@ -1,5 +1,6 @@
-package objects;
+package objects.level;
 
+import objects.composition.Spike;
 import core.ActorManager;
 import core.LevelActor;
 import flixel.FlxBasic;

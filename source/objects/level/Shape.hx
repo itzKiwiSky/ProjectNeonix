@@ -1,5 +1,6 @@
-package objects;
+package objects.level;
 
+import flixel.FlxG;
 import core.ActorManager;
 import core.ActorManager.EventCategory;
 import core.ActorManager.FieldKind;
@@ -30,7 +31,11 @@ class Shape extends LevelActor
     var curScale:Float = 1;
     var curAngle:Float = 0;
     
-    public function new(x:Float, y:Float, w:Int, h:Int, circle:Bool, time:Float, warningTime:Float, duration:Float, outroDuration:Float)
+    var isSolid:Bool;
+    var frameDX:Float = 0; // quanto a forma andou neste frame, para carregar quem está em cima
+    var frameDY:Float = 0;
+    
+    public function new(x:Float, y:Float, w:Int, h:Int, circle:Bool, isSolid:Bool, time:Float, warningTime:Float, duration:Float, outroDuration:Float)
     {
         // o ator fica em (0, 0) e a forma usa coordenadas absolutas
         super(0, 0, time, warningTime, duration, outroDuration);
@@ -50,6 +55,10 @@ class Shape extends LevelActor
             FlxSpriteUtil.drawRoundRect(body, 0, 0, w, baseH, 16, 16, FlxColor.WHITE);
         body.visible = false;
         add(body);
+        
+        this.isSolid = isSolid && !circle; // o Flixel só separa retângulos
+        body.immovable = true;
+        body.setPosition(x - w * 0.5, y - baseH * 0.5);
     }
     
     function apply(phaseAlpha:Float)
@@ -62,9 +71,13 @@ class Shape extends LevelActor
         body.visible = true;
         body.alpha = phaseAlpha * FlxMath.bound(channel("alpha", 1), 0, 1);
         body.scale.set(curScale, curScale);
+        body.updateHitbox(); // o retângulo de colisão acompanha a escala
         body.angle = curAngle;
-        // frameWidth é o tamanho sem escala; o sprite escala em torno do centro
-        body.setPosition(curX - body.frameWidth * 0.5, curY - body.frameHeight * 0.5);
+        var nx = curX - body.width * 0.5;
+        var ny = curY - body.height * 0.5;
+        frameDX = nx - body.x;
+        frameDY = ny - body.y;
+        body.setPosition(nx, ny);
     }
     
     override function onWaiting()
@@ -85,6 +98,9 @@ class Shape extends LevelActor
     // o jogador é tratado como um círculo; a forma pode estar girada e escalada
     override function hits(obj:FlxBasic):Bool
     {
+        if (isSolid)
+            return false; // sólido não machuca
+            
         var o:FlxObject = Std.downcast(obj, FlxObject);
         if (phase != Active || o == null)
             return false;
@@ -111,10 +127,28 @@ class Shape extends LevelActor
         return ex * ex + ey * ey <= r * r;
     }
     
+    override function collide(obj:FlxObject):Bool
+    {
+        if (!isSolid || phase != Active)
+            return false;
+            
+        if (!FlxG.collide(obj, body))
+            return false;
+            
+        // em cima da forma: ela leva o jogador junto (o Flixel não faz isso sozinho)
+        if (obj.isTouching(DOWN) && obj.y + obj.height <= body.y + 4)
+        {
+            obj.x += frameDX;
+            obj.y += frameDY;
+        }
+        return true;
+    }
+    
     public static function selfRegister()
     {
         ActorManager.registerActor("shape", e -> new Shape(ActorManager.num(e, "x", 640), ActorManager.num(e, "y", 360), Std.int(ActorManager.num(e, "w", 96)), Std.int(ActorManager.num(e, "h", 96)), e.params != null
-            && Reflect.field(e.params, "circle") == true, e.time, e.lead ?? 750, ActorManager.num(e, "duration", 4000), ActorManager.num(e, "outro", 300)), EventCategory.Obstacle, [
+            && Reflect.field(e.params, "circle") == true, e.params != null
+            && Reflect.field(e.params, "solid") == true, e.time, e.lead ?? 750, ActorManager.num(e, "duration", 4000), ActorManager.num(e, "outro", 300)), EventCategory.Obstacle, [
             {
                 key: "x",
                 label: "X",
@@ -126,6 +160,12 @@ class Shape extends LevelActor
                 label: "Y",
                 kind: FieldKind.Number,
                 defaultValue: 360
+            },
+            {
+                key: "solid",
+                label: "Solid",
+                kind: FieldKind.Checkbox,
+                defaultValue: false
             },
             {
                 key: "w",

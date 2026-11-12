@@ -1,4 +1,4 @@
-package objects;
+package objects.level;
 
 import flixel.FlxBasic;
 import core.LevelActor;

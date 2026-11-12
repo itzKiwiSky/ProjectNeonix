@@ -1,9 +1,6 @@
 package core;
 
-import objects.SpikePit;
-import objects.BulletEmitter;
 import flixel.FlxG;
-import objects.PulseBlock;
 import core.Timeline.TimelineEvent;
 import core.level.Level.LevelData;
 
@@ -65,7 +62,7 @@ class ActorManager
             return;
         initialized = true;
         
-        ActorAutoRegisterMacro.run("objects");
+        ActorAutoRegisterMacro.run("objects.level");
     }
     
     public static function getActorNames():Array<String>

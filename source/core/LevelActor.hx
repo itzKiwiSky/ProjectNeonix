@@ -1,5 +1,6 @@
 package core;
 
+import flixel.FlxObject;
 import flixel.FlxG;
 import flixel.FlxBasic;
 import core.Timeline.TimelineEvent;
@@ -115,6 +116,10 @@ class LevelActor extends FlxTypedSpriteGroup<FlxSprite>
         return len <= 0 ? 1 : Math.max(0, Math.min(1, (now - start) / len));
         
     public function hits(obj:FlxBasic):Bool
+        return false;
+        
+    // colisão sólida com um objeto que se move (o jogador); devolve se houve contato
+    public function collide(obj:FlxObject):Bool
         return false;
         
     function set_event(e:TimelineEvent):TimelineEvent

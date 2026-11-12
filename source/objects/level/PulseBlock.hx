@@ -1,4 +1,4 @@
-package objects;
+package objects.level;
 
 import core.ActorManager;
 import core.LevelActor;

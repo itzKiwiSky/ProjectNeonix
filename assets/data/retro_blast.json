@@ -631,7 +631,7 @@
                 "interval": 600,
                 "useRandomX": true,
                 "count": 7,
-                "speed": 1500
+                "speed": 550
             },
             "time": 29788,
             "object": "bullet_emitter"
@@ -649,7 +649,7 @@
                 "interval": 600,
                 "useRandomX": true,
                 "count": 7,
-                "speed": 1500
+                "speed": 550
             },
             "time": 30000,
             "object": "bullet_emitter"
@@ -667,7 +667,7 @@
                 "interval": 600,
                 "useRandomX": true,
                 "count": 7,
-                "speed": 1500
+                "speed": 550
             },
             "time": 30263.1578947368,
             "object": "bullet_emitter"
@@ -685,7 +685,7 @@
                 "interval": 600,
                 "useRandomX": true,
                 "count": 7,
-                "speed": 1500
+                "speed": 550
             },
             "time": 30526.3157894737,
             "object": "bullet_emitter"
@@ -703,7 +703,7 @@
                 "interval": 600,
                 "useRandomX": true,
                 "count": 7,
-                "speed": 1500
+                "speed": 550
             },
             "time": 30789.4736842105,
             "object": "bullet_emitter"
@@ -721,7 +721,7 @@
                 "interval": 600,
                 "useRandomX": true,
                 "count": 7,
-                "speed": 1500
+                "speed": 550
             },
             "time": 31052.6315789474,
             "object": "bullet_emitter"
@@ -739,7 +739,7 @@
                 "interval": 600,
                 "useRandomX": true,
                 "count": 7,
-                "speed": 1500
+                "speed": 550
             },
             "time": 31315.7894736842,
             "object": "bullet_emitter"
@@ -757,7 +757,7 @@
                 "interval": 600,
                 "useRandomX": true,
                 "count": 7,
-                "speed": 1500
+                "speed": 550
             },
             "time": 31578.947368421,
             "object": "bullet_emitter"
@@ -775,7 +775,7 @@
                 "interval": 600,
                 "useRandomX": true,
                 "count": 7,
-                "speed": 1500
+                "speed": 550
             },
             "time": 31842.1052631579,
             "object": "bullet_emitter"
@@ -793,7 +793,7 @@
                 "interval": 600,
                 "useRandomX": true,
                 "count": 7,
-                "speed": 1500
+                "speed": 550
             },
             "time": 32105.2631578947,
             "object": "bullet_emitter"
@@ -811,7 +811,7 @@
                 "interval": 600,
                 "useRandomX": true,
                 "count": 7,
-                "speed": 1500
+                "speed": 550
             },
             "time": 32368.4210526316,
             "object": "bullet_emitter"
@@ -829,7 +829,7 @@
                 "interval": 600,
                 "useRandomX": true,
                 "count": 7,
-                "speed": 1500
+                "speed": 550
             },
             "time": 32631.5789473684,
             "object": "bullet_emitter"
@@ -847,7 +847,7 @@
                 "interval": 600,
                 "useRandomX": true,
                 "count": 7,
-                "speed": 1500
+                "speed": 550
             },
             "time": 32763.1578947368,
             "object": "bullet_emitter"
@@ -865,7 +865,7 @@
                 "interval": 600,
                 "useRandomX": true,
                 "count": 7,
-                "speed": 1500
+                "speed": 550
             },
             "time": 33026.3157894737,
             "object": "bullet_emitter"
@@ -883,7 +883,7 @@
                 "interval": 600,
                 "useRandomX": true,
                 "count": 7,
-                "speed": 1500
+                "speed": 550
             },
             "time": 33289.4736842105,
             "object": "bullet_emitter"
@@ -901,7 +901,7 @@
                 "interval": 600,
                 "useRandomX": true,
                 "count": 7,
-                "speed": 1500
+                "speed": 550
             },
             "time": 33552.6315789474,
             "object": "bullet_emitter"
@@ -919,7 +919,7 @@
                 "interval": 600,
                 "useRandomX": true,
                 "count": 7,
-                "speed": 1500
+                "speed": 550
             },
             "time": 33815.7894736842,
             "object": "bullet_emitter"
@@ -937,7 +937,7 @@
                 "interval": 600,
                 "useRandomX": true,
                 "count": 7,
-                "speed": 1500
+                "speed": 550
             },
             "time": 34210.5263157895,
             "object": "bullet_emitter"
@@ -955,7 +955,7 @@
                 "interval": 600,
                 "useRandomX": true,
                 "count": 7,
-                "speed": 1500
+                "speed": 550
             },
             "time": 34342.1052631579,
             "object": "bullet_emitter"
@@ -973,7 +973,7 @@
                 "interval": 600,
                 "useRandomX": true,
                 "count": 7,
-                "speed": 1500
+                "speed": 550
             },
             "time": 34736.8421052632,
             "object": "bullet_emitter"
@@ -991,7 +991,7 @@
                 "interval": 600,
                 "useRandomX": true,
                 "count": 7,
-                "speed": 1500
+                "speed": 550
             },
             "time": 35000,
             "object": "bullet_emitter"
@@ -1009,7 +1009,7 @@
                 "interval": 600,
                 "useRandomX": true,
                 "count": 7,
-                "speed": 1500
+                "speed": 550
             },
             "time": 35263.1578947368,
             "object": "bullet_emitter"
@@ -1027,7 +1027,7 @@
                 "interval": 600,
                 "useRandomX": true,
                 "count": 7,
-                "speed": 1500
+                "speed": 550
             },
             "time": 35789.4736842105,
             "object": "bullet_emitter"
@@ -1045,7 +1045,7 @@
                 "interval": 600,
                 "useRandomX": true,
                 "count": 7,
-                "speed": 1500
+                "speed": 550
             },
             "time": 36052.6315789474,
             "object": "bullet_emitter"
@@ -1082,7 +1082,18 @@
             "lead": 0,
             "object": "bg_color",
             "time": 38046
-        }
+        },
+        {
+    "time": 40000,
+    "object": "shape",
+    "lead": 750,
+    "params": { "x": 200, "y": 300, "w": 96, "h": 96, "circle": false, "duration": 4000, "outro": 300 },
+    "tracks": {
+        "x": [ { "t": 0, "value": 200 }, { "t": 500, "value": 1000, "dur": 2000, "ease": "quadInOut" } ],
+        "angle": [ { "t": 0, "value": 0, "dur": 0 }, { "t": 500, "value": 360, "dur": 2000, "ease": "linear" } ],
+        "scale": [ { "t": 2500, "value": 2, "dur": 1000, "ease": "backOut" } ]
+    }
+}
     ],
     "meta": {
         "platformColor": [

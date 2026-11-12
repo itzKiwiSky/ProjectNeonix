@@ -1,6 +1,6 @@
 package states;
 
-import objects.Spike;
+import objects.core.Player;
 import states.substates.GameOverSubstate;
 import core.shaders.GrayscaleShader;
 import flixel.tweens.FlxEase;
@@ -19,7 +19,6 @@ import core.MusicSyncedState;
 import core.level.Level;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import objects.Player;
 
 class PlayState extends MusicSyncedState
 {
@@ -86,7 +85,7 @@ class PlayState extends MusicSyncedState
         
         player.onKill = () ->
         {
-            FlxTween.tween(FlxG.sound.music, {pitch: 0}, 1.2, {
+            FlxTween.tween(FlxG.sound.music, {pitch: 0}, 2, {
                 ease: FlxEase.sineOut,
                 type: ONESHOT,
             }).onComplete = (t:FlxTween) ->
@@ -137,6 +136,8 @@ class PlayState extends MusicSyncedState
         super.update(elapsed);
         
         FlxG.collide(player.hitbox, platformSprite);
+        
+        runtime.collide(player.hitbox);
         
         if (runtime.hits(player.hitbox))
             player.testHit();

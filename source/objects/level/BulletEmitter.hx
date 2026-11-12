@@ -1,5 +1,6 @@
-package objects;
+package objects.level;
 
+import objects.composition.Bullet;
 import core.ActorManager;
 import core.Conductor;
 import core.LevelActor;
