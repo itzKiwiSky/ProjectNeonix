@@ -3,606 +3,13 @@
         "lastSavedTime": 0,
         "audioPath": ""
     },
-    "events": [
-        {
-            "lead": 0,
-            "params": {
-                "r": 255,
-                "b": 255,
-                "duration": 3950,
-                "g": 255
-            },
-            "time": 0,
-            "object": "platform_color"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 640,
-                "y": 100,
-                "outro": 200,
-                "spread": 360,
-                "angle": 0,
-                "life": 5000,
-                "duration": 250,
-                "interval": 250,
-                "useRandomX": true,
-                "count": 15,
-                "speed": 300
-            },
-            "time": 4736.84210526316,
-            "object": "bullet_emitter"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 640,
-                "y": 100,
-                "spread": 360,
-                "angle": 0,
-                "outro": 200,
-                "life": 5000,
-                "duration": 250,
-                "interval": 250,
-                "useRandomX": true,
-                "count": 15,
-                "speed": 300
-            },
-            "time": 5789.47368421053,
-            "object": "bullet_emitter"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 640,
-                "y": 100,
-                "spread": 360,
-                "angle": 0,
-                "outro": 200,
-                "life": 5000,
-                "duration": 250,
-                "interval": 250,
-                "useRandomX": true,
-                "count": 15,
-                "speed": 300
-            },
-            "time": 6842.10526315789,
-            "object": "bullet_emitter"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 640,
-                "y": 100,
-                "spread": 360,
-                "angle": 0,
-                "outro": 200,
-                "life": 5000,
-                "duration": 250,
-                "interval": 250,
-                "useRandomX": true,
-                "count": 15,
-                "speed": 300
-            },
-            "time": 7894.73684210526,
-            "object": "bullet_emitter"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 640,
-                "y": 100,
-                "angle": 0,
-                "outro": 200,
-                "spread": 360,
-                "life": 5000,
-                "duration": 250,
-                "interval": 250,
-                "useRandomX": true,
-                "count": 15,
-                "speed": 300
-            },
-            "time": 9078.94736842105,
-            "object": "bullet_emitter"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 640,
-                "y": 100,
-                "angle": 0,
-                "outro": 200,
-                "spread": 360,
-                "life": 5000,
-                "duration": 250,
-                "interval": 250,
-                "useRandomX": true,
-                "count": 15,
-                "speed": 300
-            },
-            "time": 10000,
-            "object": "bullet_emitter"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 640,
-                "y": 100,
-                "angle": 0,
-                "outro": 200,
-                "spread": 360,
-                "life": 5000,
-                "duration": 250,
-                "interval": 250,
-                "useRandomX": true,
-                "count": 15,
-                "speed": 300
-            },
-            "time": 11052.6315789474,
-            "object": "bullet_emitter"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 200,
-                "y": 100,
-                "angle": 0,
-                "outro": 200,
-                "spread": 360,
-                "life": 5000,
-                "duration": 250,
-                "interval": 250,
-                "count": 20,
-                "speed": 675
-            },
-            "time": 12763.1578947368,
-            "object": "bullet_emitter"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 1100,
-                "y": 100,
-                "angle": 0,
-                "outro": 200,
-                "spread": 360,
-                "life": 5000,
-                "duration": 250,
-                "interval": 250,
-                "randomX": false,
-                "count": 20,
-                "speed": 675
-            },
-            "time": 12763.1578947368,
-            "object": "bullet_emitter"
-        },
-        {
-            "params": {
-                "duration": 250,
-                "b": 2,
-                "r": 255,
-                "g": 25
-            },
-            "lead": 0,
-            "object": "actors_color",
-            "time": 11447.3684210526
-        },
-        {
-            "params": {
-                "duration": 0,
-                "b": 255,
-                "r": 255,
-                "g": 255
-            },
-            "lead": 0,
-            "object": "actors_color",
-            "time": 12763.1578947368
-        },
-        {
-            "params": {
-                "duration": 150,
-                "b": 152,
-                "r": 255,
-                "g": 5
-            },
-            "lead": 0,
-            "object": "actors_color",
-            "time": 12783
-        },
-        {
-            "params": {
-                "duration": 1250,
-                "b": 39,
-                "r": 69,
-                "g": 20
-            },
-            "lead": 0,
-            "object": "bg_color",
-            "time": 12794
-        },
-        {
-            "params": {
-                "duration": 0,
-                "zoom": 3.5
-            },
-            "lead": 0,
-            "object": "camera_zoom",
-            "time": 0
-        },
-        {
-            "params": {
-                "duration": 0,
-                "zoom": 3.5
-            },
-            "lead": 0,
-            "object": "camera_zoom",
-            "time": 0
-        },
-        {
-            "params": {
-                "duration": 3000,
-                "easing": "sineOut",
-                "zoom": 1
-            },
-            "lead": 0,
-            "object": "camera_zoom",
-            "time": 40
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 640,
-                "y": 100,
-                "outro": 200,
-                "spread": 360,
-                "angle": 0,
-                "life": 5000,
-                "duration": 250,
-                "interval": 250,
-                "useRandomX": true,
-                "count": 15,
-                "speed": 300
-            },
-            "time": 13289.4736842105,
-            "object": "bullet_emitter"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 640,
-                "y": 100,
-                "outro": 200,
-                "spread": 360,
-                "angle": 0,
-                "life": 5000,
-                "duration": 250,
-                "interval": 250,
-                "useRandomX": true,
-                "count": 15,
-                "speed": 300
-            },
-            "time": 14150,
-            "object": "bullet_emitter"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 640,
-                "y": 100,
-                "outro": 200,
-                "spread": 360,
-                "angle": 0,
-                "life": 5000,
-                "duration": 250,
-                "interval": 250,
-                "useRandomX": true,
-                "count": 15,
-                "speed": 300
-            },
-            "time": 15394.7368421053,
-            "object": "bullet_emitter"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 640,
-                "y": 100,
-                "outro": 200,
-                "spread": 360,
-                "angle": 0,
-                "life": 5000,
-                "duration": 250,
-                "interval": 250,
-                "useRandomX": true,
-                "count": 15,
-                "speed": 300
-            },
-            "time": 16447.3684210526,
-            "object": "bullet_emitter"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 640,
-                "y": 100,
-                "outro": 200,
-                "spread": 360,
-                "angle": 0,
-                "life": 5000,
-                "duration": 250,
-                "interval": 250,
-                "useRandomX": true,
-                "count": 15,
-                "speed": 300
-            },
-            "time": 17500,
-            "object": "bullet_emitter"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 640,
-                "y": 100,
-                "outro": 200,
-                "spread": 360,
-                "angle": 0,
-                "life": 5000,
-                "duration": 250,
-                "interval": 250,
-                "useRandomX": true,
-                "count": 15,
-                "speed": 300
-            },
-            "time": 18552.6315789474,
-            "object": "bullet_emitter"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 640,
-                "y": 100,
-                "outro": 200,
-                "spread": 360,
-                "angle": 0,
-                "life": 5000,
-                "duration": 250,
-                "interval": 250,
-                "useRandomX": true,
-                "count": 15,
-                "speed": 300
-            },
-            "time": 19605.2631578947,
-            "object": "bullet_emitter"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 640,
-                "duration": 250,
-                "y": 490,
-                "useRandomX": true,
-                "useRandomY": false,
-                "outro": 400
-            },
-            "time": 21052,
-            "object": "pulse_square"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 640,
-                "duration": 250,
-                "y": 490,
-                "useRandomX": true,
-                "useRandomY": false,
-                "outro": 400
-            },
-            "time": 21578.947368421,
-            "object": "pulse_square"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 640,
-                "duration": 250,
-                "y": 490,
-                "useRandomX": true,
-                "useRandomY": false,
-                "outro": 400
-            },
-            "time": 22105.2631578947,
-            "object": "pulse_square"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 640,
-                "duration": 250,
-                "y": 490,
-                "useRandomX": true,
-                "useRandomY": false,
-                "outro": 400
-            },
-            "time": 22631.5789473684,
-            "object": "pulse_square"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 640,
-                "duration": 250,
-                "y": 490,
-                "useRandomX": true,
-                "useRandomY": false,
-                "outro": 400
-            },
-            "time": 23157.8947368421,
-            "object": "pulse_square"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 640,
-                "duration": 250,
-                "y": 490,
-                "useRandomX": true,
-                "useRandomY": false,
-                "outro": 400
-            },
-            "time": 23684.2105263158,
-            "object": "pulse_square"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 640,
-                "duration": 250,
-                "y": 490,
-                "useRandomX": true,
-                "useRandomY": false,
-                "outro": 400
-            },
-            "time": 24210.5263157895,
-            "object": "pulse_square"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 640,
-                "duration": 250,
-                "y": 490,
-                "useRandomX": true,
-                "useRandomY": false,
-                "outro": 400
-            },
-            "time": 24736.8421052632,
-            "object": "pulse_square"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 640,
-                "duration": 250,
-                "y": 490,
-                "useRandomX": true,
-                "useRandomY": false,
-                "outro": 400
-            },
-            "time": 25263.1578947368,
-            "object": "pulse_square"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 640,
-                "duration": 250,
-                "y": 490,
-                "useRandomX": true,
-                "useRandomY": false,
-                "outro": 400
-            },
-            "time": 25789.4736842105,
-            "object": "pulse_square"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 640,
-                "duration": 250,
-                "y": 490,
-                "useRandomX": true,
-                "useRandomY": false,
-                "outro": 400
-            },
-            "time": 26315.7894736842,
-            "object": "pulse_square"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 640,
-                "duration": 250,
-                "y": 490,
-                "useRandomX": true,
-                "useRandomY": false,
-                "outro": 400
-            },
-            "time": 26842.1052631579,
-            "object": "pulse_square"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 640,
-                "duration": 250,
-                "y": 490,
-                "useRandomX": true,
-                "useRandomY": false,
-                "outro": 400
-            },
-            "time": 27368.4210526316,
-            "object": "pulse_square"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 640,
-                "duration": 250,
-                "y": 490,
-                "useRandomX": true,
-                "useRandomY": false,
-                "outro": 400
-            },
-            "time": 27894.7368421053,
-            "object": "pulse_square"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 640,
-                "duration": 250,
-                "y": 490,
-                "useRandomX": true,
-                "useRandomY": false,
-                "outro": 400
-            },
-            "time": 28421.0526315789,
-            "object": "pulse_square"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 640,
-                "duration": 250,
-                "y": 490,
-                "useRandomX": true,
-                "useRandomY": false,
-                "outro": 400
-            },
-            "time": 28947.3684210526,
-            "object": "pulse_square"
-        },
-        {
-            "lead": 750,
-            "params": {
-                "x": 640,
-                "duration": 250,
-                "y": 490,
-                "useRandomX": true,
-                "useRandomY": false,
-                "outro": 400
-            },
-            "time": 29473.6842105263,
-            "object": "pulse_square"
-        }
-    ],
     "meta": {
+        "title": "Retro Blast",
         "platformColor": [
             0,
             0,
             0
         ],
-        "title": "Retro Blast",
         "backgroundID": 2,
         "songEnding": -1,
         "songFilename": "builtin:retro_blast_avenza.ogg",
@@ -616,7 +23,623 @@
             0,
             0
         ],
-        "artist": "Avenza",
-        "bpm": 114
-    }
+        "bpm": 114,
+        "artist": "Avenza"
+    },
+    "events": [
+        {
+            "params": {
+                "duration": 3950,
+                "b": 255,
+                "r": 255,
+                "g": 255
+            },
+            "lead": 0,
+            "object": "platform_color",
+            "time": 0
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 100,
+                "angle": 0,
+                "outro": 200,
+                "spread": 360,
+                "life": 5000,
+                "duration": 250,
+                "interval": 250,
+                "useRandomX": true,
+                "speed": 300,
+                "count": 15
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 4736.84210526316
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 100,
+                "outro": 200,
+                "spread": 360,
+                "angle": 0,
+                "life": 5000,
+                "duration": 250,
+                "interval": 250,
+                "useRandomX": true,
+                "speed": 300,
+                "count": 15
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 5789.47368421053
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 100,
+                "outro": 200,
+                "spread": 360,
+                "angle": 0,
+                "life": 5000,
+                "duration": 250,
+                "interval": 250,
+                "useRandomX": true,
+                "speed": 300,
+                "count": 15
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 6842.10526315789
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 100,
+                "outro": 200,
+                "spread": 360,
+                "angle": 0,
+                "life": 5000,
+                "duration": 250,
+                "interval": 250,
+                "useRandomX": true,
+                "speed": 300,
+                "count": 15
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 7894.73684210526
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 100,
+                "spread": 360,
+                "angle": 0,
+                "outro": 200,
+                "life": 5000,
+                "duration": 250,
+                "interval": 250,
+                "useRandomX": true,
+                "speed": 300,
+                "count": 15
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 9078.94736842105
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 100,
+                "spread": 360,
+                "angle": 0,
+                "outro": 200,
+                "life": 5000,
+                "duration": 250,
+                "interval": 250,
+                "useRandomX": true,
+                "speed": 300,
+                "count": 15
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 10000
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 100,
+                "spread": 360,
+                "angle": 0,
+                "outro": 200,
+                "life": 5000,
+                "duration": 250,
+                "interval": 250,
+                "useRandomX": true,
+                "speed": 300,
+                "count": 15
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 11052.6315789474
+        },
+        {
+            "params": {
+                "x": 200,
+                "y": 100,
+                "spread": 360,
+                "angle": 0,
+                "outro": 200,
+                "life": 5000,
+                "duration": 250,
+                "interval": 250,
+                "speed": 675,
+                "count": 20
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 12763.1578947368
+        },
+        {
+            "params": {
+                "x": 1100,
+                "y": 100,
+                "spread": 360,
+                "angle": 0,
+                "outro": 200,
+                "life": 5000,
+                "duration": 250,
+                "randomX": false,
+                "interval": 250,
+                "speed": 675,
+                "count": 20
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 12763.1578947368
+        },
+        {
+            "lead": 0,
+            "params": {
+                "r": 255,
+                "b": 2,
+                "duration": 250,
+                "g": 25
+            },
+            "time": 11447.3684210526,
+            "object": "actors_color"
+        },
+        {
+            "lead": 0,
+            "params": {
+                "r": 255,
+                "b": 255,
+                "duration": 0,
+                "g": 255
+            },
+            "time": 12763.1578947368,
+            "object": "actors_color"
+        },
+        {
+            "lead": 0,
+            "params": {
+                "r": 255,
+                "b": 152,
+                "duration": 150,
+                "g": 5
+            },
+            "time": 12783,
+            "object": "actors_color"
+        },
+        {
+            "lead": 0,
+            "params": {
+                "r": 69,
+                "b": 39,
+                "duration": 1250,
+                "g": 20
+            },
+            "time": 12794,
+            "object": "bg_color"
+        },
+        {
+            "lead": 0,
+            "params": {
+                "duration": 0,
+                "zoom": 3.5
+            },
+            "time": 0,
+            "object": "camera_zoom"
+        },
+        {
+            "lead": 0,
+            "params": {
+                "duration": 0,
+                "zoom": 3.5
+            },
+            "time": 0,
+            "object": "camera_zoom"
+        },
+        {
+            "lead": 0,
+            "params": {
+                "duration": 3000,
+                "zoom": 1,
+                "easing": "sineOut"
+            },
+            "time": 40,
+            "object": "camera_zoom"
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 100,
+                "angle": 0,
+                "outro": 200,
+                "spread": 360,
+                "life": 5000,
+                "duration": 250,
+                "interval": 250,
+                "useRandomX": true,
+                "speed": 300,
+                "count": 15
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 13289.4736842105
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 100,
+                "angle": 0,
+                "outro": 200,
+                "spread": 360,
+                "life": 5000,
+                "duration": 250,
+                "interval": 250,
+                "useRandomX": true,
+                "speed": 300,
+                "count": 15
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 14150
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 100,
+                "angle": 0,
+                "outro": 200,
+                "spread": 360,
+                "life": 5000,
+                "duration": 250,
+                "interval": 250,
+                "useRandomX": true,
+                "speed": 300,
+                "count": 15
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 15394.7368421053
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 100,
+                "angle": 0,
+                "outro": 200,
+                "spread": 360,
+                "life": 5000,
+                "duration": 250,
+                "interval": 250,
+                "useRandomX": true,
+                "speed": 300,
+                "count": 15
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 16447.3684210526
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 100,
+                "angle": 0,
+                "outro": 200,
+                "spread": 360,
+                "life": 5000,
+                "duration": 250,
+                "interval": 250,
+                "useRandomX": true,
+                "speed": 300,
+                "count": 15
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 17500
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 100,
+                "angle": 0,
+                "outro": 200,
+                "spread": 360,
+                "life": 5000,
+                "duration": 250,
+                "interval": 250,
+                "useRandomX": true,
+                "speed": 300,
+                "count": 15
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 18552.6315789474
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 100,
+                "angle": 0,
+                "outro": 200,
+                "spread": 360,
+                "life": 5000,
+                "duration": 250,
+                "interval": 250,
+                "useRandomX": true,
+                "speed": 300,
+                "count": 15
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 19605.2631578947
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 640,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 400,
+                "useRandomY": false
+            },
+            "lead": 750,
+            "object": "pulse_square",
+            "time": 21052
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 640,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 400,
+                "useRandomY": false
+            },
+            "lead": 750,
+            "object": "pulse_square",
+            "time": 21578.947368421
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 640,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 400,
+                "useRandomY": false
+            },
+            "lead": 750,
+            "object": "pulse_square",
+            "time": 22105.2631578947
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 640,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 400,
+                "useRandomY": false
+            },
+            "lead": 750,
+            "object": "pulse_square",
+            "time": 22631.5789473684
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 640,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 400,
+                "useRandomY": false
+            },
+            "lead": 750,
+            "object": "pulse_square",
+            "time": 23157.8947368421
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 640,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 400,
+                "useRandomY": false
+            },
+            "lead": 750,
+            "object": "pulse_square",
+            "time": 23684.2105263158
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 640,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 400,
+                "useRandomY": false
+            },
+            "lead": 750,
+            "object": "pulse_square",
+            "time": 24210.5263157895
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 640,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 400,
+                "useRandomY": false
+            },
+            "lead": 750,
+            "object": "pulse_square",
+            "time": 24736.8421052632
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 640,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 400,
+                "useRandomY": false
+            },
+            "lead": 750,
+            "object": "pulse_square",
+            "time": 25263.1578947368
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 640,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 400,
+                "useRandomY": false
+            },
+            "lead": 750,
+            "object": "pulse_square",
+            "time": 25789.4736842105
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 640,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 400,
+                "useRandomY": false
+            },
+            "lead": 750,
+            "object": "pulse_square",
+            "time": 26315.7894736842
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 640,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 400,
+                "useRandomY": false
+            },
+            "lead": 750,
+            "object": "pulse_square",
+            "time": 26842.1052631579
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 640,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 400,
+                "useRandomY": false
+            },
+            "lead": 750,
+            "object": "pulse_square",
+            "time": 27368.4210526316
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 640,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 400,
+                "useRandomY": false
+            },
+            "lead": 750,
+            "object": "pulse_square",
+            "time": 27894.7368421053
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 640,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 400,
+                "useRandomY": false
+            },
+            "lead": 750,
+            "object": "pulse_square",
+            "time": 28421.0526315789
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 640,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 400,
+                "useRandomY": false
+            },
+            "lead": 750,
+            "object": "pulse_square",
+            "time": 28947.3684210526
+        },
+        {
+            "params": {
+                "duration": 250,
+                "x": 640,
+                "y": 490,
+                "useRandomX": true,
+                "outro": 400,
+                "useRandomY": false
+            },
+            "lead": 750,
+            "object": "pulse_square",
+            "time": 29473.6842105263
+        },
+        {
+            "params": {
+                "duration": 3500,
+                "y": 550,
+                "waveIntensity": 0.2,
+                "waveSpeed": 0.5,
+                "outro": 500
+            },
+            "object": "spike_pit",
+            "lead": 0,
+            "time": 29736.8421052632
+        },
+        {
+            "params": {
+                "duration": 1250,
+                "b": 75,
+                "r": 55,
+                "g": 25
+            },
+            "object": "bg_color",
+            "lead": 0,
+            "time": 29605.2631578947
+        }
+    ]
 }

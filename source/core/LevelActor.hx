@@ -35,6 +35,8 @@ class LevelActor extends FlxTypedSpriteGroup<FlxSprite>
     public var useRandomX:Bool = false;
     public var useRandomY:Bool = false;
     
+    public var tintByActorsColor:Bool = true; // no LevelActor; a piscina põe false se o spike.png tem cores próprias
+    
     public function new(x:Float = 0, y:Float = 0, time:Float = 0, warningTime:Float = 1000, duration:Float = 500, outroDuration:Float = 200)
     {
         super(x, y);

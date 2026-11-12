@@ -1,5 +1,7 @@
 package states;
 
+import objects.Spike;
+import states.substates.GameOverSubstate;
 import core.shaders.GrayscaleShader;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -85,11 +87,13 @@ class PlayState extends MusicSyncedState
         player.onKill = () ->
         {
             FlxTween.tween(FlxG.sound.music, {pitch: 0}, 1.2, {
-                ease: FlxEase.linear,
+                ease: FlxEase.sineOut,
                 type: ONESHOT,
-            }).onComplete = (t:FlxTween) -> {
-                // open the substate //
-            };
+            }).onComplete = (t:FlxTween) ->
+                {
+                    // open the substate //
+                    openSubState(new GameOverSubstate());
+                };
         }
         
         super.create();

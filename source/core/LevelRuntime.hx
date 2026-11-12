@@ -107,7 +107,8 @@ class LevelRuntime
         
         // o grupo só repassa a cor aos sprites quando ela muda, então isso custa quase nada
         for (a in active)
-            a.color = actorsColor;
+            if (a.tintByActorsColor)
+                a.color = actorsColor;
     }
     
     public function hits(obj:FlxBasic):Bool

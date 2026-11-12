@@ -1,5 +1,6 @@
 package core;
 
+import objects.SpikePit;
 import objects.BulletEmitter;
 import flixel.FlxG;
 import objects.PulseBlock;
@@ -66,6 +67,7 @@ class ActorManager
         
         PulseBlock.selfRegister();
         BulletEmitter.selfRegister();
+        SpikePit.selfRegister();
     }
     
     public static function getActorNames():Array<String>
