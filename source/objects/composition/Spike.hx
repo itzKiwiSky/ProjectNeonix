@@ -5,6 +5,7 @@ import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 
 class Spike extends FlxTypedSpriteGroup<FlxSprite>
 {
+    var spikeBlock:FlxSprite;
     var spikeSprite:FlxSprite;
     
     public var spikeHitbox:FlxSprite;
@@ -21,13 +22,18 @@ class Spike extends FlxTypedSpriteGroup<FlxSprite>
         spikeSprite.updateHitbox();
         add(spikeSprite);
         
+        spikeBlock = new FlxSprite();
+        spikeBlock.loadGraphic("assets/images/game/movable_block.png");
+        spikeBlock.updateHitbox();
+        spikeBlock.setPosition(0, 96);
+        add(spikeBlock);
+        
         spikeHitbox = new FlxSprite();
         spikeHitbox.makeGraphic(1, 1);
         spikeHitbox.setGraphicSize(32, 48);
         spikeHitbox.updateHitbox();
         spikeHitbox.setPosition(spikeSprite.width * 0.5 - spikeHitbox.width * 0.5, (spikeSprite.height * 0.5 - spikeHitbox.height * 0.5) + 16);
-        add(spikeHitbox);
-        
         spikeHitbox.visible = false;
+        add(spikeHitbox);
     }
 }

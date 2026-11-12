@@ -31,7 +31,6 @@ class Shape extends LevelActor
     var curScale:Float = 1;
     var curAngle:Float = 0;
     
-    var isSolid:Bool;
     var frameDX:Float = 0; // quanto a forma andou neste frame, para carregar quem está em cima
     var frameDY:Float = 0;
     
@@ -56,7 +55,7 @@ class Shape extends LevelActor
         body.visible = false;
         add(body);
         
-        this.isSolid = isSolid && !circle; // o Flixel só separa retângulos
+        this.solid = isSolid && !circle; // o Flixel só separa retângulos
         body.immovable = true;
         body.setPosition(x - w * 0.5, y - baseH * 0.5);
     }
@@ -98,7 +97,7 @@ class Shape extends LevelActor
     // o jogador é tratado como um círculo; a forma pode estar girada e escalada
     override function hits(obj:FlxBasic):Bool
     {
-        if (isSolid)
+        if (solid)
             return false; // sólido não machuca
             
         var o:FlxObject = Std.downcast(obj, FlxObject);
@@ -129,7 +128,7 @@ class Shape extends LevelActor
     
     override function collide(obj:FlxObject):Bool
     {
-        if (!isSolid || phase != Active)
+        if (!solid || phase != Active)
             return false;
             
         if (!FlxG.collide(obj, body))

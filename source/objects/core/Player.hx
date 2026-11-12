@@ -91,7 +91,7 @@ class Player extends FlxTypedSpriteGroup<FlxSprite>
         
         // update graphic //
         
-        if (!hitbox.isTouching(DOWN))
+        if (!hitbox.isTouching(DOWN) && dir != 0)
             playerSprite.angle += (dir * 360) * elapsed;
         else
         {
@@ -118,6 +118,8 @@ class Player extends FlxTypedSpriteGroup<FlxSprite>
         wasHit = true;
         cooldown = hitCooldown;
         health--;
+        
+        // FlxG.camera.shake(0.1, 0.25);
         
         updateHealthDial();
     }

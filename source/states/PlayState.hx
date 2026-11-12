@@ -45,7 +45,7 @@ class PlayState extends MusicSyncedState
     static inline var CAMERA_SWAY_Y:Float = 4;
     
     var grayscale:GrayscaleShader;
-
+    
     public function new(?playtestData:LevelData, ?playtestMusicAsset:Sound)
     {
         super();
@@ -89,6 +89,7 @@ class PlayState extends MusicSyncedState
         
         player = new Player();
         player.screenCenter();
+        player.y = platformSprite.y - player.hitbox.height;
         
         // os efeitos precisam existir antes do load, é o que registra bg_color, camera_zoom...
         runtime = new LevelRuntime(background, platformSprite, gameCam);
@@ -97,7 +98,7 @@ class PlayState extends MusicSyncedState
         add(player);
         add(platformSprite);
         add(runtime.active);
-
+        
         if (playtestMode)
         {
             returnButton = new GameUIButton(8, 8, "Back to editor", returnToEditor, 144, 28);
@@ -128,18 +129,17 @@ class PlayState extends MusicSyncedState
                     music.stop();
                 return;
             }
-
+            
             if (music == null)
             {
                 openSubState(new GameOverSubstate());
                 return;
             }
-
+            
             FlxTween.tween(music, {pitch: 0}, 2, {
                 ease: FlxEase.sineOut,
                 type: ONESHOT,
-            }).onComplete = (t:FlxTween) ->
-                openSubState(new GameOverSubstate());
+            }).onComplete = (t:FlxTween) -> openSubState(new GameOverSubstate());
         }
         
         super.create();
@@ -161,7 +161,7 @@ class PlayState extends MusicSyncedState
         
         if (level.meta.backgroundID > 0)
             updateBackground(level.meta.backgroundID);
-
+            
         if (playtestMode)
         {
             if (playtestMusicAsset != null)
@@ -190,7 +190,7 @@ class PlayState extends MusicSyncedState
             super.update(elapsed);
             return;
         }
-
+        
         if (music != null)
         {
             Conductor.songPosition = music.time;
@@ -198,7 +198,7 @@ class PlayState extends MusicSyncedState
         }
         else
             Conductor.songPosition = 0;
-        
+            
         runtime.update(Conductor.songPosition);
         
         gameCam.targetOffset.set(Math.sin(elapsed * 0.45) * CAMERA_SWAY_X, Math.sin(elapsed * 0.32) * CAMERA_SWAY_Y);
@@ -224,13 +224,13 @@ class PlayState extends MusicSyncedState
         
         player.updatePlayer(elapsed);
     }
-
+    
     function returnToEditor()
     {
         destroyMusic();
         FlxG.switchState(() -> new EditorState());
     }
-
+    
     function destroyMusic()
     {
         if (music != null)
@@ -240,7 +240,7 @@ class PlayState extends MusicSyncedState
             music = null;
         }
     }
-
+    
     override public function destroy()
     {
         destroyMusic();
