@@ -1,5 +1,6 @@
 package states;
 
+import flixel.FlxObject;
 import objects.core.Player;
 import states.substates.GameOverSubstate;
 import core.shaders.GrayscaleShader;
@@ -44,6 +45,10 @@ class PlayState extends MusicSyncedState
     static inline var CAMERA_SWAY_X:Float = 7;
     static inline var CAMERA_SWAY_Y:Float = 4;
     
+    var camFollowX:Float = 0.134;
+    var camFollowY:Float = 0.04;
+    var cameraObject:FlxSprite;
+    
     var grayscale:GrayscaleShader;
     
     public function new(?playtestData:LevelData, ?playtestMusicAsset:Sound)
@@ -61,7 +66,12 @@ class PlayState extends MusicSyncedState
         ActorManager.init();
         ActorManager.randomizePositions = true; // o jogo sempre respeita Random X/Y
         
-        FlxG.worldBounds.set(-FlxG.width * 0.5, -FlxG.height * 0.5, FlxG.width * 2, FlxG.height * 1.5);
+        cameraObject = new FlxSprite();
+        cameraObject.makeGraphic(1, 1, FlxColor.WHITE);
+        cameraObject.setGraphicSize(32, 32);
+        cameraObject.updateHitbox();
+        
+        trace(FlxG.worldBounds);
         // FlxG.debugger.drawDebug = true
         
         gameCam = new FlxCamera();
@@ -111,8 +121,15 @@ class PlayState extends MusicSyncedState
         
         reloadLevelData();
         
-        gameCam.setScrollBoundsRect(FlxG.worldBounds.x, FlxG.worldBounds.y, FlxG.worldBounds.width, FlxG.worldBounds.height, true);
-        gameCam.follow(player, FlxCameraFollowStyle.TOPDOWN, 0.5);
+        background.updateHitbox();
+        
+        FlxG.worldBounds.set(-128, 0, FlxG.width + 256, FlxG.height + 32);
+        
+        updateCameraTarget();
+        add(cameraObject);
+        
+        gameCam.setScrollBoundsRect(FlxG.worldBounds.x - 256, FlxG.worldBounds.y, FlxG.worldBounds.width + 256, FlxG.worldBounds.height, true);
+        gameCam.follow(cameraObject, PLATFORMER, 0.0376);
         var bloomShader = new GlowShader(4.0, 2.5, 0.65);
         grayscale = new GrayscaleShader();
         // gameCam.filters = [new ShaderFilter(bloomShader), new ShaderFilter(grayscale)];
@@ -223,6 +240,17 @@ class PlayState extends MusicSyncedState
         }
         
         player.updatePlayer(elapsed);
+        updateCameraTarget();
+    }
+    
+    function updateCameraTarget()
+    {
+        var worldCenterX = FlxG.worldBounds.x + FlxG.worldBounds.width * 0.5 + 128;
+        var worldCenterY = FlxG.worldBounds.y + FlxG.worldBounds.height * 0.5;
+        var playerCenterX = player.hitbox.x + player.hitbox.width * 0.5;
+        var playerCenterY = player.hitbox.y + player.hitbox.height * 0.5;
+        
+        cameraObject.setPosition(worldCenterX + (playerCenterX - worldCenterX) * camFollowX - cameraObject.width * 0.5, worldCenterY + (playerCenterY - worldCenterY) * camFollowY - cameraObject.height * 0.5);
     }
     
     function returnToEditor()
