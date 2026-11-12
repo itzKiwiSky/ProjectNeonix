@@ -9,10 +9,6 @@ class BoostrapState extends FlxState
 {
     override function create()
     {
-        FlxG.sound.muteKeys = null;
-        FlxG.sound.volumeUpKeys = null;
-        FlxG.sound.volumeDownKeys = null;
-        
         SaveUtils.applyDefaults(UserPreferences);
         FlxG.switchState(() -> new states.PlayState());
     }

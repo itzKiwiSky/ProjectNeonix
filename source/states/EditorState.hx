@@ -31,12 +31,29 @@ import core.MusicSyncedState;
 import core.Timeline.TimelineEvent;
 import ui.GameUIEventController.EngineUIEvent;
 
+typedef EditorPlaytestSession =
+{
+    var levelData:LevelData;
+    var currentLevelDir:String;
+    var loadedMusicPath:String;
+    var cursorMusicTime:Float;
+    var musicTime:Float;
+    var musicVolume:Float;
+    var musicWasPlaying:Bool;
+    var musicAsset:Null<Sound>;
+    var selectedEvent:Null<TimelineEvent>;
+}
+
 class EditorState extends MusicSyncedState implements EngineUIEvent
 {
+    public static var playtestSession:Null<EditorPlaytestSession>;
+    
     var timeText:FlxText;
     
     var runtime:LevelRuntime; // atores em janela de tempo + efeitos: o mesmo código do jogo
     var cursorMusicTime:Float = 0; // the music cursor, the truth source
+    var music:Null<FlxSound>;
+    var musicAsset:Null<Sound>;
     var levelData:LevelData;
     var hudCam:FlxCamera;
     var editorGameCamera:FlxCamera;
@@ -117,7 +134,14 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         add(editorTimeline);
         
         // timeline for editor //
-        resetEditor();
+        if (playtestSession == null)
+            resetEditor();
+        else
+        {
+            var session = playtestSession;
+            playtestSession = null;
+            restorePlaytestSession(session);
+        }
         
         // for debug //
         timeText = new FlxText();
@@ -275,12 +299,30 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         obj.cameras = [camera];
         
     inline function pauseSong()
-        if (FlxG.sound.music != null)
-            FlxG.sound.music.pause();
+        if (music != null)
+            music.pause();
             
     inline function stopSong()
-        if (FlxG.sound.music != null)
-            FlxG.sound.music.stop();
+        if (music != null)
+            music.stop();
+
+    function replaceMusic(sound:Sound)
+    {
+        destroyMusic();
+        musicAsset = sound;
+        music = FlxG.sound.create(sound);
+    }
+
+    function destroyMusic()
+    {
+        if (music != null)
+        {
+            music.stop();
+            music.destroy();
+            music = null;
+        }
+        musicAsset = null;
+    }
             
     function addUI()
     {
@@ -314,9 +356,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
             {
                 loadedMusicPath = path;
                 levelData.meta.songFilename = ""; // música nova: o Save vai copiar para audio.ogg
-                if (FlxG.sound.music != null)
-                    FlxG.sound.music.destroy();
-                FlxG.sound.music = loadAudio(path);
+                replaceMusic(loadAudio(path));
                 rebuildLevelUI(); // o campo Song passa a mostrar vazio
             });
             
@@ -331,9 +371,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         var btnLevelSettings:GameUIButton = new GameUIButton(space, 8, "Level settings", () -> toggleLevelSettings());
         
         space = padding + btnLevelSettings.x + btnLevelSettings.width;
-        var btnPlayLevel:GameUIButton = new GameUIButton(space, 8, "Playtest", () -> {
-            // PlayState.levelPath = currentLevelDir;
-        });
+        var btnPlayLevel:GameUIButton = new GameUIButton(space, 8, "Playtest", startPlaytest);
         
         setUICamera(btnLoadLevel, hudCam);
         setUICamera(btnSaveLevel, hudCam);
@@ -348,6 +386,62 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         add(btnCreateLevel);
         add(btnLevelSettings);
         add(btnPlayLevel);
+    }
+
+    function startPlaytest()
+    {
+        playtestSession = {
+            levelData: levelData,
+            currentLevelDir: currentLevelDir,
+            loadedMusicPath: loadedMusicPath,
+            cursorMusicTime: cursorMusicTime,
+            musicTime: music == null ? cursorMusicTime : music.time,
+            musicVolume: music == null ? 1 : music.volume,
+            musicWasPlaying: music != null && music.playing,
+            musicAsset: musicAsset,
+            selectedEvent: selectedEvent
+        };
+
+        if (music != null)
+        {
+            music.pause();
+            music.destroy();
+            music = null;
+        }
+
+        FlxG.switchState(() -> new PlayState(levelData, musicAsset));
+    }
+
+    function restorePlaytestSession(session:EditorPlaytestSession)
+    {
+        levelData = session.levelData;
+        currentLevelDir = session.currentLevelDir;
+        loadedMusicPath = session.loadedMusicPath;
+        cursorMusicTime = session.cursorMusicTime;
+        musicAsset = session.musicAsset;
+        music = musicAsset == null ? null : FlxG.sound.create(musicAsset);
+
+        runtime.load(levelData);
+        Conductor.changeBPM(levelData.meta.bpm ?? 110);
+
+        if (levelData.meta.backgroundID > 0)
+            updateBackground(levelData.meta.backgroundID);
+
+        var laneOverrides:Array<Null<Int>> = levelData.editorMeta == null ? null : levelData.editorMeta.eventLanes;
+        editorTimeline.setEvents(levelData.events, laneOverrides);
+        editorTimeline.cursorMusicTime = cursorMusicTime;
+        Conductor.songPosition = cursorMusicTime;
+        selectedEvent = session.selectedEvent;
+
+        if (music != null)
+        {
+            music.time = session.musicTime;
+            music.volume = session.musicVolume;
+            if (session.musicWasPlaying)
+                music.play();
+            else
+                music.pause();
+        }
     }
     
     function cameraWorldConfig()
@@ -380,15 +474,20 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     
     override function update(elapsed:Float)
     {
-        var music:FlxSound = FlxG.sound.music;
         if (music != null && music.playing)
             cursorMusicTime = music.time;
             
         editorTimeline.cursorMusicTime = cursorMusicTime;
         Conductor.songPosition = cursorMusicTime;
         
+        var overTimeline = FlxG.mouse.viewY >= editorTimeline.y;
+        var scrollLanes = overTimeline && FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel != 0;
+        if (scrollLanes)
+            editorTimeline.scrollLanes(-FlxG.mouse.wheel);
+
         // arrows and wheel, move the time //
-        var dir:Float = (FlxG.keys.pressed.RIGHT || FlxG.mouse.wheel > 0 ? 1 : 0) - (FlxG.keys.pressed.LEFT || FlxG.mouse.wheel < 0 ? 1 : 0);
+        var wheel = scrollLanes ? 0 : FlxG.mouse.wheel;
+        var dir:Float = (FlxG.keys.pressed.RIGHT || wheel > 0 ? 1 : 0) - (FlxG.keys.pressed.LEFT || wheel < 0 ? 1 : 0);
         if (dir != 0)
         {
             var speed = 1000; // ms por segundo
@@ -422,6 +521,12 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
                 lastCopiedEvent = cloneEvent(selectedEvent);
             if (FlxG.keys.justPressed.V)
                 createEventCopyAtCursor();
+            if (FlxG.keys.justPressed.END)
+                goToLastEvent();
+            if (selectedEvent != null && FlxG.keys.justPressed.UP)
+                editorTimeline.moveEventToLane(selectedEvent, -1);
+            if (selectedEvent != null && FlxG.keys.justPressed.DOWN)
+                editorTimeline.moveEventToLane(selectedEvent, 1);
         }
         
         // select event //
@@ -445,16 +550,29 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     // the only way to move on the time //
     function setSongTime(time:Float)
     {
-        if (FlxG.sound.music == null)
+        if (music == null)
             return;
             
-        cursorMusicTime = FlxMath.bound(time, 0, FlxG.sound.music.length);
+        cursorMusicTime = FlxMath.bound(time, 0, music.length);
         
-        if (FlxG.sound.music.playing)
-            FlxG.sound.music.time = cursorMusicTime;
+        if (music.playing)
+            music.time = cursorMusicTime;
             
-        FlxG.sound.music.time = cursorMusicTime;
+        music.time = cursorMusicTime;
         Conductor.songPosition = cursorMusicTime;
+    }
+
+    function goToLastEvent()
+    {
+        if (levelData.events.length == 0)
+            return;
+
+        var lastEventTime:Float = levelData.events[0].time;
+        for (event in levelData.events)
+            if (event.time > lastEventTime)
+                lastEventTime = event.time;
+
+        setSongTime(lastEventTime);
     }
     
     inline function snapTime(t:Float):Float
@@ -533,11 +651,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         // we clear the song preloaded cuz we destroy it too //
         loadedMusicPath = "";
         
-        if (FlxG.sound.music != null)
-        {
-            FlxG.sound.music.destroy();
-            FlxG.sound.music = null;
-        }
+        destroyMusic();
         
         // and update the timeline to remove all the sprites//
         editorTimeline.destroyEventSprites();
@@ -546,12 +660,8 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         Conductor.changeBPM(100);
     }
     
-    inline function loadAudio(path:String)
-    {
-        var rawSoundData:Sound = Sound.fromFile(path);
-        var snd:FlxSound = FlxG.sound.create(rawSoundData);
-        return snd;
-    }
+    inline function loadAudio(path:String):Sound
+        return Sound.fromFile(path);
     
     // carregar e criar um level vazio passam pelo mesmo caminho
     function applyLevel(data:LevelData, levelDir:String = "")
@@ -567,7 +677,8 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         if (bgID > 0)
             updateBackground(bgID);
             
-        editorTimeline.setEvents(levelData.events);
+        var laneOverrides:Array<Null<Int>> = levelData.editorMeta == null ? null : levelData.editorMeta.eventLanes;
+        editorTimeline.setEvents(levelData.events, laneOverrides);
         
         trace(currentLevelDir);
         
@@ -608,6 +719,10 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
                 File.copy(loadedMusicPath, target);
             levelData.meta.songFilename = "audio.ogg";
         }
+
+        if (levelData.editorMeta == null)
+            levelData.editorMeta = Level.emptyEditorMetadata();
+        levelData.editorMeta.eventLanes = editorTimeline.getLaneOverrides();
         
         currentLevelDir = Path.directory(path);
         trace(currentLevelDir);
@@ -772,6 +887,13 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
             editorTimeline.setSelected(v);
         return v;
     }
+
+    override public function destroy()
+    {
+        if (playtestSession == null)
+            destroyMusic();
+        super.destroy();
+    }
     
     // carrega a música que o meta aponta; devolve se achou
     function loadSongFromMeta():Bool
@@ -781,9 +903,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         if (sound == null)
             return false;
             
-        if (FlxG.sound.music != null)
-            FlxG.sound.music.destroy();
-        FlxG.sound.music = FlxG.sound.create(sound);
+        replaceMusic(sound);
         
         // arquivo em disco: o Save sabe copiar; builtin e embed ficam só como referência
         loadedMusicPath = Paths.split(ref).scheme == null ? Path.join([currentLevelDir, ref]) : "";

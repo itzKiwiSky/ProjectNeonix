@@ -21,6 +21,7 @@ typedef EditorMeta =
 {
     var audioPath:String;
     var lastSavedTime:Float;
+    var ?eventLanes:Array<Null<Int>>;
 }
 
 typedef LevelData =
@@ -56,6 +57,7 @@ class Level
         return {
             audioPath: "",
             lastSavedTime: 0,
+            eventLanes: [],
         }
     }
     

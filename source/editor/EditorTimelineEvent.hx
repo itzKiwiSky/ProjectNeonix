@@ -3,6 +3,7 @@ package editor;
 import core.Timeline.TimelineEvent;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
+import flixel.text.FlxText;
 import flixel.util.FlxColor;
 
 class EditorTimelineEvent
@@ -11,7 +12,10 @@ class EditorTimelineEvent
     public var warn:FlxSprite;
     public var attack:FlxSprite;
     public var outro:FlxSprite;
-    public var lane:Int = 0; // non serializable
+    public var nameLabel:FlxText;
+    public var naturalNameWidth(default, null):Float;
+    public var lane:Int = 0;
+    public var laneIsManual:Bool = false;
     
     var baseColor:FlxColor = FlxColor.WHITE;
     
@@ -25,8 +29,22 @@ class EditorTimelineEvent
         warn = makeBar();
         attack = makeBar();
         outro = makeBar();
+        nameLabel = new FlxText(0, 0, 0, displayName(event.object), 10);
+        nameLabel.wordWrap = false;
+        nameLabel.color = FlxColor.WHITE;
+        naturalNameWidth = nameLabel.width;
     }
     
+    public function refreshName()
+    {
+        nameLabel.fieldWidth = 0;
+        nameLabel.text = displayName(event.object);
+        naturalNameWidth = nameLabel.width;
+    }
+        
+    inline static function displayName(name:String):String
+        return name.split("_").join(" ");
+        
     static function makeBar():FlxSprite
     {
         var s = new FlxSprite();
@@ -66,5 +84,6 @@ class EditorTimelineEvent
         group.add(warn);
         group.add(attack);
         group.add(outro);
+        group.add(nameLabel);
     }
 }

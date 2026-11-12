@@ -30,9 +30,8 @@ class GameOverSubstate extends FlxSubState
         gameOverText.size = 50;
         gameOverText.font = "assets/embed/fonts/nexa_bold.otf";
         gameOverText.text = "Game Over!";
-        
         gameOverText.screenCenter(X);
-        gameOverText.y = 300;
+        gameOverText.y = 400;
         gameOverText.alpha = 0;
         
         add(gameOverText);

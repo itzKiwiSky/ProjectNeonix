@@ -19,6 +19,10 @@ class Main extends Sprite
         game = new FlxGame(screenWidth, screenHeight, PlayState, updateFrameRate, updateFrameRate, true, false);
         
         addChild(game);
+        
         FlxG.autoPause = false;
+        FlxG.sound.muteKeys = null;
+        FlxG.sound.volumeUpKeys = null;
+        FlxG.sound.volumeDownKeys = null;
     }
 }
