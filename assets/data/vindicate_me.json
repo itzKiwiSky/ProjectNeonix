@@ -1,0 +1,279 @@
+{
+    "editorMeta": {
+        "lastSavedTime": 0,
+        "audioPath": "",
+        "eventLanes": [
+            2,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            1
+        ]
+    },
+    "meta": {
+        "title": "Vindicate Me",
+        "platformColor": [
+            186,
+            211,
+            230
+        ],
+        "backgroundID": 2,
+        "songEnding": -1,
+        "songFilename": "builtin:vindicate_me.ogg",
+        "actorsColor": [
+            255,
+            255,
+            255
+        ],
+        "backgroundColor": [
+            0,
+            0,
+            0
+        ],
+        "bpm": 100,
+        "artist": "BigGiantCircles"
+    },
+    "events": [
+        {
+            "lead": 0,
+            "params": {
+                "duration": 9650,
+                "y": 580,
+                "waveIntensity": 0.4,
+                "waveSpeed": 0.1,
+                "outro": 100
+            },
+            "time": 0,
+            "object": "spike_pit"
+        },
+        {
+            "lead": 0,
+            "params": {
+                "duration": 650,
+                "zoom": 1.7,
+                "easing": "sineOut"
+            },
+            "time": 8840,
+            "object": "camera_zoom"
+        },
+        {
+            "lead": 0,
+            "params": {
+                "duration": 100,
+                "zoom": 1.1,
+                "easing": "expoOut"
+            },
+            "time": 9710,
+            "object": "camera_zoom"
+        },
+        {
+            "params": {
+                "duration": 950,
+                "x": 640,
+                "useRandomX": true,
+                "stopY": 496,
+                "outro": 200
+            },
+            "lead": 750,
+            "object": "falling_block",
+            "time": 11070
+        },
+        {
+            "params": {
+                "duration": 950,
+                "x": 640,
+                "useRandomX": true,
+                "stopY": 496,
+                "outro": 200
+            },
+            "lead": 750,
+            "object": "falling_block",
+            "time": 13670
+        },
+        {
+            "params": {
+                "duration": 950,
+                "x": 640,
+                "useRandomX": true,
+                "stopY": 496,
+                "outro": 200
+            },
+            "lead": 750,
+            "object": "falling_block",
+            "time": 15900
+        },
+        {
+            "params": {
+                "duration": 950,
+                "x": 640,
+                "useRandomX": true,
+                "stopY": 496,
+                "outro": 200
+            },
+            "lead": 750,
+            "object": "falling_block",
+            "time": 18340
+        },
+        {
+            "params": {
+                "duration": 950,
+                "x": 640,
+                "useRandomX": true,
+                "stopY": 496,
+                "outro": 200
+            },
+            "lead": 750,
+            "object": "falling_block",
+            "time": 20760
+        },
+        {
+            "params": {
+                "duration": 950,
+                "x": 640,
+                "useRandomX": true,
+                "stopY": 496,
+                "outro": 200
+            },
+            "lead": 750,
+            "object": "falling_block",
+            "time": 23410
+        },
+        {
+            "params": {
+                "duration": 950,
+                "x": 640,
+                "useRandomX": true,
+                "stopY": 496,
+                "outro": 200
+            },
+            "lead": 750,
+            "object": "falling_block",
+            "time": 23410
+        },
+        {
+            "lead": 0,
+            "params": {
+                "r": 69,
+                "b": 99,
+                "duration": 50,
+                "g": 51
+            },
+            "time": 11400,
+            "object": "bg_color"
+        },
+        {
+            "lead": 0,
+            "params": {
+                "r": 37,
+                "b": 68,
+                "duration": 450,
+                "g": 23
+            },
+            "time": 11463.6666666667,
+            "object": "bg_color"
+        },
+        {
+            "lead": 0,
+            "params": {
+                "r": 69,
+                "b": 99,
+                "duration": 50,
+                "g": 51
+            },
+            "time": 13800,
+            "object": "bg_color"
+        },
+        {
+            "lead": 0,
+            "params": {
+                "r": 37,
+                "b": 68,
+                "duration": 450,
+                "g": 23
+            },
+            "time": 13864,
+            "object": "bg_color"
+        },
+        {
+            "params": {
+                "x": 200,
+                "y": 150,
+                "spread": 360,
+                "angle": 0,
+                "outro": 500,
+                "life": 3000,
+                "duration": 250,
+                "interval": 250,
+                "useRandomX": false,
+                "speed": 1200,
+                "useRandomY": false,
+                "count": 8
+            },
+            "object": "bullet_emitter",
+            "lead": 750,
+            "time": 23415.6666666667
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 150,
+                "angle": 0,
+                "outro": 500,
+                "spread": 360,
+                "life": 3000,
+                "duration": 250,
+                "interval": 1200,
+                "useRandomX": false,
+                "speed": 700,
+                "useRandomY": false,
+                "count": 8
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 23699.3333333333
+        },
+        {
+            "params": {
+                "x": 1100,
+                "y": 150,
+                "angle": 0,
+                "outro": 500,
+                "spread": 360,
+                "life": 3000,
+                "duration": 250,
+                "interval": 250,
+                "useRandomX": false,
+                "speed": 1200,
+                "useRandomY": false,
+                "count": 8
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 23566
+        },
+        {
+            "params": {
+                "duration": 1250,
+                "b": 68,
+                "r": 37,
+                "g": 23           
+            },
+            "object": "bg_color",
+            "lead": 0,
+            "time": 8624.33333333333
+        }
+    ]
+}

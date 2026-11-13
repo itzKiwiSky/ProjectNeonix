@@ -78,6 +78,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     var levelDataWidgets:Array<FlxSprite> = [];
     
     public var selectedEvent(default, null):Null<TimelineEvent>;
+    
     var selectedEvents:Array<TimelineEvent> = [];
     
     var isEventUIDirty:Bool = false; // set if the ui need to be rebuilt
@@ -412,7 +413,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
             music = null;
         }
         
-        FlxG.switchState(() -> new PlayState(levelData, musicAsset));
+        FlxG.switchState(() -> new PlayState(levelData, musicAsset, cursorMusicTime));
     }
     
     function restorePlaytestSession(session:EditorPlaytestSession)
@@ -438,12 +439,11 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         
         if (music != null)
         {
-            music.time = session.musicTime;
             music.volume = session.musicVolume;
             if (session.musicWasPlaying)
-                music.play();
+                music.play(true, session.musicTime);
             else
-                music.pause();
+                music.time = session.musicTime;
         }
     }
     
@@ -507,10 +507,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
             if (music.playing)
                 music.pause();
             else
-            {
-                music.time = cursorMusicTime;
-                music.play();
-            }
+                music.play(true, cursorMusicTime);
         }
         
         // atalhos não valem enquanto você digita num campo de texto //
@@ -524,6 +521,10 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
                 lastCopiedEvent = cloneEvent(selectedEvent);
             if (FlxG.keys.justPressed.V)
                 createEventCopyAtCursor();
+            if (FlxG.keys.justPressed.X)
+                createExactEventCopy();
+            if (FlxG.keys.justPressed.T)
+                moveSelectedEventsToCursor();
             if (FlxG.keys.justPressed.END)
                 goToLastEvent();
             if (FlxG.keys.justPressed.UP)
@@ -622,6 +623,28 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     inline function cloneEvent(e:TimelineEvent):TimelineEvent
         return Json.parse(Json.stringify(e));
         
+    function createExactEventCopy()
+    {
+        if (lastCopiedEvent == null)
+            return;
+            
+        pushEvents(cloneEvent(lastCopiedEvent));
+    }
+
+    function moveSelectedEventsToCursor()
+    {
+        if (selectedEvents.length == 0)
+            return;
+
+        for (e in selectedEvents)
+        {
+            e.time = cursorMusicTime;
+            rebuildActor(e);
+        }
+        editorTimeline.relayout();
+        onEventsChanged();
+    }
+
     function createEventCopyAtCursor()
     {
         if (lastCopiedEvent == null)
@@ -828,7 +851,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         var fields = rootFields.copy();
         if (selectionHasType(selectedEvent.object))
             fields = fields.concat(ActorManager.fieldsOf(selectedEvent.object));
-
+            
         for (f in fields)
         {
             switch (f.kind)
@@ -889,12 +912,12 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
             dd.text = "Multiple types";
         addWidget(dd);
     }
-
+    
     function selectionHasType(type:String):Bool
     {
         if (selectedEvents.length == 0)
             return false;
-
+            
         for (e in selectedEvents)
             if (e.object != type)
                 return false;
@@ -905,26 +928,26 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     {
         if (selectedEvent == null || selectedEvents.length == 0)
             return;
-
+            
         for (e in selectedEvents)
         {
             if (e.object == newType)
                 continue;
-
+                
             var old:Dynamic = e.params;
             var fresh:Dynamic = ActorManager.defaultParams(newType);
-
+            
             // keep the data that has equal fields
             if (old != null)
                 for (k in Reflect.fields(fresh))
                     if (Reflect.hasField(old, k))
                         Reflect.setField(fresh, k, Reflect.field(old, k));
-
+                        
             e.object = newType;
             e.params = fresh;
             if (ActorManager.categoryOf(newType) == EventCategory.Map)
                 e.lead = 0;
-
+                
             rebuildActor(e);
             editorTimeline.refreshEvent(e);
         }
@@ -935,9 +958,8 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     function selectEvents(events:Array<TimelineEvent>, ?primary:Null<TimelineEvent>)
     {
         selectedEvents = events.copy();
-        selectedEvent = primary != null && selectedEvents.indexOf(primary) >= 0
-            ? primary
-            : (selectedEvents.length > 0 ? selectedEvents[selectedEvents.length - 1] : null);
+        selectedEvent = primary != null
+            && selectedEvents.indexOf(primary) >= 0 ? primary : (selectedEvents.length > 0 ? selectedEvents[selectedEvents.length - 1] : null);
         isEventUIDirty = true;
         if (editorTimeline != null)
             editorTimeline.setSelected(selectedEvents);

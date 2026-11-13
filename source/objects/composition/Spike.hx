@@ -1,5 +1,6 @@
 package objects.composition;
 
+import flixel.util.FlxColor;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 
@@ -30,11 +31,11 @@ class Spike extends FlxTypedSpriteGroup<FlxSprite>
         add(spikeBlock);
         
         spikeHitbox = new FlxSprite();
-        spikeHitbox.makeGraphic(1, 1);
+        spikeHitbox.makeGraphic(1, 1, FlxColor.TRANSPARENT);
         spikeHitbox.setGraphicSize(32, 48);
         spikeHitbox.updateHitbox();
         spikeHitbox.setPosition(spikeSprite.width * 0.5 - spikeHitbox.width * 0.5, (spikeSprite.height * 0.5 - spikeHitbox.height * 0.5) + 16);
-        spikeHitbox.visible = false;
+        spikeHitbox.alpha = 0;
         add(spikeHitbox);
     }
 }

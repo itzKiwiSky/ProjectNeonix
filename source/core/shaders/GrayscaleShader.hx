@@ -31,12 +31,13 @@ class GrayscaleShader extends FlxShader
     function get_strength():Float
     {
         var v:Array<Float> = data.amount.value;
-        return v == null ? 0.0 : v[0];
+        return v == null || v.length == 0 ? 0.0 : v[0];
     }
     
     function set_strength(value:Float):Float
     {
-        data.amount.value = [value];
-        return value;
+        var clamped = Math.max(0.0, Math.min(1.0, value));
+        data.amount.value = [clamped];
+        return clamped;
     }
 }

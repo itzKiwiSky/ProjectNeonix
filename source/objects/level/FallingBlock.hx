@@ -4,6 +4,8 @@ import flixel.tweens.FlxEase;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import core.managers.ActorManager;
+import core.managers.ActorManager.EventCategory;
+import core.managers.ActorManager.FieldKind;
 import flixel.FlxBasic;
 import core.LevelActor;
 
@@ -11,57 +13,128 @@ class FallingBlock extends LevelActor
 {
     var warningSprite:FlxSprite;
     var movingBlock:FlxSprite;
+    var stopY:Float;
+    var warningBaseScaleX:Float;
+    var warningBaseScaleY:Float;
+    var blockBaseScale:Float;
     
     static inline final sizeBase:Int = 128;
+    static inline final WARNING_ANIMATION_MS:Float = 200;
+    static inline final START_Y:Float = -sizeBase * 0.5;
     
-    public function new(x:Float, y:Float, time:Float = 0, warningTime:Float = 1000, attackSpeed:Float = 500, outroDuration:Float = 200)
+    public function new(x:Float, stopY:Float, time:Float = 0, warningTime:Float = 1000, fallDuration:Float = 500, outroDuration:Float = 200)
     {
-        super(x, y, time, warningTime, attackSpeed, outroDuration);
+        super(x, stopY, time, warningTime, fallDuration, outroDuration);
+        this.cx = x;
+        this.cy = START_Y;
+        this.stopY = stopY;
+        
         warningSprite = new FlxSprite();
         warningSprite.loadGraphic("assets/images/game/warning.png");
         warningSprite.setGraphicSize(sizeBase, FlxG.height);
+        warningBaseScaleX = warningSprite.scale.x;
+        warningBaseScaleY = warningSprite.scale.y;
         warningSprite.updateHitbox();
+        warningSprite.alpha = 0.5;
+        warningSprite.visible = false;
         add(warningSprite);
+        setWarningScale(0);
         
         movingBlock = new FlxSprite();
         movingBlock.loadGraphic("assets/images/game/movable_block.png");
         movingBlock.setGraphicSize(sizeBase, sizeBase);
+        blockBaseScale = movingBlock.scale.x;
         movingBlock.updateHitbox();
+        movingBlock.visible = false;
         add(movingBlock);
+        syncBlock();
     }
     
-    public static function selfRegister()
+    public static function selfRegister():Void
     {
-        // ActorManager.registerActor();
+        ActorManager.registerActor("falling_block", e -> new FallingBlock(ActorManager.posX(e), ActorManager.num(e, "stopY", FlxG.height - sizeBase * 0.5), e.time, e.lead ?? 750, ActorManager.num(e, "duration", 500), ActorManager.num(e, "outro", 200)), EventCategory.Obstacle, [
+            {
+                key: "x",
+                label: "X",
+                kind: FieldKind.Number,
+                defaultValue: 640
+            },
+            {
+                key: "useRandomX",
+                label: "Random X",
+                kind: Checkbox,
+                defaultValue: false
+            },
+            {
+                key: "stopY",
+                label: "Stop Y",
+                kind: FieldKind.Number,
+                defaultValue: FlxG.height - sizeBase * 0.5
+            },
+            {
+                key: "duration",
+                label: "Fall duration",
+                kind: FieldKind.Number,
+                step: 100,
+                defaultValue: 500
+            },
+            {
+                key: "outro",
+                label: "Outro",
+                kind: FieldKind.Number,
+                step: 100,
+                defaultValue: 200
+            }
+        ]);
     }
     
-    override function onWaiting() {}
+    override function onWaiting()
+    {
+        warningSprite.visible = false;
+        movingBlock.visible = false;
+    }
     
     override function onWarning()
     {
         warningSprite.visible = true;
         movingBlock.visible = false;
+        setWarningScale(0);
     }
     
     override function onActive()
     {
         warningSprite.visible = false;
         movingBlock.visible = true;
+        movingBlock.alpha = 1;
+        cy = START_Y;
+        setBlockScale(1);
     }
     
-    inline function syncActive(obj:FlxSprite):Void
+    inline function syncBlock():Void
     {
-        obj.updateHitbox();
-        obj.setPosition(cx - obj.width * 0.5, cy - obj.height * 0.5);
+        movingBlock.updateHitbox();
+        movingBlock.setPosition(cx - movingBlock.width * 0.5, cy - movingBlock.height * 0.5);
     }
     
-    function setScale(s:FlxSprite, v:Float)
+    function setBlockScale(value:Float)
     {
-        s.scale.set(v, v);
-        syncActive(s);
+        movingBlock.scale.set(blockBaseScale * value, blockBaseScale * value);
+        syncBlock();
     }
     
-    override function onOutro() {}
+    function setWarningScale(value:Float)
+    {
+        warningSprite.scale.set(warningBaseScaleX * value, FlxG.height);
+        warningSprite.updateHitbox();
+        warningSprite.setPosition(cx - warningSprite.width * 0.5, (FlxG.height - warningSprite.height) * 0.5);
+    }
+    
+    override function onOutro()
+    {
+        cy = stopY;
+        movingBlock.alpha = 1;
+        setBlockScale(1);
+    }
     
     override function onDead()
     {
@@ -69,20 +142,30 @@ class FallingBlock extends LevelActor
         movingBlock.visible = false;
     }
     
-    override function onWaitingUpdate() {}
-    
     override function onWarningUpdate()
     {
-        var t:Float = progress(currentTime, time - warningTime, sizeBase);
-        warningSprite.scale.set(FlxEase.backOut(t));
+        var animationLength = Math.min(warningTime, WARNING_ANIMATION_MS);
+        var t = progress(currentTime, time - warningTime, animationLength);
+        setWarningScale(FlxEase.backOut(t));
     }
     
-    override function onActiveUpdate() {}
+    override function onActiveUpdate()
+    {
+        var t = progress(currentTime, time, duration);
+        cy = START_Y + (stopY - START_Y) * FlxEase.bounceOut(t);
+        syncBlock();
+    }
     
-    override function onOutroUpdate() {}
+    override function onOutroUpdate()
+    {
+        var t = progress(currentTime, time + duration, outroDuration);
+        var scale = 1 - FlxEase.quadIn(t);
+        movingBlock.alpha = scale;
+        setBlockScale(scale);
+    }
     
     override function hits(obj:FlxBasic):Bool
     {
-        return super.hits(obj);
+        return phase == Active && FlxG.overlap(obj, movingBlock);
     }
 }

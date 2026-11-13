@@ -30,6 +30,7 @@ class PlayState extends MusicSyncedState
     
     var playtestData:Null<LevelData>;
     var playtestMode:Bool = false;
+    var playtestStartTime:Float = 0;
     var gameplayStopped:Bool = false;
     var music:Null<FlxSound>;
     var playtestMusicAsset:Null<Sound>;
@@ -48,15 +49,16 @@ class PlayState extends MusicSyncedState
     
     var camFollowX:Float = 0.134;
     var camFollowY:Float = 0.04;
-    var cameraObject:FlxSprite;
+    var cameraObject:FlxObject;
     
-    var grayscale:GrayscaleShader;
+    public var grayscale(default, null):GrayscaleShader;
     
-    public function new(?playtestData:LevelData, ?playtestMusicAsset:Sound)
+    public function new(?playtestData:LevelData, ?playtestMusicAsset:Sound, playtestStartTime:Float = 0)
     {
         super();
         this.playtestData = playtestData;
         this.playtestMusicAsset = playtestMusicAsset;
+        this.playtestStartTime = playtestStartTime;
         playtestMode = playtestData != null;
     }
     
@@ -67,10 +69,7 @@ class PlayState extends MusicSyncedState
         ActorManager.init();
         ActorManager.randomizePositions = true; // o jogo sempre respeita Random X/Y
         
-        cameraObject = new FlxSprite();
-        cameraObject.makeGraphic(1, 1, FlxColor.WHITE);
-        cameraObject.setGraphicSize(32, 32);
-        cameraObject.updateHitbox();
+        cameraObject = new FlxObject(0, 0, 32, 32);
         
         trace(FlxG.worldBounds);
         // FlxG.debugger.drawDebug = true
@@ -130,11 +129,8 @@ class PlayState extends MusicSyncedState
         add(cameraObject);
         
         gameCam.setScrollBoundsRect(FlxG.worldBounds.x - 256, FlxG.worldBounds.y, FlxG.worldBounds.width + 256, FlxG.worldBounds.height, true);
-        gameCam.follow(cameraObject, PLATFORMER, 0.0376);
-        var bloomShader = new GlowShader(4.0, 2.5, 0.65);
-        grayscale = new GrayscaleShader();
-        // gameCam.filters = [new ShaderFilter(bloomShader), new ShaderFilter(grayscale)];
-        // grayscale.strength = 0;
+        gameCam.follow(cameraObject, PLATFORMER, 0.1);
+        gameCam.snapToTarget();
         
         player.onKill = () ->
         {
@@ -182,11 +178,12 @@ class PlayState extends MusicSyncedState
             
         if (playtestMode)
         {
+            Conductor.songPosition = playtestStartTime;
             if (playtestMusicAsset != null)
             {
                 music = FlxG.sound.create(playtestMusicAsset);
                 music.volume = 0.2;
-                music.play();
+                music.play(true, playtestStartTime);
             }
             return;
         }
@@ -219,7 +216,8 @@ class PlayState extends MusicSyncedState
             
         runtime.update(Conductor.songPosition);
         
-        gameCam.targetOffset.set(Math.sin(elapsed * 0.45) * CAMERA_SWAY_X, Math.sin(elapsed * 0.32) * CAMERA_SWAY_Y);
+        cameraMotionTime += elapsed;
+        gameCam.targetOffset.set(Math.sin(cameraMotionTime * 0.45) * CAMERA_SWAY_X, Math.sin(cameraMotionTime * 0.32) * CAMERA_SWAY_Y);
         
         super.update(elapsed);
         
@@ -239,6 +237,15 @@ class PlayState extends MusicSyncedState
                 returnToEditor();
             else
                 FlxG.switchState(() -> new EditorState());
+        }
+        
+        if (playtestMode)
+        {
+            if (FlxG.keys.justPressed.R)
+            {
+                if (music != null)
+                    music.time = 0;
+            }
         }
         #end
         

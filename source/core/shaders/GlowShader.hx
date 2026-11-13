@@ -37,8 +37,8 @@ class GlowShader extends FlxShader
 
             vec4 glow = (colorSum / 25.0) * uIntensity;
 
-            // Additive blending over the original sprite so dark outlines stay crisp
-            gl_FragColor = texColor + glow * (1.0 - texColor.a);
+            // Camera buffers are usually opaque, so the glow must not depend on transparency.
+            gl_FragColor = vec4(texColor.rgb + glow.rgb, texColor.a);
         }
     ')
     public function new(size:Float = 4.0, intensity:Float = 1.5, threshold:Float = 0.0)
