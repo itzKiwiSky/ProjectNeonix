@@ -1,4 +1,4 @@
-package core;
+package core.utils;
 
 import haxe.io.Path;
 import openfl.media.Sound;

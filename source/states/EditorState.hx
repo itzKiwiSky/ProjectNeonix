@@ -1,7 +1,7 @@
 package states;
 
+import core.utils.Paths;
 import ui.GameUINumericStepper;
-import core.Paths;
 import haxe.io.Path;
 import core.LevelRuntime;
 import core.managers.EffectManager;

@@ -54,6 +54,8 @@
 	<haxelib name="flixel-addons" />
 	<haxelib name="flixel-waveform" />
 
+	<haxelib name="hscript-iris" />
+
 	<haxelib name="hxdiscord_rpc" version="1.3.0" if="DISCORD_ALLOWED desktop" />
 
 	<haxelib name="hxcpp-debug-server" if="debug" />

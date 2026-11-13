@@ -12,7 +12,7 @@ import flixel.FlxCamera;
 import flixel.util.FlxColor;
 import openfl.media.Sound;
 import haxe.io.Path;
-import core.Paths;
+import core.utils.Paths;
 import core.managers.ActorManager;
 import core.Conductor;
 import core.LevelRuntime;
@@ -40,6 +40,7 @@ class PlayState extends MusicSyncedState
     var gameCam:FlxCamera;
     var hudCam:FlxCamera;
     var returnButton:GameUIButton;
+    var objectEditorButton:GameUIButton;
     var cameraMotionTime:Float = 0;
     
     static inline var CAMERA_SWAY_X:Float = 7;
@@ -229,6 +230,7 @@ class PlayState extends MusicSyncedState
         if (runtime.hits(player.hitbox))
             player.testHit();
             
+        #if debug
         if (FlxG.keys.justPressed.SEVEN)
         {
             if (music != null)
@@ -238,6 +240,7 @@ class PlayState extends MusicSyncedState
             else
                 FlxG.switchState(() -> new EditorState());
         }
+        #end
         
         player.updatePlayer(elapsed);
         updateCameraTarget();

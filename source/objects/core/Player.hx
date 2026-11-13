@@ -1,5 +1,6 @@
 package objects.core;
 
+import flixel.input.gamepad.FlxGamepad;
 import core.save.UserPreferences;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -34,6 +35,8 @@ class Player extends FlxTypedSpriteGroup<FlxSprite>
     public var playerSkin:Int = 0;
     
     public var onKill:Void->Void;
+    
+    var activeGamepad:FlxGamepad;
     
     public function new()
     {
@@ -70,10 +73,20 @@ class Player extends FlxTypedSpriteGroup<FlxSprite>
     {
         hitbox.velocity.x = 0;
         
+        if (isKilled)
+            return;
+            
         if (hitbox.isTouching(DOWN) && FlxG.keys.anyPressed([UP, SPACE, Z, W]))
             hitbox.velocity.y = -400;
             
-        var dir:Float = (FlxG.keys.anyPressed([D, RIGHT]) ? 1 : 0) - (FlxG.keys.anyPressed([A, LEFT]) ? 1 : 0);
+        activeGamepad = FlxG.gamepads.lastActive;
+        var gamepadAxis:Float = 0;
+        if (activeGamepad != null)
+            gamepadAxis = -activeGamepad.getXAxis(LEFT_ANALOG_STICK);
+            
+        var movingRight:Int = FlxG.keys.anyPressed([D, RIGHT]) ? 1 : 0;
+        var movingLeft:Int = FlxG.keys.anyPressed([A, LEFT]) ? 1 : 0;
+        var dir:Float = (movingRight - movingLeft) - gamepadAxis;
         
         hitbox.velocity.x = dir * playerSpeed;
         
