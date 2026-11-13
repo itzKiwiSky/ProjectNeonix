@@ -42,6 +42,7 @@ typedef EditorPlaytestSession =
     var musicWasPlaying:Bool;
     var musicAsset:Null<Sound>;
     var selectedEvent:Null<TimelineEvent>;
+    var selectedEvents:Array<TimelineEvent>;
 }
 
 class EditorState extends MusicSyncedState implements EngineUIEvent
@@ -76,7 +77,8 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     var eventWidgets:Array<FlxSprite> = [];
     var levelDataWidgets:Array<FlxSprite> = [];
     
-    public var selectedEvent(default, set):TimelineEvent;
+    public var selectedEvent(default, null):Null<TimelineEvent>;
+    var selectedEvents:Array<TimelineEvent> = [];
     
     var isEventUIDirty:Bool = false; // set if the ui need to be rebuilt
     
@@ -399,7 +401,8 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
             musicVolume: music == null ? 1 : music.volume,
             musicWasPlaying: music != null && music.playing,
             musicAsset: musicAsset,
-            selectedEvent: selectedEvent
+            selectedEvent: selectedEvent,
+            selectedEvents: selectedEvents.copy()
         };
         
         if (music != null)
@@ -431,7 +434,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         editorTimeline.setEvents(levelData.events, laneOverrides);
         editorTimeline.cursorMusicTime = cursorMusicTime;
         Conductor.songPosition = cursorMusicTime;
-        selectedEvent = session.selectedEvent;
+        selectEvents(session.selectedEvents ?? (session.selectedEvent == null ? [] : [session.selectedEvent]), session.selectedEvent);
         
         if (music != null)
         {
@@ -523,18 +526,34 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
                 createEventCopyAtCursor();
             if (FlxG.keys.justPressed.END)
                 goToLastEvent();
-            if (selectedEvent != null && FlxG.keys.justPressed.UP)
-                editorTimeline.moveEventToLane(selectedEvent, -1);
-            if (selectedEvent != null && FlxG.keys.justPressed.DOWN)
-                editorTimeline.moveEventToLane(selectedEvent, 1);
+            if (FlxG.keys.justPressed.UP)
+                for (e in selectedEvents)
+                    editorTimeline.moveEventToLane(e, -1);
+            if (FlxG.keys.justPressed.DOWN)
+                for (e in selectedEvents)
+                    editorTimeline.moveEventToLane(e, 1);
         }
         
         // select event //
         if (FlxG.mouse.justPressed && FlxG.mouse.viewY >= editorTimeline.y)
         {
             var hit = editorTimeline.eventAt(FlxG.mouse.viewX, FlxG.mouse.viewY);
-            if (hit != null)
-                selectedEvent = hit;
+            if (FlxG.keys.pressed.CONTROL)
+            {
+                if (hit == null)
+                    selectEvents([]);
+                else
+                {
+                    var selection = selectedEvents.copy();
+                    if (selection.indexOf(hit) >= 0)
+                        selection.remove(hit);
+                    else
+                        selection.push(hit);
+                    selectEvents(selection, hit);
+                }
+            }
+            else if (hit != null)
+                selectEvents([hit], hit);
         }
         
         if (isEventUIDirty && boxCurrentSelectedEvent != null)
@@ -596,7 +615,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         levelData.events.push(e);
         editorTimeline.addEvent(e);
         rebuildActor(e);
-        selectedEvent = e;
+        selectEvents([e], e);
         onEventsChanged();
     }
     
@@ -615,13 +634,16 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     
     function deleteSelected()
     {
-        if (selectedEvent == null)
+        if (selectedEvents.length == 0)
             return;
             
-        removeActorOf(selectedEvent);
-        editorTimeline.removeEvent(selectedEvent);
-        levelData.events.remove(selectedEvent);
-        selectedEvent = null;
+        for (e in selectedEvents.copy())
+        {
+            removeActorOf(e);
+            editorTimeline.removeEvent(e);
+            levelData.events.remove(e);
+        }
+        selectEvents([]);
         onEventsChanged();
     }
     
@@ -645,7 +667,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         runtime.load(levelData);
         
         // clear the selected one //
-        selectedEvent = null;
+        selectEvents([]);
         cursorMusicTime = 0;
         
         // we clear the song preloaded cuz we destroy it too //
@@ -780,13 +802,20 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     
     function setValue(f:FieldDef, value:Dynamic)
     {
-        var holder = holderOf(f);
-        if (holder == null)
-            return;
-            
-        Reflect.setField(holder, f.key, value);
-        
-        rebuildActor(selectedEvent); // o ator guarda cópias dos valores
+        for (e in selectedEvents)
+        {
+            var holder:Dynamic = f.target == FieldTarget.Root ? e : e.params;
+            if (holder == null && f.target != FieldTarget.Root)
+            {
+                holder = {};
+                e.params = holder;
+            }
+            if (holder != null)
+            {
+                Reflect.setField(holder, f.key, value);
+                rebuildActor(e); // o ator guarda cópias dos valores
+            }
+        }
         editorTimeline.relayout(); // time, duration ou outro mudam a largura e a linha
         onEventsChanged();
     }
@@ -796,7 +825,11 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         var ROW_HEIGHT:Float = 32;
         var rowY:Float = 8 + ROW_HEIGHT + 8; // abaixo do dropdown
         
-        for (f in rootFields.concat(ActorManager.fieldsOf(selectedEvent.object)))
+        var fields = rootFields.copy();
+        if (selectionHasType(selectedEvent.object))
+            fields = fields.concat(ActorManager.fieldsOf(selectedEvent.object));
+
+        for (f in fields)
         {
             switch (f.kind)
             {
@@ -850,42 +883,64 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     function createTypeDropdown()
     {
         var dd:GameUIDropdownMenu = new GameUIDropdownMenu(8, 8, ActorManager.getActorNames(), (idx:Int, name:String) -> changeEventType(name), 140);
-        dd.selectedLabel = selectedEvent.object;
+        var sameType = selectionHasType(selectedEvent.object);
+        dd.selectedLabel = sameType ? selectedEvent.object : null;
+        if (!sameType)
+            dd.text = "Multiple types";
         addWidget(dd);
+    }
+
+    function selectionHasType(type:String):Bool
+    {
+        if (selectedEvents.length == 0)
+            return false;
+
+        for (e in selectedEvents)
+            if (e.object != type)
+                return false;
+        return true;
     }
     
     function changeEventType(newType:String)
     {
-        if (selectedEvent == null || selectedEvent.object == newType)
+        if (selectedEvent == null || selectedEvents.length == 0)
             return;
-            
-        var old:Dynamic = selectedEvent.params;
-        var fresh:Dynamic = ActorManager.defaultParams(newType);
-        
-        // keep the data that has equal fields
-        if (old != null)
-            for (k in Reflect.fields(fresh))
-                if (Reflect.hasField(old, k))
-                    Reflect.setField(fresh, k, Reflect.field(old, k));
-                    
-        selectedEvent.object = newType;
-        selectedEvent.params = fresh;
-        if (ActorManager.categoryOf(newType) == EventCategory.Map)
-            selectedEvent.lead = 0;
-            
-        rebuildActor(selectedEvent);
-        editorTimeline.refreshEvent(selectedEvent);
+
+        for (e in selectedEvents)
+        {
+            if (e.object == newType)
+                continue;
+
+            var old:Dynamic = e.params;
+            var fresh:Dynamic = ActorManager.defaultParams(newType);
+
+            // keep the data that has equal fields
+            if (old != null)
+                for (k in Reflect.fields(fresh))
+                    if (Reflect.hasField(old, k))
+                        Reflect.setField(fresh, k, Reflect.field(old, k));
+
+            e.object = newType;
+            e.params = fresh;
+            if (ActorManager.categoryOf(newType) == EventCategory.Map)
+                e.lead = 0;
+
+            rebuildActor(e);
+            editorTimeline.refreshEvent(e);
+        }
         onEventsChanged();
         isEventUIDirty = true;
     }
     
-    function set_selectedEvent(v:TimelineEvent):TimelineEvent
+    function selectEvents(events:Array<TimelineEvent>, ?primary:Null<TimelineEvent>)
     {
-        selectedEvent = v;
+        selectedEvents = events.copy();
+        selectedEvent = primary != null && selectedEvents.indexOf(primary) >= 0
+            ? primary
+            : (selectedEvents.length > 0 ? selectedEvents[selectedEvents.length - 1] : null);
         isEventUIDirty = true;
         if (editorTimeline != null)
-            editorTimeline.setSelected(v);
-        return v;
+            editorTimeline.setSelected(selectedEvents);
     }
     
     override public function destroy()

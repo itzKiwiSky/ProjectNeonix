@@ -73,8 +73,8 @@ class FallingBlock extends LevelActor
     
     override function onWarningUpdate()
     {
-        var t:Float = progress(currentTime, time - warningTime, 200);
-        setScale(warningSprite, FlxEase.backOut(t));
+        var t:Float = progress(currentTime, time - warningTime, sizeBase);
+        warningSprite.scale.set(FlxEase.backOut(t));
     }
     
     override function onActiveUpdate() {}

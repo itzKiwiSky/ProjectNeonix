@@ -8,7 +8,7 @@ import sys.FileSystem;
 
 class Paths
 {
-    static final SCHEMES:Map<String, String> = ["embed" => "assets/embed/", "builtin" => "assets/music/"];
+    static final SCHEMES:Map<String, String> = ["embed" => "assets/embed/", "builtin" => "assets/embed/music/"];
     
     // só é esquema se for um dos conhecidos: "C:\x.ogg" e "audio.ogg" ficam sem esquema
     public static function split(ref:String):{scheme:Null<String>, path:String}

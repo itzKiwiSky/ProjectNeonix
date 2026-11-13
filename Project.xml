@@ -44,7 +44,6 @@
 
 	<assets path="assets/images" />
 	<assets path="assets/sounds" />
-	<assets path="assets/music" />
 	<assets path="assets/data" />
 	<assets path="assets/embed" embed="true" />
 

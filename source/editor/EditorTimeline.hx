@@ -194,10 +194,10 @@ class EditorTimeline extends FlxTypedSpriteGroup<FlxSprite>
         }
     }
     
-    public function setSelected(e:Null<TimelineEvent>)
+    public function setSelected(events:Array<TimelineEvent>)
     {
         for (s in eventSprites)
-            s.setSelected(s.event == e);
+            s.setSelected(events.indexOf(s.event) >= 0);
     }
     
     // distribui os eventos em linhas para que nenhum fique em cima de outro
