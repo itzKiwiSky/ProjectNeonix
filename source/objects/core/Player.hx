@@ -30,7 +30,7 @@ class Player extends FlxTypedSpriteGroup<FlxSprite>
     var playerSpeed:Float = 350;
     var playerSize:Int = 48;
     
-    var isKilled:Bool = false;
+    public var isKilled:Bool = false;
     
     public var playerSkin:Int = 0;
     
@@ -126,6 +126,7 @@ class Player extends FlxTypedSpriteGroup<FlxSprite>
     public function reboot()
     {
         health = maxHealth;
+        isKilled = false;
         updateHealthDial();
     }
     

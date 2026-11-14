@@ -28,7 +28,7 @@ import ui.GameUIButton;
 
 class PlayState extends MusicSyncedState
 {
-    public inline static var levelPath:String = "assets/data/retro_blast.json"; // quem abrir o PlayState escolhe a fase aqui
+    public inline static var levelPath:String = "assets/data/vindicate_me.json"; // quem abrir o PlayState escolhe a fase aqui
     
     public static var needRestart:Bool = false;
     
@@ -160,7 +160,13 @@ class PlayState extends MusicSyncedState
             FlxTween.tween(music, {pitch: 0}, 2, {
                 ease: FlxEase.sineOut,
                 type: ONESHOT,
-            }).onComplete = (t:FlxTween) -> openSubState(new GameOverSubstate());
+            }).onComplete = (t:FlxTween) ->
+                {
+                    final lastTime:Float = music?.time;
+                    music.pause();
+                    Conductor.songPosition = lastTime;
+                    openSubState(new GameOverSubstate());
+                };
         }
         
         super.create();
@@ -216,6 +222,7 @@ class PlayState extends MusicSyncedState
         if (music != null)
         {
             Conductor.songPosition = music.time;
+            
             FlxG.watch.add(music, "time", "music time");
         }
         else
@@ -261,13 +268,20 @@ class PlayState extends MusicSyncedState
         player.updatePlayer(elapsed);
         updateCameraTarget();
         
+        resetLevel();
+    }
+    
+    public function resetLevel()
+    {
         if (needRestart)
         {
             grayscale.strength = 0;
             if (music != null)
             {
                 music.time = 0;
+                music.pitch = 1;
                 Conductor.songPosition = music.time;
+                music.play();
             }
             Conductor.recalculateTimings();
             player.reboot();

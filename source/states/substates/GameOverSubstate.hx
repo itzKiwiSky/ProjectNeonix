@@ -29,7 +29,7 @@ class GameOverSubstate extends FlxSubState
         super.create();
         
         subCamera = new FlxCamera();
-        subCamera.bgColor = 0x61000000; // Optional semi-transparent background
+        subCamera.bgColor = FlxColor.TRANSPARENT; // Optional semi-transparent background
         FlxG.cameras.add(subCamera, false);
         
         bgSprite = new FlxSprite();
@@ -53,19 +53,7 @@ class GameOverSubstate extends FlxSubState
         
         btnRestart = new GameUIButton(0, 0, "Restart Level", () ->
         {
-            if (isActionAlreadyRunning)
-                return;
-                
-            subCamera.fade(FlxColor.BLACK, 0.75, false, () ->
-            {
-                PlayState.needRestart = true;
-                subCamera.fade(FlxColor.BLACK, 0.75, true, () ->
-                {
-                    isActionAlreadyRunning = false;
-                    closeSubState();
-                });
-            });
-            isActionAlreadyRunning = true;
+            closeTransition();
         });
         btnRestart.screenCenter(X);
         btnRestart.y = FlxG.height;
@@ -90,6 +78,22 @@ class GameOverSubstate extends FlxSubState
                 FlxTween.tween(btnRestart, {alpha: 1, y: 400}, 1.5, {ease: FlxEase.backOut});
             }
         });
+    }
+    
+    function closeTransition()
+    {
+        FlxTween.tween(gameOverText, {alpha: 0, y: 400}, 1.5, {
+            ease: FlxEase.backIn,
+            onComplete: (t:FlxTween) -> FlxTween.tween(bgSprite, {alpha: 0}, 1.1, {
+                ease: FlxEase.quadOut,
+                onComplete: (t:FlxTween) ->
+                {
+                    PlayState.needRestart = true;
+                    close();
+                }
+            })
+        });
+        FlxTween.tween(btnRestart, {alpha: 0, y: FlxG.height}, 1.5, {ease: FlxEase.backIn});
     }
     
     override function update(elapsed:Float)
