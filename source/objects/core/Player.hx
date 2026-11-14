@@ -123,6 +123,12 @@ class Player extends FlxTypedSpriteGroup<FlxSprite>
         dialHealth.angle = playerSprite.angle;
     }
     
+    public function reboot()
+    {
+        health = maxHealth;
+        updateHealthDial();
+    }
+    
     public function testHit()
     {
         if (wasHit || health <= 0)

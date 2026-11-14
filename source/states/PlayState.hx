@@ -26,7 +26,9 @@ import ui.GameUIButton;
 
 class PlayState extends MusicSyncedState
 {
-    public static var levelPath:String = "assets/data/retro_blast.json"; // quem abrir o PlayState escolhe a fase aqui
+    public inline static var levelPath:String = "assets/data/retro_blast.json"; // quem abrir o PlayState escolhe a fase aqui
+    
+    public static var needRestart:Bool = false;
     
     var playtestData:Null<LevelData>;
     var playtestMode:Bool = false;
@@ -51,7 +53,7 @@ class PlayState extends MusicSyncedState
     var camFollowY:Float = 0.04;
     var cameraObject:FlxObject;
     
-    public var grayscale(default, null):GrayscaleShader;
+    var grayscale:GrayscaleShader;
     
     public function new(?playtestData:LevelData, ?playtestMusicAsset:Sound, playtestStartTime:Float = 0)
     {
@@ -69,7 +71,10 @@ class PlayState extends MusicSyncedState
         ActorManager.init();
         ActorManager.randomizePositions = true; // o jogo sempre respeita Random X/Y
         
-        cameraObject = new FlxObject(0, 0, 32, 32);
+        cameraObject = new FlxSprite();
+        // cameraObject.makeGraphic(1, 1, FlxColor.WHITE);
+        // cameraObject.setGraphicSize(32, 32);
+        // cameraObject.updateHitbox();
         
         trace(FlxG.worldBounds);
         // FlxG.debugger.drawDebug = true
@@ -126,11 +131,11 @@ class PlayState extends MusicSyncedState
         FlxG.worldBounds.set(-128, 0, FlxG.width + 256, FlxG.height + 32);
         
         updateCameraTarget();
-        add(cameraObject);
         
         gameCam.setScrollBoundsRect(FlxG.worldBounds.x - 256, FlxG.worldBounds.y, FlxG.worldBounds.width + 256, FlxG.worldBounds.height, true);
-        gameCam.follow(cameraObject, PLATFORMER, 0.1);
-        gameCam.snapToTarget();
+        gameCam.follow(cameraObject, PLATFORMER, 0.0376);
+        // gameCam.filters = [new ShaderFilter(bloomShader), new ShaderFilter(grayscale)];
+        // grayscale.strength = 0;
         
         player.onKill = () ->
         {
@@ -216,8 +221,7 @@ class PlayState extends MusicSyncedState
             
         runtime.update(Conductor.songPosition);
         
-        cameraMotionTime += elapsed;
-        gameCam.targetOffset.set(Math.sin(cameraMotionTime * 0.45) * CAMERA_SWAY_X, Math.sin(cameraMotionTime * 0.32) * CAMERA_SWAY_Y);
+        gameCam.targetOffset.set(Math.sin(elapsed * 0.45) * CAMERA_SWAY_X, Math.sin(elapsed * 0.32) * CAMERA_SWAY_Y);
         
         super.update(elapsed);
         
@@ -247,10 +251,20 @@ class PlayState extends MusicSyncedState
                     music.time = 0;
             }
         }
+        
+        if (FlxG.keys.justPressed.Q)
+            player.health = 0;
         #end
         
         player.updatePlayer(elapsed);
         updateCameraTarget();
+        
+        if (needRestart)
+        {
+            reloadLevelData();
+            player.reboot();
+            player.y = platformSprite.y - player.hitbox.height;
+        }
     }
     
     function updateCameraTarget()
