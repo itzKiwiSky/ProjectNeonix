@@ -1,5 +1,8 @@
 package core.managers;
 
+import flixel.FlxCamera;
+import flixel.system.FlxAssets.FlxShader;
+import flixel.FlxSprite;
 import flixel.FlxG;
 import core.managers.Timeline.TimelineEvent;
 import core.level.Level.LevelData;
@@ -55,6 +58,8 @@ class ActorManager
     public static var randomizePositions:Bool = true;
     
     static inline var RANDOM_MARGIN:Float = 64;
+    
+    public static var defaultCamera:Null<FlxCamera>;
     
     public static function init()
     {
@@ -126,6 +131,7 @@ class ActorManager
             
         var actor:LevelActor = entry.factory(e);
         actor.event = e;
+        actor.forEach((s:FlxSprite) -> s.cameras = [defaultCamera]);
         return actor;
     }
     

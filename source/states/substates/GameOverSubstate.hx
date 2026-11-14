@@ -1,5 +1,7 @@
 package states.substates;
 
+import flixel.FlxBasic;
+import flixel.FlxCamera;
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 import ui.GameUIButton;
 import ui.GameUIBox;
@@ -18,9 +20,17 @@ class GameOverSubstate extends FlxSubState
     
     var btnRestart:GameUIButton;
     
+    var isActionAlreadyRunning:Bool = false;
+    
+    public var subCamera:FlxCamera;
+    
     override function create()
     {
         super.create();
+        
+        subCamera = new FlxCamera();
+        subCamera.bgColor = 0x61000000; // Optional semi-transparent background
+        FlxG.cameras.add(subCamera, false);
         
         bgSprite = new FlxSprite();
         bgSprite.makeGraphic(1, 1, FlxColor.BLACK);
@@ -41,9 +51,29 @@ class GameOverSubstate extends FlxSubState
         
         add(gameOverText);
         
-        btnRestart = new GameUIButton(0, 0, "Restart Level", () -> PlayState.needRestart = true);
+        btnRestart = new GameUIButton(0, 0, "Restart Level", () ->
+        {
+            if (isActionAlreadyRunning)
+                return;
+                
+            subCamera.fade(FlxColor.BLACK, 0.75, false, () ->
+            {
+                PlayState.needRestart = true;
+                subCamera.fade(FlxColor.BLACK, 0.75, true, () ->
+                {
+                    isActionAlreadyRunning = false;
+                    closeSubState();
+                });
+            });
+            isActionAlreadyRunning = true;
+        });
         btnRestart.screenCenter(X);
         btnRestart.y = FlxG.height;
+        btnRestart.cameras = [subCamera];
+        btnRestart.bg.cameras = [subCamera];
+        btnRestart.text.cameras = [subCamera];
+        
+        forEach((s:FlxBasic) -> s.cameras = [subCamera]);
         
         add(btnRestart);
         

@@ -1,5 +1,7 @@
 package states;
 
+import flixel.FlxSubState;
+import openfl.display.Shader;
 import flixel.FlxObject;
 import objects.core.Player;
 import states.substates.GameOverSubstate;
@@ -46,7 +48,7 @@ class PlayState extends MusicSyncedState
     var objectEditorButton:GameUIButton;
     var cameraMotionTime:Float = 0;
     
-    static inline var CAMERA_SWAY_X:Float = 7;
+    static inline var CAMERA_SWAY_X:Float = 6;
     static inline var CAMERA_SWAY_Y:Float = 4;
     
     var camFollowX:Float = 0.134;
@@ -71,23 +73,14 @@ class PlayState extends MusicSyncedState
         ActorManager.init();
         ActorManager.randomizePositions = true; // o jogo sempre respeita Random X/Y
         
-        cameraObject = new FlxSprite();
-        // cameraObject.makeGraphic(1, 1, FlxColor.WHITE);
-        // cameraObject.setGraphicSize(32, 32);
-        // cameraObject.updateHitbox();
-        
-        trace(FlxG.worldBounds);
-        // FlxG.debugger.drawDebug = true
+        cameraObject = new FlxObject();
         
         gameCam = new FlxCamera();
-        FlxG.cameras.add(gameCam);
-        FlxG.cameras.setDefaultDrawTarget(gameCam, true);
-        if (playtestMode)
-        {
-            hudCam = new FlxCamera();
-            hudCam.bgColor = FlxColor.TRANSPARENT;
-            FlxG.cameras.add(hudCam, false);
-        }
+        FlxG.cameras.add(gameCam, true);
+        
+        hudCam = new FlxCamera();
+        hudCam.bgColor = FlxColor.TRANSPARENT;
+        FlxG.cameras.add(hudCam, false);
         
         platformSprite = new FlxSprite();
         platformSprite.loadGraphic("assets/images/game/platform.png");
@@ -95,19 +88,24 @@ class PlayState extends MusicSyncedState
         platformSprite.y = (FlxG.height - platformSprite.height * 0.5) + 64;
         platformSprite.immovable = true;
         platformSprite.screenCenter(X);
+        platformSprite.cameras = [gameCam];
         
         background = new FlxSprite();
         background.makeGraphic(FlxG.width, FlxG.height, FlxColor.TRANSPARENT);
         background.updateHitbox();
         background.scrollFactor.set(0.5, 0.5);
         background.screenCenter();
+        background.cameras = [gameCam];
         
         player = new Player();
         player.screenCenter();
         player.y = platformSprite.y - player.hitbox.height;
+        player.cameras = [gameCam];
         
         // os efeitos precisam existir antes do load, é o que registra bg_color, camera_zoom...
         runtime = new LevelRuntime(background, platformSprite, gameCam);
+        
+        ActorManager.defaultCamera = gameCam;
         
         add(background);
         add(player);
@@ -132,10 +130,9 @@ class PlayState extends MusicSyncedState
         
         updateCameraTarget();
         
-        gameCam.setScrollBoundsRect(FlxG.worldBounds.x - 256, FlxG.worldBounds.y, FlxG.worldBounds.width + 256, FlxG.worldBounds.height, true);
-        gameCam.follow(cameraObject, PLATFORMER, 0.0376);
-        // gameCam.filters = [new ShaderFilter(bloomShader), new ShaderFilter(grayscale)];
-        // grayscale.strength = 0;
+        grayscale = new GrayscaleShader(0);
+        var glow:GlowShader = new GlowShader(0.0035, 0.12, 0.2, 0xFFFFFFFF);
+        gameCam.filters = [new ShaderFilter(glow), new ShaderFilter(grayscale)];
         
         player.onKill = () ->
         {
@@ -154,6 +151,11 @@ class PlayState extends MusicSyncedState
                 openSubState(new GameOverSubstate());
                 return;
             }
+            
+            FlxTween.tween(grayscale, {strength: 1}, 2, {
+                ease: FlxEase.sineOut,
+                type: ONESHOT,
+            });
             
             FlxTween.tween(music, {pitch: 0}, 2, {
                 ease: FlxEase.sineOut,
@@ -261,9 +263,16 @@ class PlayState extends MusicSyncedState
         
         if (needRestart)
         {
-            reloadLevelData();
+            grayscale.strength = 0;
+            if (music != null)
+            {
+                music.time = 0;
+                Conductor.songPosition = music.time;
+            }
+            Conductor.recalculateTimings();
             player.reboot();
             player.y = platformSprite.y - player.hitbox.height;
+            needRestart = false;
         }
     }
     

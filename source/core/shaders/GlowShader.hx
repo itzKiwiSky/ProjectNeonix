@@ -7,45 +7,68 @@ class GlowShader extends FlxShader
     @:glFragmentSource('
         #pragma header
 
-        uniform float uGlowSize;
-        uniform float uIntensity;
-        uniform float uBrightnessThreshold;
+        uniform float uGlowPower;
+        uniform float uGlowStrength;
+        uniform vec4 uGlowColor;
+        uniform float uContrast;
 
         void main()
         {
             vec2 uv = openfl_TextureCoordv;
-            vec4 texColor = flixel_texture2D(bitmap, uv);
+            float p = uGlowPower;
 
-            vec2 texelSize = uGlowSize / openfl_TextureSize;
-            vec4 colorSum = vec4(0.0);
+            vec4 c = flixel_texture2D(bitmap, uv);
+            c.rgb *= (1.0 + uContrast);
+            vec4 oldColor = c;
 
-            for (float x = -2.0; x <= 2.0; x += 1.0)
+            float strength = uGlowStrength + 0.5;
+
+            vec4 sum = c;
+            sum += flixel_texture2D(bitmap, uv + vec2( 0.0, -p));
+            sum += flixel_texture2D(bitmap, uv + vec2(-p,   -p));
+            sum += flixel_texture2D(bitmap, uv + vec2(-p,    0.0));
+            sum += flixel_texture2D(bitmap, uv + vec2(-p,    p));
+            sum += flixel_texture2D(bitmap, uv + vec2( 0.0,  p));
+            sum += flixel_texture2D(bitmap, uv + vec2( p,    p));
+            sum += flixel_texture2D(bitmap, uv + vec2( p,    0.0));
+            sum += flixel_texture2D(bitmap, uv + vec2( p,   -p));
+            vec4 blur = sum / 9.0;
+
+            vec4 result;
+            result.a   = blur.a + oldColor.a;
+            result.rgb = oldColor.rgb / 2.0 + blur.rgb * strength;
+
+            if (oldColor.a < 1.0 && p > 0.0)
             {
-                for (float y = -2.0; y <= 2.0; y += 1.0)
-                {
-                    vec4 sampleColor = flixel_texture2D(bitmap, uv + vec2(x, y) * texelSize);
-                    
-                    // Check how bright the pixel is (optional: makes only bright colors glow)
-                    float brightness = dot(sampleColor.rgb, vec3(0.299, 0.587, 0.114));
-                    if (brightness >= uBrightnessThreshold)
-                    {
-                        // Multiply RGB by alpha so transparent pixels do not bleed dark edges
-                        colorSum += vec4(sampleColor.rgb * sampleColor.a, sampleColor.a);
-                    }
-                }
+                result.a   = blur.a + oldColor.a;
+                result.rgb = uGlowColor.rgb * p * 100.0 * (1.0 - oldColor.a)
+                           + oldColor.rgb * oldColor.a;
+            }
+            else if (oldColor.a < 1.0)
+            {
+                result.a = oldColor.a;
             }
 
-            vec4 glow = (colorSum / 25.0) * uIntensity;
-
-            // Camera buffers are usually opaque, so the glow must not depend on transparency.
-            gl_FragColor = vec4(texColor.rgb + glow.rgb, texColor.a);
+            gl_FragColor = result;
         }
     ')
-    public function new(size:Float = 4.0, intensity:Float = 1.5, threshold:Float = 0.0)
+    public function new(power:Float = 0.002, strength:Float = 0.0, contrast:Float = 0.0, color:Int = 0xFFFFFFFF)
     {
         super();
-        uGlowSize.value = [size];
-        uIntensity.value = [intensity];
-        uBrightnessThreshold.value = [threshold];
+        trace(data.uGlowPower, data.uGlowColor);
+        data.uGlowPower.value = [power];
+        data.uGlowStrength.value = [strength];
+        data.uContrast.value = [contrast];
+        setColor(color);
+    }
+    
+    public function setColor(color:Int):Void
+    {
+        data.uGlowColor.value = [
+            ((color >> 16) & 0xFF) / 255.0,
+            ((color >> 8) & 0xFF) / 255.0,
+            (color & 0xFF) / 255.0,
+            1.0
+        ];
     }
 }
