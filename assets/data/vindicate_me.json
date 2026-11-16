@@ -1,7 +1,6 @@
 {
     "editorMeta": {
         "lastSavedTime": 0,
-        "audioPath": "",
         "eventLanes": [
             2,
             null,
@@ -17,19 +16,433 @@
             null,
             null,
             null,
+            2,
+            null,
+            4,
+            1,
             null,
             null,
             null,
-            1
-        ]
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        ],
+        "audioPath": ""
     },
+    "events": [
+        {
+            "params": {
+                "duration": 9650,
+                "y": 580,
+                "waveIntensity": 0.4,
+                "waveSpeed": 0.1,
+                "outro": 100
+            },
+            "lead": 0,
+            "object": "spike_pit",
+            "time": 0
+        },
+        {
+            "params": {
+                "duration": 650,
+                "easing": "sineOut",
+                "zoom": 1.7
+            },
+            "lead": 0,
+            "object": "camera_zoom",
+            "time": 8840
+        },
+        {
+            "params": {
+                "duration": 100,
+                "easing": "expoOut",
+                "zoom": 1
+            },
+            "lead": 0,
+            "object": "camera_zoom",
+            "time": 9710
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 950,
+                "useRandomX": true,
+                "outro": 200,
+                "stopY": 496
+            },
+            "time": 11070,
+            "object": "falling_block"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 950,
+                "useRandomX": true,
+                "outro": 200,
+                "stopY": 496
+            },
+            "time": 13670,
+            "object": "falling_block"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 950,
+                "useRandomX": true,
+                "outro": 200,
+                "stopY": 496
+            },
+            "time": 15900,
+            "object": "falling_block"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 950,
+                "useRandomX": true,
+                "outro": 200,
+                "stopY": 496
+            },
+            "time": 18340,
+            "object": "falling_block"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 950,
+                "useRandomX": true,
+                "outro": 200,
+                "stopY": 496
+            },
+            "time": 20760,
+            "object": "falling_block"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 450,
+                "duration": 750,
+                "useRandomX": false,
+                "outro": 200,
+                "stopY": 496
+            },
+            "time": 23370,
+            "object": "falling_block"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 800,
+                "duration": 750,
+                "useRandomX": true,
+                "outro": 200,
+                "stopY": 496
+            },
+            "time": 23500,
+            "object": "falling_block"
+        },
+        {
+            "params": {
+                "duration": 50,
+                "b": 99,
+                "r": 69,
+                "g": 51
+            },
+            "lead": 0,
+            "object": "bg_color",
+            "time": 11400
+        },
+        {
+            "params": {
+                "duration": 450,
+                "b": 68,
+                "r": 37,
+                "g": 23
+            },
+            "lead": 0,
+            "object": "bg_color",
+            "time": 11463.6666666667
+        },
+        {
+            "params": {
+                "duration": 50,
+                "b": 99,
+                "r": 69,
+                "g": 51
+            },
+            "lead": 0,
+            "object": "bg_color",
+            "time": 13800
+        },
+        {
+            "params": {
+                "duration": 450,
+                "b": 68,
+                "r": 37,
+                "g": 23
+            },
+            "lead": 0,
+            "object": "bg_color",
+            "time": 13864
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 200,
+                "y": 150,
+                "outro": 500,
+                "spread": 360,
+                "angle": 0,
+                "life": 3000,
+                "duration": 250,
+                "interval": 250,
+                "useRandomX": true,
+                "count": 8,
+                "useRandomY": false,
+                "speed": 1200
+            },
+            "time": 23415.6666666667,
+            "object": "bullet_emitter"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "y": 150,
+                "spread": 360,
+                "angle": 0,
+                "outro": 500,
+                "life": 3000,
+                "duration": 250,
+                "interval": 400,
+                "useRandomX": false,
+                "count": 8,
+                "useRandomY": false,
+                "speed": 1200
+            },
+            "time": 23699.3333333333,
+            "object": "bullet_emitter"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 1100,
+                "y": 150,
+                "spread": 360,
+                "angle": 0,
+                "outro": 500,
+                "life": 3000,
+                "duration": 250,
+                "interval": 250,
+                "useRandomX": false,
+                "count": 8,
+                "useRandomY": false,
+                "speed": 1200
+            },
+            "time": 23566,
+            "object": "bullet_emitter"
+        },
+        {
+            "lead": 0,
+            "params": {
+                "r": 37,
+                "b": 68,
+                "duration": 1250,
+                "g": 23
+            },
+            "time": 8624.33333333333,
+            "object": "bg_color"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 950,
+                "useRandomX": true,
+                "outro": 200,
+                "stopY": 496
+            },
+            "time": 25470,
+            "object": "falling_block"
+        },
+        {
+            "lead": 900,
+            "params": {
+                "x": 200,
+                "y": 150,
+                "spread": 360,
+                "angle": 0,
+                "outro": 500,
+                "life": 3000,
+                "duration": 250,
+                "interval": 250,
+                "useRandomX": true,
+                "count": 9,
+                "useRandomY": false,
+                "speed": 1200
+            },
+            "time": 25837,
+            "object": "bullet_emitter"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 950,
+                "useRandomX": true,
+                "outro": 200,
+                "stopY": 496
+            },
+            "time": 27880,
+            "object": "falling_block"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 950,
+                "useRandomX": true,
+                "outro": 200,
+                "stopY": 496
+            },
+            "time": 27880,
+            "object": "falling_block"
+        },
+        {
+            "lead": 900,
+            "params": {
+                "x": 200,
+                "y": 150,
+                "angle": 0,
+                "outro": 500,
+                "spread": 360,
+                "life": 3000,
+                "duration": 250,
+                "interval": 250,
+                "useRandomX": true,
+                "count": 9,
+                "useRandomY": false,
+                "speed": 1200
+            },
+            "time": 28200,
+            "object": "bullet_emitter"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 950,
+                "useRandomX": true,
+                "outro": 200,
+                "stopY": 496
+            },
+            "time": 11070,
+            "object": "falling_block"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 950,
+                "useRandomX": true,
+                "outro": 200,
+                "stopY": 496
+            },
+            "time": 13670,
+            "object": "falling_block"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 950,
+                "useRandomX": true,
+                "outro": 200,
+                "stopY": 496
+            },
+            "time": 15900,
+            "object": "falling_block"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 950,
+                "useRandomX": true,
+                "outro": 200,
+                "stopY": 496
+            },
+            "time": 15900,
+            "object": "falling_block"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 950,
+                "useRandomX": true,
+                "outro": 200,
+                "stopY": 496
+            },
+            "time": 18340,
+            "object": "falling_block"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 950,
+                "useRandomX": true,
+                "outro": 200,
+                "stopY": 496
+            },
+            "time": 20760,
+            "object": "falling_block"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 950,
+                "useRandomX": true,
+                "outro": 200,
+                "stopY": 496
+            },
+            "time": 20760,
+            "object": "falling_block"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 950,
+                "useRandomX": true,
+                "outro": 200,
+                "stopY": 496
+            },
+            "time": 20760,
+            "object": "falling_block"
+        }
+    ],
     "meta": {
-        "title": "Vindicate Me",
         "platformColor": [
             186,
             211,
             230
         ],
+        "title": "Vindicate Me",
         "backgroundID": 2,
         "songEnding": -1,
         "songFilename": "builtin:vindicate_me.ogg",
@@ -43,237 +456,7 @@
             0,
             0
         ],
-        "bpm": 100,
-        "artist": "BigGiantCircles"
-    },
-    "events": [
-        {
-            "lead": 0,
-            "params": {
-                "duration": 9650,
-                "y": 580,
-                "waveIntensity": 0.4,
-                "waveSpeed": 0.1,
-                "outro": 100
-            },
-            "time": 0,
-            "object": "spike_pit"
-        },
-        {
-            "lead": 0,
-            "params": {
-                "duration": 650,
-                "zoom": 1.7,
-                "easing": "sineOut"
-            },
-            "time": 8840,
-            "object": "camera_zoom"
-        },
-        {
-            "lead": 0,
-            "params": {
-                "duration": 100,
-                "zoom": 1.1,
-                "easing": "expoOut"
-            },
-            "time": 9710,
-            "object": "camera_zoom"
-        },
-        {
-            "params": {
-                "duration": 950,
-                "x": 640,
-                "useRandomX": true,
-                "stopY": 496,
-                "outro": 200
-            },
-            "lead": 750,
-            "object": "falling_block",
-            "time": 11070
-        },
-        {
-            "params": {
-                "duration": 950,
-                "x": 640,
-                "useRandomX": true,
-                "stopY": 496,
-                "outro": 200
-            },
-            "lead": 750,
-            "object": "falling_block",
-            "time": 13670
-        },
-        {
-            "params": {
-                "duration": 950,
-                "x": 640,
-                "useRandomX": true,
-                "stopY": 496,
-                "outro": 200
-            },
-            "lead": 750,
-            "object": "falling_block",
-            "time": 15900
-        },
-        {
-            "params": {
-                "duration": 950,
-                "x": 640,
-                "useRandomX": true,
-                "stopY": 496,
-                "outro": 200
-            },
-            "lead": 750,
-            "object": "falling_block",
-            "time": 18340
-        },
-        {
-            "params": {
-                "duration": 950,
-                "x": 640,
-                "useRandomX": true,
-                "stopY": 496,
-                "outro": 200
-            },
-            "lead": 750,
-            "object": "falling_block",
-            "time": 20760
-        },
-        {
-            "params": {
-                "duration": 950,
-                "x": 640,
-                "useRandomX": true,
-                "stopY": 496,
-                "outro": 200
-            },
-            "lead": 750,
-            "object": "falling_block",
-            "time": 23410
-        },
-        {
-            "params": {
-                "duration": 950,
-                "x": 640,
-                "useRandomX": true,
-                "stopY": 496,
-                "outro": 200
-            },
-            "lead": 750,
-            "object": "falling_block",
-            "time": 23410
-        },
-        {
-            "lead": 0,
-            "params": {
-                "r": 69,
-                "b": 99,
-                "duration": 50,
-                "g": 51
-            },
-            "time": 11400,
-            "object": "bg_color"
-        },
-        {
-            "lead": 0,
-            "params": {
-                "r": 37,
-                "b": 68,
-                "duration": 450,
-                "g": 23
-            },
-            "time": 11463.6666666667,
-            "object": "bg_color"
-        },
-        {
-            "lead": 0,
-            "params": {
-                "r": 69,
-                "b": 99,
-                "duration": 50,
-                "g": 51
-            },
-            "time": 13800,
-            "object": "bg_color"
-        },
-        {
-            "lead": 0,
-            "params": {
-                "r": 37,
-                "b": 68,
-                "duration": 450,
-                "g": 23
-            },
-            "time": 13864,
-            "object": "bg_color"
-        },
-        {
-            "params": {
-                "x": 200,
-                "y": 150,
-                "spread": 360,
-                "angle": 0,
-                "outro": 500,
-                "life": 3000,
-                "duration": 250,
-                "interval": 250,
-                "useRandomX": false,
-                "speed": 1200,
-                "useRandomY": false,
-                "count": 8
-            },
-            "object": "bullet_emitter",
-            "lead": 750,
-            "time": 23415.6666666667
-        },
-        {
-            "params": {
-                "x": 640,
-                "y": 150,
-                "angle": 0,
-                "outro": 500,
-                "spread": 360,
-                "life": 3000,
-                "duration": 250,
-                "interval": 1200,
-                "useRandomX": false,
-                "speed": 700,
-                "useRandomY": false,
-                "count": 8
-            },
-            "lead": 750,
-            "object": "bullet_emitter",
-            "time": 23699.3333333333
-        },
-        {
-            "params": {
-                "x": 1100,
-                "y": 150,
-                "angle": 0,
-                "outro": 500,
-                "spread": 360,
-                "life": 3000,
-                "duration": 250,
-                "interval": 250,
-                "useRandomX": false,
-                "speed": 1200,
-                "useRandomY": false,
-                "count": 8
-            },
-            "lead": 750,
-            "object": "bullet_emitter",
-            "time": 23566
-        },
-        {
-            "params": {
-                "duration": 1250,
-                "b": 68,
-                "r": 37,
-                "g": 23           
-            },
-            "object": "bg_color",
-            "lead": 0,
-            "time": 8624.33333333333
-        }
-    ]
+        "artist": "BigGiantCircles",
+        "bpm": 100
+    }
 }

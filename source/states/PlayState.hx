@@ -51,7 +51,7 @@ class PlayState extends MusicSyncedState
     static inline var CAMERA_SWAY_X:Float = 6;
     static inline var CAMERA_SWAY_Y:Float = 4;
     
-    var camFollowX:Float = 0.134;
+    var camFollowX:Float = 0.164;
     var camFollowY:Float = 0.04;
     var cameraObject:FlxObject;
     
@@ -131,7 +131,9 @@ class PlayState extends MusicSyncedState
         updateCameraTarget();
         
         grayscale = new GrayscaleShader(0);
-        var glow:GlowShader = new GlowShader(0.0035, 0.12, 0.2, 0xFFFFFFFF);
+        gameCam.setScrollBoundsRect(FlxG.worldBounds.x - 256, FlxG.worldBounds.y, FlxG.worldBounds.width + 256, FlxG.worldBounds.height, true);
+        gameCam.follow(cameraObject, PLATFORMER, 0.0376);
+        var glow:GlowShader = new GlowShader(0.0025, 0.16, 0.14, 0xFFFFFFFF);
         gameCam.filters = [new ShaderFilter(glow), new ShaderFilter(grayscale)];
         
         player.onKill = () ->

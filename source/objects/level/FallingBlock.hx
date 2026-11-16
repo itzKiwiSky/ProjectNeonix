@@ -165,7 +165,5 @@ class FallingBlock extends LevelActor
     }
     
     override function hits(obj:FlxBasic):Bool
-    {
         return phase == Active && FlxG.overlap(obj, movingBlock);
-    }
 }

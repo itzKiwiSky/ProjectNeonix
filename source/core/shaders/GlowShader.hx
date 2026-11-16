@@ -55,7 +55,6 @@ class GlowShader extends FlxShader
     public function new(power:Float = 0.002, strength:Float = 0.0, contrast:Float = 0.0, color:Int = 0xFFFFFFFF)
     {
         super();
-        trace(data.uGlowPower, data.uGlowColor);
         data.uGlowPower.value = [power];
         data.uGlowStrength.value = [strength];
         data.uContrast.value = [contrast];

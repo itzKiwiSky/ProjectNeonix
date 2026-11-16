@@ -124,6 +124,8 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         
         FlxG.cameras.setDefaultDrawTarget(editorGameCamera, true);
         
+        ActorManager.defaultCamera = editorGameCamera;
+        
         // FlxG.debugger.drawDebug = true;
         
         createPreviewSprites();
@@ -630,12 +632,12 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
             
         pushEvents(cloneEvent(lastCopiedEvent));
     }
-
+    
     function moveSelectedEventsToCursor()
     {
         if (selectedEvents.length == 0)
             return;
-
+            
         for (e in selectedEvents)
         {
             e.time = cursorMusicTime;
@@ -644,7 +646,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         editorTimeline.relayout();
         onEventsChanged();
     }
-
+    
     function createEventCopyAtCursor()
     {
         if (lastCopiedEvent == null)
