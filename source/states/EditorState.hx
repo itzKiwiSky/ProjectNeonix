@@ -83,7 +83,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     
     var isEventUIDirty:Bool = false; // set if the ui need to be rebuilt
     
-    var lastCopiedEvent:Null<TimelineEvent> = null;
+    var lastCopiedEvents:Array<TimelineEvent> = [];
     
     var currentLevelDir:String = ""; // pasta do level aberto; vazio enquanto não foi salvo ou aberto
     
@@ -519,8 +519,8 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
                 createEventAtCursor();
             if (FlxG.keys.justPressed.DELETE)
                 deleteSelected();
-            if (FlxG.keys.justPressed.C && selectedEvent != null)
-                lastCopiedEvent = cloneEvent(selectedEvent);
+            if (FlxG.keys.justPressed.C && selectedEvents.length > 0)
+                lastCopiedEvents = [for (e in selectedEvents) cloneEvent(e)];
             if (FlxG.keys.justPressed.V)
                 createEventCopyAtCursor();
             if (FlxG.keys.justPressed.X)
@@ -564,7 +564,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
             
         runtime.update(cursorMusicTime); // janela de atores + efeitos, igual ao jogo
         
-        timeText.text = 'CurrentTime:${Math.round(cursorMusicTime)} | step: $curStep | playing: ${music != null && music.playing} | Copied event: ${lastCopiedEvent?.object}';
+        timeText.text = 'CurrentTime:${Math.round(cursorMusicTime)} | step: $curStep | playing: ${music != null && music.playing} | Copied events: ${lastCopiedEvents.length}';
         
         super.update(elapsed);
     }
@@ -610,15 +610,22 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
             params: ActorManager.defaultParams(type)
         };
         
-        pushEvents(e);
+        pushEvents([e]);
     }
     
-    function pushEvents(e:TimelineEvent)
+    function pushEvents(events:Array<TimelineEvent>)
     {
-        levelData.events.push(e);
-        editorTimeline.addEvent(e);
-        rebuildActor(e);
-        selectEvents([e], e);
+        if (events.length == 0)
+            return;
+
+        for (e in events)
+        {
+            levelData.events.push(e);
+            editorTimeline.addEvent(e, false);
+            rebuildActor(e);
+        }
+        editorTimeline.relayout();
+        selectEvents(events, events[events.length - 1]);
         onEventsChanged();
     }
     
@@ -627,10 +634,10 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         
     function createExactEventCopy()
     {
-        if (lastCopiedEvent == null)
+        if (lastCopiedEvents.length == 0)
             return;
             
-        pushEvents(cloneEvent(lastCopiedEvent));
+        pushEvents([for (e in lastCopiedEvents) cloneEvent(e)]);
     }
     
     function moveSelectedEventsToCursor()
@@ -649,12 +656,23 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     
     function createEventCopyAtCursor()
     {
-        if (lastCopiedEvent == null)
+        if (lastCopiedEvents.length == 0)
             return;
-            
-        var e = cloneEvent(lastCopiedEvent); // um clone novo a cada colagem
-        e.time = snapTime(cursorMusicTime);
-        pushEvents(e);
+
+        var earliestTime:Float = lastCopiedEvents[0].time;
+        for (e in lastCopiedEvents)
+            if (e.time < earliestTime)
+                earliestTime = e.time;
+
+        var offset = snapTime(cursorMusicTime) - earliestTime;
+        var copies:Array<TimelineEvent> = [];
+        for (source in lastCopiedEvents)
+        {
+            var copy = cloneEvent(source);
+            copy.time += offset;
+            copies.push(copy);
+        }
+        pushEvents(copies);
     }
     
     function deleteSelected()
@@ -841,6 +859,8 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
                 rebuildActor(e); // o ator guarda cópias dos valores
             }
         }
+        for (e in selectedEvents)
+            editorTimeline.refreshEvent(e);
         editorTimeline.relayout(); // time, duration ou outro mudam a largura e a linha
         onEventsChanged();
     }
@@ -851,6 +871,14 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         var rowY:Float = 8 + ROW_HEIGHT + 8; // abaixo do dropdown
         
         var fields = rootFields.copy();
+        if (ActorManager.categoryOf(selectedEvent.object) == EventCategory.Obstacle)
+            fields.push({
+                key: "id",
+                label: "Actor ID",
+                kind: FieldKind.Text,
+                target: FieldTarget.Root,
+                defaultValue: ""
+            });
         if (selectionHasType(selectedEvent.object))
             fields = fields.concat(ActorManager.fieldsOf(selectedEvent.object));
             
@@ -876,9 +904,27 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
                         selectedName = easings.indexOf("linear") >= 0 ? "linear" : (easings.length > 0 ? easings[0] : "");
                     easingType.selectedLabel = selectedName;
                     addWidget(easingType);
+                case Text:
+                    addTextRow(f, rowY);
             }
             rowY += ROW_HEIGHT;
         }
+    }
+    
+    function addTextRow(f:FieldDef, rowY:Float)
+    {
+        var boxW:Float = boxCurrentSelectedEvent.bg.width;
+        var ev:TimelineEvent = selectedEvent;
+        
+        addWidget(new FlxText(8, rowY, 88, f.label, 14));
+        
+        var input:GameUIInputText = new GameUIInputText(96, rowY, Std.int(boxW - 104), Std.string(getValue(f) ?? ""), 12);
+        input.onChange = (old:String, value:String) ->
+        {
+            if (selectedEvent == ev)
+                setValue(f, value);
+        };
+        addWidget(input);
     }
     
     function addNumberRow(f:FieldDef, rowY:Float)

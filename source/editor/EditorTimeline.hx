@@ -19,6 +19,7 @@ class EditorTimeline extends FlxTypedSpriteGroup<FlxSprite>
     static inline var LANES_TOP:Float = 48; // onde começam as linhas, abaixo dos traços
     static inline var LANE_HEIGHT:Float = 36; // 32 da barra + 4 de espaço
     static inline var VISIBLE_LANES:Int = 5; // (256 - 48) / 36
+    static inline var EVENT_LABEL_MS:Float = 300;
     
     var ticks:Array<FlxSprite> = [];
     var eventSprites:Array<EditorTimelineEvent> = [];
@@ -261,7 +262,7 @@ class EditorTimeline extends FlxTypedSpriteGroup<FlxSprite>
         return e.time - (e.lead == null ? 0 : e.lead);
         
     inline function endOf(e:TimelineEvent):Float
-        return e.time + param(e, "duration") + param(e, "outro");
+        return e.time + (e.object == "send_event" ? EVENT_LABEL_MS : param(e, "duration") + param(e, "outro"));
         
     override function update(elapsed:Float)
     {
@@ -289,6 +290,7 @@ class EditorTimeline extends FlxTypedSpriteGroup<FlxSprite>
             var lead:Float = e.lead == null ? 0 : e.lead;
             var duration = param(e, "duration");
             var outro = param(e, "outro");
+            var isSignal = e.object == "send_event";
             var visibleLane = s.lane - laneOffset;
             if (visibleLane < 0 || visibleLane >= VISIBLE_LANES)
             {
@@ -306,12 +308,12 @@ class EditorTimeline extends FlxTypedSpriteGroup<FlxSprite>
             placeBar(s.outro, e.time + duration, outro, barY);
             
             var startX = timeToX(e.time - lead);
-            var totalWidth = (lead + duration + outro) * pixelsPerMs;
+            var totalWidth = isSignal ? EVENT_LABEL_MS * pixelsPerMs : (lead + duration + outro) * pixelsPerMs;
             var labelFits = totalWidth >= s.naturalNameWidth;
-            s.nameLabel.fieldWidth = labelFits ? s.naturalNameWidth : totalWidth;
+            s.nameLabel.fieldWidth = isSignal || labelFits ? s.naturalNameWidth : totalWidth;
             s.nameLabel.wordWrap = false;
-            s.nameLabel.visible = totalWidth > 0 && startX + totalWidth >= 0 && startX <= FlxG.width;
-            s.nameLabel.x = labelFits ? startX + (totalWidth - s.naturalNameWidth) * 0.5 : startX;
+            s.nameLabel.visible = (isSignal || totalWidth > 0) && startX + totalWidth >= 0 && startX <= FlxG.width;
+            s.nameLabel.x = isSignal ? startX + 8 : (labelFits ? startX + (totalWidth - s.naturalNameWidth) * 0.5 : startX);
             s.nameLabel.y = barY + (32 - s.nameLabel.height) * 0.5;
         }
     }

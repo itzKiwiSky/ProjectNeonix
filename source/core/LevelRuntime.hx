@@ -24,6 +24,10 @@ class LevelRuntime
     public var actorsColor(default, null):FlxColor = FlxColor.WHITE; // a cor do momento, decidida pelo efeito
     
     var all:Array<LevelActor> = [];
+    var timelineEvents:Array<TimelineEvent> = [];
+    var nextTimelineEvent:Int = 0;
+    var currentTime:Float = 0;
+    var lastTimelineTime:Null<Float>;
     
     public function new(background:FlxSprite, platform:FlxSprite, camera:FlxCamera)
     {
@@ -60,10 +64,20 @@ class LevelRuntime
         for (a in all)
             a.destroy();
         all = [];
+        timelineEvents = [];
+        nextTimelineEvent = 0;
+        currentTime = 0;
+        lastTimelineTime = null;
     }
     
     public function eventsChanged()
+    {
         effects.rebuild(data.events);
+        timelineEvents = [for (e in data.events) if (e.object == "send_event") e];
+        timelineEvents.sort((a, b) -> a.time < b.time ? -1 : (a.time > b.time ? 1 : 0));
+        resetAndReplayTimelineEvents(currentTime);
+        lastTimelineTime = currentTime;
+    }
         
     public function rebuildActor(e:TimelineEvent)
     {
@@ -91,6 +105,13 @@ class LevelRuntime
     {
         if (data == null)
             return;
+
+        if (lastTimelineTime == null || now < lastTimelineTime)
+            resetAndReplayTimelineEvents(now);
+        else
+            dispatchTimelineEventsThrough(now);
+        currentTime = now;
+        lastTimelineTime = now;
             
         for (a in all)
         {
@@ -112,6 +133,43 @@ class LevelRuntime
         for (a in active)
             if (a.tintByActorsColor)
                 a.color = actorsColor;
+    }
+
+    function resetAndReplayTimelineEvents(now:Float)
+    {
+        for (a in all)
+            a.resetTimelineEvents();
+        nextTimelineEvent = 0;
+        dispatchTimelineEventsThrough(now);
+    }
+
+    function dispatchTimelineEventsThrough(now:Float)
+    {
+        while (nextTimelineEvent < timelineEvents.length && timelineEvents[nextTimelineEvent].time <= now)
+        {
+            dispatchTimelineEvent(timelineEvents[nextTimelineEvent]);
+            nextTimelineEvent++;
+        }
+    }
+
+    function dispatchTimelineEvent(source:TimelineEvent)
+    {
+        var name:Dynamic = source.params == null ? null : Reflect.field(source.params, "name");
+        if (!Std.isOfType(name, String) || name == "")
+            return;
+
+        var target:Dynamic = source.params == null ? null : Reflect.field(source.params, "target");
+        if (target != null && !Std.isOfType(target, String))
+        {
+            trace('Target inválido no evento de timeline "${name}".');
+            return;
+        }
+        for (a in all)
+        {
+            if (Std.isOfType(target, String) && target != "" && a.event.id != target)
+                continue;
+            a.onTimelineEvent(name, source);
+        }
     }
     
     public function collide(obj:FlxObject):Bool

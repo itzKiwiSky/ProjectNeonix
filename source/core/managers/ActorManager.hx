@@ -20,6 +20,7 @@ enum FieldKind
     Number; // time, lead, duration...
     Checkbox; // randomX, randomY
     DropdownString;
+    Text;
 }
 
 // onde o valor do campo mora
@@ -68,6 +69,26 @@ class ActorManager
         initialized = true;
         
         ActorAutoRegisterMacro.run("objects.level");
+        registerMapEvent("send_event", [
+            {
+                key: "name",
+                label: "Event",
+                kind: Text,
+                defaultValue: "event"
+            },
+            {
+                key: "target",
+                label: "Target ID",
+                kind: Text,
+                defaultValue: ""
+            },
+            {
+                key: "payload",
+                label: "Payload",
+                kind: Text,
+                defaultValue: ""
+            }
+        ]);
     }
     
     public static function getActorNames():Array<String>

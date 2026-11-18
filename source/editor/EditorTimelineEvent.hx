@@ -29,7 +29,7 @@ class EditorTimelineEvent
         warn = makeBar();
         attack = makeBar();
         outro = makeBar();
-        nameLabel = new FlxText(0, 0, 0, displayName(event.object), 10);
+        nameLabel = new FlxText(0, 0, 0, displayName(event), 10);
         nameLabel.wordWrap = false;
         nameLabel.color = FlxColor.WHITE;
         naturalNameWidth = nameLabel.width;
@@ -38,12 +38,20 @@ class EditorTimelineEvent
     public function refreshName()
     {
         nameLabel.fieldWidth = 0;
-        nameLabel.text = displayName(event.object);
+        nameLabel.text = displayName(event);
         naturalNameWidth = nameLabel.width;
     }
     
-    inline static function displayName(name:String):String
-        return name.split("_").join(" ");
+    static function displayName(event:TimelineEvent):String
+    {
+        if (event.object == "send_event" && event.params != null)
+        {
+            var name:Dynamic = Reflect.field(event.params, "name");
+            if (Std.isOfType(name, String) && name != "")
+                return name;
+        }
+        return event.object.split("_").join(" ");
+    }
         
     static function makeBar():FlxSprite
     {

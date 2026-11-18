@@ -29,6 +29,11 @@ class Player extends FlxTypedSpriteGroup<FlxSprite>
     
     var playerSpeed:Float = 350;
     var playerSize:Int = 48;
+    var jumpHoldDuration:Float = 0.14;
+    var jumpHoldAcceleration:Float = 1400;
+    var jumpCutMultiplier:Float = 0.4;
+    var jumpHoldTimer:Float = 0;
+    var jumpCutApplied:Bool = false;
     
     public var isKilled:Bool = false;
     
@@ -76,9 +81,28 @@ class Player extends FlxTypedSpriteGroup<FlxSprite>
         if (isKilled)
             return;
             
-        if (hitbox.isTouching(DOWN) && FlxG.keys.anyPressed([UP, SPACE, Z, W]))
+        var jumpPressed:Bool = FlxG.keys.anyPressed([UP, SPACE, Z, W]);
+        var jumpJustPressed:Bool = FlxG.keys.justPressed.UP || FlxG.keys.justPressed.SPACE || FlxG.keys.justPressed.Z || FlxG.keys.justPressed.W;
+        
+        if (hitbox.isTouching(DOWN) && jumpJustPressed)
+        {
             hitbox.velocity.y = -400;
-            
+            jumpHoldTimer = 0;
+            jumpCutApplied = false;
+        }
+        
+        if (jumpPressed && hitbox.velocity.y < 0 && jumpHoldTimer < jumpHoldDuration)
+        {
+            var holdElapsed:Float = Math.min(elapsed, jumpHoldDuration - jumpHoldTimer);
+            hitbox.velocity.y -= jumpHoldAcceleration * holdElapsed;
+            jumpHoldTimer += holdElapsed;
+        }
+        else if (!jumpPressed && !jumpCutApplied && hitbox.velocity.y < 0 && jumpHoldTimer < jumpHoldDuration)
+        {
+            hitbox.velocity.y *= jumpCutMultiplier;
+            jumpCutApplied = true;
+        }
+        
         activeGamepad = FlxG.gamepads.lastActive;
         var gamepadAxis:Float = 0;
         if (activeGamepad != null)

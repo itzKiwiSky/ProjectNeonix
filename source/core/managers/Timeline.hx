@@ -4,6 +4,7 @@ typedef TimelineEvent =
 {
     var time:Float; // momento do impacto, em ms
     var object:String;
+    var ?id:String; // identificador opcional do ator para eventos direcionados
     var ?lead:Float; // quanto antes (ms) o objeto deve nascer
     var ?params:Dynamic;
     var ?tracks:Dynamic; // animações do evento: {canal: [{t, value, dur?, ease?}]}

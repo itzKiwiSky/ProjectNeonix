@@ -150,4 +150,8 @@ class LevelActor extends FlxTypedSpriteGroup<FlxSprite>
     public function onActiveUpdate() {}
     
     public function onOutroUpdate() {}
+
+    public function resetTimelineEvents() {}
+
+    public function onTimelineEvent(name:String, source:TimelineEvent) {}
 }
