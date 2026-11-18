@@ -113,7 +113,7 @@ class PulseBlock extends LevelActor
     
     override function onOutroUpdate()
     {
-        var t:Float = progress(currentTime, time + duration, outroDuration);
+        var t:Float = progress(currentTime, outroStartTime, outroDuration);
         activeSprite.alpha = 1 - FlxEase.quadIn(t);
         setScale(activeSprite, 1 - FlxEase.quadIn(t));
     }
@@ -125,6 +125,12 @@ class PulseBlock extends LevelActor
     }
     
     override function onActive()
+    {
+        warningSprite.visible = false;
+        activeSprite.visible = true;
+    }
+    
+    override function onOutro()
     {
         warningSprite.visible = false;
         activeSprite.visible = true;

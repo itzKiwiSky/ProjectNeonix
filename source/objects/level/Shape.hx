@@ -33,6 +33,8 @@ class Shape extends LevelActor
     
     var frameDX:Float = 0; // quanto a forma andou neste frame, para carregar quem está em cima
     var frameDY:Float = 0;
+    var lastCollisionX:Null<Float>;
+    var lastCollisionY:Null<Float>;
     
     public function new(x:Float, y:Float, w:Int, h:Int, circle:Bool, isSolid:Bool, time:Float, warningTime:Float, duration:Float, outroDuration:Float)
     {
@@ -92,7 +94,7 @@ class Shape extends LevelActor
         apply(1);
         
     override function onOutroUpdate()
-        apply(1 - FlxEase.quadIn(progress(currentTime, time + duration, outroDuration)));
+        apply(1 - FlxEase.quadIn(progress(currentTime, outroStartTime, outroDuration)));
         
     // o jogador é tratado como um círculo; a forma pode estar girada e escalada
     override function hits(obj:FlxBasic):Bool
@@ -105,22 +107,33 @@ class Shape extends LevelActor
             return false;
             
         var r = Math.min(o.width, o.height) * 0.4;
-        var dx = o.x + o.width * 0.5 - curX;
-        var dy = o.y + o.height * 0.5 - curY;
+        var pivotX:Float = x;
+        var pivotY:Float = y;
+        var shapeDX:Float = curX + timelineMoveX - pivotX;
+        var shapeDY:Float = curY + timelineMoveY - pivotY;
+        var transformRad:Float = timelineRotation * Math.PI / 180;
+        var shapeX:Float = pivotX + shapeDX * Math.cos(transformRad) - shapeDY * Math.sin(transformRad);
+        var shapeY:Float = pivotY + shapeDX * Math.sin(transformRad) + shapeDY * Math.cos(transformRad);
+        shapeX = pivotX + (shapeX - pivotX) * timelineScaleX;
+        shapeY = pivotY + (shapeY - pivotY) * timelineScaleY;
+
+        var dx = o.x + o.width * 0.5 - shapeX;
+        var dy = o.y + o.height * 0.5 - shapeY;
         
         // leva o jogador para o espaço da forma, desfazendo a rotação
-        var rad = -curAngle * Math.PI / 180;
+        var rad = -(curAngle + timelineRotation) * Math.PI / 180;
         var lx = dx * Math.cos(rad) - dy * Math.sin(rad);
         var ly = dx * Math.sin(rad) + dy * Math.cos(rad);
         
         if (circle)
         {
-            var rr = baseW * 0.5 * curScale + r;
-            return lx * lx + ly * ly <= rr * rr;
+            var rx = baseW * 0.5 * curScale * timelineScaleX + r;
+            var ry = baseH * 0.5 * curScale * timelineScaleY + r;
+            return lx * lx / (rx * rx) + ly * ly / (ry * ry) <= 1;
         }
         
-        var hw = baseW * 0.5 * curScale;
-        var hh = baseH * 0.5 * curScale;
+        var hw = baseW * 0.5 * curScale * timelineScaleX;
+        var hh = baseH * 0.5 * curScale * timelineScaleY;
         var ex = lx - FlxMath.bound(lx, -hw, hw); // distância até o ponto do retângulo mais perto
         var ey = ly - FlxMath.bound(ly, -hh, hh);
         return ex * ex + ey * ey <= r * r;
@@ -129,7 +142,16 @@ class Shape extends LevelActor
     override function collide(obj:FlxObject):Bool
     {
         if (!solid || phase != Active)
+        {
+            lastCollisionX = null;
+            lastCollisionY = null;
             return false;
+        }
+
+        var moveX:Float = lastCollisionX == null ? frameDX : body.x - lastCollisionX;
+        var moveY:Float = lastCollisionY == null ? frameDY : body.y - lastCollisionY;
+        lastCollisionX = body.x;
+        lastCollisionY = body.y;
             
         if (!FlxG.collide(obj, body))
             return false;
@@ -137,8 +159,8 @@ class Shape extends LevelActor
         // em cima da forma: ela leva o jogador junto (o Flixel não faz isso sozinho)
         if (obj.isTouching(DOWN) && obj.y + obj.height <= body.y + 4)
         {
-            obj.x += frameDX;
-            obj.y += frameDY;
+            obj.x += moveX;
+            obj.y += moveY;
         }
         return true;
     }

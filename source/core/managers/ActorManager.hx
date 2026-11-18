@@ -39,6 +39,7 @@ typedef FieldDef =
     var ?step:Float; // quanto o stepper anda (padrão 10)
     var ?active:Bool;
     var ?defaultValue:Dynamic; // usado quando o campo não existe no evento
+    var ?options:Array<String>;
     var ?min:Float; // menor valor do stepper (padrão 0)
     var ?decimals:Int; // casas decimais exibidas (padrão 0)
     var ?max:Float;
@@ -85,6 +86,58 @@ class ActorManager
             {
                 key: "payload",
                 label: "Payload",
+                kind: Text,
+                defaultValue: ""
+            }
+        ]);
+        registerMapEvent("transform_actor", [
+            {
+                key: "target",
+                label: "Target ID",
+                kind: Text,
+                defaultValue: ""
+            },
+            {
+                key: "property",
+                label: "Property",
+                kind: DropdownString,
+                options: ["move_x", "move_y", "rotate", "scale_x", "scale_y"],
+                defaultValue: "move_x"
+            },
+            {
+                key: "value",
+                label: "Value",
+                kind: Number,
+                step: 1,
+                decimals: 2,
+                min: -999999,
+                defaultValue: 1
+            },
+            {
+                key: "relative",
+                label: "Relative",
+                kind: Checkbox,
+                defaultValue: false
+            },
+            {
+                key: "duration",
+                label: "Duration",
+                kind: Number,
+                step: 100,
+                defaultValue: 500
+            },
+            {
+                key: "easing",
+                label: "Easing",
+                kind: DropdownString,
+                options: EffectManager.easingNames(),
+                defaultValue: "linear"
+            }
+        ]);
+        registerMapEvent("kill_actor", [
+            {
+                key: "target",
+                label: "Target ID",
                 kind: Text,
                 defaultValue: ""
             }

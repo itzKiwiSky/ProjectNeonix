@@ -262,7 +262,7 @@ class EditorTimeline extends FlxTypedSpriteGroup<FlxSprite>
         return e.time - (e.lead == null ? 0 : e.lead);
         
     inline function endOf(e:TimelineEvent):Float
-        return e.time + (e.object == "send_event" ? EVENT_LABEL_MS : param(e, "duration") + param(e, "outro"));
+        return e.time + (e.object == "send_event" || e.object == "kill_actor" ? EVENT_LABEL_MS : param(e, "duration") + param(e, "outro"));
         
     override function update(elapsed:Float)
     {
@@ -290,7 +290,7 @@ class EditorTimeline extends FlxTypedSpriteGroup<FlxSprite>
             var lead:Float = e.lead == null ? 0 : e.lead;
             var duration = param(e, "duration");
             var outro = param(e, "outro");
-            var isSignal = e.object == "send_event";
+            var isInstant = e.object == "send_event" || e.object == "kill_actor";
             var visibleLane = s.lane - laneOffset;
             if (visibleLane < 0 || visibleLane >= VISIBLE_LANES)
             {
@@ -308,12 +308,12 @@ class EditorTimeline extends FlxTypedSpriteGroup<FlxSprite>
             placeBar(s.outro, e.time + duration, outro, barY);
             
             var startX = timeToX(e.time - lead);
-            var totalWidth = isSignal ? EVENT_LABEL_MS * pixelsPerMs : (lead + duration + outro) * pixelsPerMs;
+            var totalWidth = isInstant ? EVENT_LABEL_MS * pixelsPerMs : (lead + duration + outro) * pixelsPerMs;
             var labelFits = totalWidth >= s.naturalNameWidth;
-            s.nameLabel.fieldWidth = isSignal || labelFits ? s.naturalNameWidth : totalWidth;
+            s.nameLabel.fieldWidth = isInstant || labelFits ? s.naturalNameWidth : totalWidth;
             s.nameLabel.wordWrap = false;
-            s.nameLabel.visible = (isSignal || totalWidth > 0) && startX + totalWidth >= 0 && startX <= FlxG.width;
-            s.nameLabel.x = isSignal ? startX + 8 : (labelFits ? startX + (totalWidth - s.naturalNameWidth) * 0.5 : startX);
+            s.nameLabel.visible = (isInstant || totalWidth > 0) && startX + totalWidth >= 0 && startX <= FlxG.width;
+            s.nameLabel.x = isInstant ? startX + 8 : (labelFits ? startX + (totalWidth - s.naturalNameWidth) * 0.5 : startX);
             s.nameLabel.y = barY + (32 - s.nameLabel.height) * 0.5;
         }
     }

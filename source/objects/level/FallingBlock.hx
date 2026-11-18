@@ -131,7 +131,9 @@ class FallingBlock extends LevelActor
     
     override function onOutro()
     {
-        cy = stopY;
+        warningSprite.visible = false;
+        if (!hasTimelineKill)
+            cy = stopY;
         movingBlock.alpha = 1;
         setBlockScale(1);
     }
@@ -158,7 +160,7 @@ class FallingBlock extends LevelActor
     
     override function onOutroUpdate()
     {
-        var t = progress(currentTime, time + duration, outroDuration);
+        var t = progress(currentTime, outroStartTime, outroDuration);
         var scale = 1 - FlxEase.quadIn(t);
         movingBlock.alpha = scale;
         setBlockScale(scale);

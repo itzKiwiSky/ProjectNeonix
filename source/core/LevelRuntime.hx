@@ -73,8 +73,13 @@ class LevelRuntime
     public function eventsChanged()
     {
         effects.rebuild(data.events);
-        timelineEvents = [for (e in data.events) if (e.object == "send_event") e];
-        timelineEvents.sort((a, b) -> a.time < b.time ? -1 : (a.time > b.time ? 1 : 0));
+        timelineEvents = [for (e in data.events) if (e.object == "send_event" || e.object == "transform_actor" || e.object == "kill_actor") e];
+        timelineEvents.sort((a, b) ->
+        {
+            if (a.time != b.time)
+                return a.time < b.time ? -1 : 1;
+            return data.events.indexOf(a) - data.events.indexOf(b);
+        });
         resetAndReplayTimelineEvents(currentTime);
         lastTimelineTime = currentTime;
     }
@@ -138,7 +143,11 @@ class LevelRuntime
     function resetAndReplayTimelineEvents(now:Float)
     {
         for (a in all)
+        {
             a.resetTimelineEvents();
+            a.resetActorTransforms();
+            a.resetTimelineLifetime();
+        }
         nextTimelineEvent = 0;
         dispatchTimelineEventsThrough(now);
     }
@@ -154,11 +163,52 @@ class LevelRuntime
 
     function dispatchTimelineEvent(source:TimelineEvent)
     {
+        var target:Dynamic = source.params == null ? null : Reflect.field(source.params, "target");
+        if (source.object == "transform_actor")
+        {
+            if (!Std.isOfType(target, String) || target == "")
+            {
+                trace("Evento transform_actor precisa de um Target ID.");
+                return;
+            }
+
+            var found:Bool = false;
+            for (a in all)
+                if (a.event.id == target)
+                {
+                    if (!a.addTimelineTransform(source))
+                        trace('Parâmetros inválidos em transform_actor para o ator "${target}".');
+                    found = true;
+                }
+            if (!found)
+                trace('Nenhum ator encontrado com o ID "${target}" para transform_actor.');
+            return;
+        }
+
+        if (source.object == "kill_actor")
+        {
+            if (!Std.isOfType(target, String) || target == "")
+            {
+                trace("Evento kill_actor precisa de um Target ID.");
+                return;
+            }
+
+            var found:Bool = false;
+            for (a in all)
+                if (a.event.id == target)
+                {
+                    a.receiveTimelineKill(source);
+                    found = true;
+                }
+            if (!found)
+                trace('Nenhum ator encontrado com o ID "${target}" para kill_actor.');
+            return;
+        }
+
         var name:Dynamic = source.params == null ? null : Reflect.field(source.params, "name");
         if (!Std.isOfType(name, String) || name == "")
             return;
 
-        var target:Dynamic = source.params == null ? null : Reflect.field(source.params, "target");
         if (target != null && !Std.isOfType(target, String))
         {
             trace('Target inválido no evento de timeline "${name}".');
@@ -176,16 +226,41 @@ class LevelRuntime
     {
         var any:Bool = false;
         for (a in active)
-            if (a.alive && a.collide(obj))
+            if (a.alive && collideActorTree(a, obj))
                 any = true;
         return any;
     }
     
+    function collideActorTree(actor:LevelActor, obj:FlxObject):Bool
+    {
+        var any:Bool = actor.collide(obj);
+        for (member in actor.members)
+        {
+            var child:LevelActor = Std.downcast(member, LevelActor);
+            if (child != null && child.alive && collideActorTree(child, obj))
+                any = true;
+        }
+        return any;
+    }
+
     public function hits(obj:FlxBasic):Bool
     {
         for (a in active)
-            if (a.alive && a.hits(obj))
+            if (a.alive && hitsActorTree(a, obj))
                 return true;
+        return false;
+    }
+
+    function hitsActorTree(actor:LevelActor, obj:FlxBasic):Bool
+    {
+        if (actor.hits(obj))
+            return true;
+        for (member in actor.members)
+        {
+            var child:LevelActor = Std.downcast(member, LevelActor);
+            if (child != null && child.alive && hitsActorTree(child, obj))
+                return true;
+        }
         return false;
     }
 }

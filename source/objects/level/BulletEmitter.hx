@@ -161,6 +161,8 @@ class BulletEmitter extends LevelActor
     // o emissor vive até a última bala sumir
     override public function lifeEnd():Float
     {
+        if (hasTimelineKill)
+            return super.lifeEnd();
         var lastShot = time + (volleys - 1) * cfg.interval;
         return Math.max(super.lifeEnd(), lastShot + cfg.life);
     }
@@ -191,8 +193,8 @@ class BulletEmitter extends LevelActor
     
     override function update(elapsed:Float)
     {
-        super.update(elapsed); // troca de fase e ganchos
         updateBullets(Conductor.songPosition);
+        super.update(elapsed); // troca de fase, filhos e transformações da timeline
     }
     
     // corpo do emissor
@@ -228,13 +230,14 @@ class BulletEmitter extends LevelActor
         setBodyScale(FlxEase.backOut(progress(currentTime, time - warningTime, 200)));
         
     override function onOutroUpdate()
-        setBodyScale(1 - FlxEase.quadOut(progress(currentTime, time + duration, outroDuration)));
+        setBodyScale(1 - FlxEase.quadOut(progress(currentTime, outroStartTime, outroDuration)));
         
     // círculo contra círculo, contando só as balas visíveis
     override public function hits(obj:FlxBasic):Bool
     {
         var playerRect = Collision.rectShapeFromFlxSprite(cast obj);
-        var bulletCircle = Collision.createCircleShape(0, 0, Bullet.SIZE * 0.5);
+        var bulletRadius = Bullet.SIZE * 0.5 * Math.max(timelineScaleX, timelineScaleY);
+        var bulletCircle = Collision.createCircleShape(0, 0, bulletRadius);
         
         for (b in bullets)
         {

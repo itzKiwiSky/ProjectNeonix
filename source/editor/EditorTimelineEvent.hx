@@ -50,6 +50,18 @@ class EditorTimelineEvent
             if (Std.isOfType(name, String) && name != "")
                 return name;
         }
+        if (event.object == "transform_actor" && event.params != null)
+        {
+            var property:Dynamic = Reflect.field(event.params, "property");
+            if (Std.isOfType(property, String))
+                return 'transform ${property.split("_").join(" ")}';
+        }
+        if (event.object == "kill_actor" && event.params != null)
+        {
+            var target:Dynamic = Reflect.field(event.params, "target");
+            if (Std.isOfType(target, String) && target != "")
+                return 'kill ${target}';
+        }
         return event.object.split("_").join(" ");
     }
         

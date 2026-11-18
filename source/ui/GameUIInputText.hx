@@ -294,16 +294,21 @@ class GameUIInputText extends FlxTypedSpriteGroup<FlxSprite>
                 inInsertMode = !inInsertMode;
                 
             case BACKSPACE: // Delete letter to the left of caret
-                if (caretIndex <= 0)
-                    return;
-                    
                 if (selectIndex > -1 && selectIndex != caretIndex)
                     deleteSelection();
                 else
                 {
+                    if (caretIndex <= 0)
+                    {
+                        updateCaret();
+                        return;
+                    }
+
                     var lastText = text;
+                    var newCaretIndex:Int = caretIndex - 1;
                     text = text.substring(0, caretIndex - 1) + text.substring(caretIndex);
-                    caretIndex--;
+                    caretIndex = newCaretIndex;
+                    selectIndex = -1;
                     if (onChange != null)
                         onChange(lastText, text);
                     if (broadcastInputTextEvent)

@@ -123,8 +123,8 @@ class SpikePit extends LevelActor
     
     override function onOutroUpdate()
     {
-        var p:Float = FlxEase.quadIn(progress(currentTime, time + duration, outroDuration));
-        var endTime:Float = time + duration; // parte da altura que cada espinho tinha ao fim da fase ativa
+        var p:Float = FlxEase.quadIn(progress(currentTime, outroStartTime, outroDuration));
+        var endTime:Float = outroStartTime; // parte da altura que cada espinho tinha ao começar a retirada
         for (i in 0...spikes.length)
             setSpike(spikes[i], FlxMath.lerp(waveAt(i, endTime), 0, p));
     }

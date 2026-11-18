@@ -856,6 +856,16 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
             if (holder != null)
             {
                 Reflect.setField(holder, f.key, value);
+                if (f.key == "property" && e.object == "transform_actor")
+                {
+                    if (value == "scale_x" || value == "scale_y")
+                    {
+                        var currentValue:Dynamic = Reflect.field(holder, "value");
+                        if (currentValue == null || ((Std.isOfType(currentValue, Int) || Std.isOfType(currentValue, Float)) && currentValue <= 0))
+                            Reflect.setField(holder, "value", 0.01);
+                    }
+                    isEventUIDirty = true;
+                }
                 rebuildActor(e); // o ator guarda cópias dos valores
             }
         }
@@ -872,6 +882,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         
         var fields = rootFields.copy();
         if (ActorManager.categoryOf(selectedEvent.object) == EventCategory.Obstacle)
+        {
             fields.push({
                 key: "id",
                 label: "Actor ID",
@@ -879,6 +890,14 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
                 target: FieldTarget.Root,
                 defaultValue: ""
             });
+            fields.push({
+                key: "persistent",
+                label: "Until killed by event",
+                kind: FieldKind.Checkbox,
+                target: FieldTarget.Root,
+                defaultValue: false
+            });
+        }
         if (selectionHasType(selectedEvent.object))
             fields = fields.concat(ActorManager.fieldsOf(selectedEvent.object));
             
@@ -893,17 +912,17 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
                     box.checked = getValue(f) == true;
                     addWidget(box);
                 case DropdownString:
-                    final easings:Array<String> = EffectManager.easingNames();
+                    final options:Array<String> = f.options ?? EffectManager.easingNames();
                     var boxW:Float = boxCurrentSelectedEvent.bg.width;
                     addWidget(new FlxText(8, rowY, 80, f.label, 14));
-                    var easingType:GameUIDropdownMenu = new GameUIDropdownMenu(boxW - 108, rowY, easings, (idx:Int, name:String) -> setValue(f, name));
+                    var dropdown:GameUIDropdownMenu = new GameUIDropdownMenu(boxW - 108, rowY, options, (idx:Int, name:String) -> setValue(f, name));
                     
                     var selected:Dynamic = getValue(f);
                     var selectedName:String = selected == null ? "" : Std.string(selected);
-                    if (easings.indexOf(selectedName) < 0)
-                        selectedName = easings.indexOf("linear") >= 0 ? "linear" : (easings.length > 0 ? easings[0] : "");
-                    easingType.selectedLabel = selectedName;
-                    addWidget(easingType);
+                    if (options.indexOf(selectedName) < 0)
+                        selectedName = options.indexOf("linear") >= 0 ? "linear" : (options.length > 0 ? options[0] : "");
+                    dropdown.selectedLabel = selectedName;
+                    addWidget(dropdown);
                 case Text:
                     addTextRow(f, rowY);
             }
@@ -935,7 +954,14 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         addWidget(new FlxText(8, rowY, 80, f.label, 14));
         
         // argumentos: x, y, step, valor inicial, min, max, casas decimais
-        var stepper:GameUINumericStepper = new GameUINumericStepper(boxW - 108, rowY, f.step ?? 10, getValue(f) ?? 0, f.min ?? 0, f.max ?? 999999, f.decimals ?? 0);
+        var min:Float = f.min ?? 0;
+        if (ev.object == "transform_actor" && f.key == "value")
+        {
+            var property:Dynamic = ev.params == null ? null : Reflect.field(ev.params, "property");
+            if (property == "scale_x" || property == "scale_y")
+                min = 0.01;
+        }
+        var stepper:GameUINumericStepper = new GameUINumericStepper(boxW - 108, rowY, f.step ?? 10, getValue(f) ?? 0, min, f.max ?? 999999, f.decimals ?? 0);
         stepper.onValueChange = () ->
         {
             if (selectedEvent == ev) // o painel pode já ter mudado de evento quando o callback dispara
