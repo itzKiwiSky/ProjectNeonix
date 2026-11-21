@@ -14,6 +14,7 @@ typedef LevelMetaData =
     var platformColor:Array<Int>;
     var actorsColor:Array<Int>;
     var bpm:Float;
+    var songStarting:Float;
     var songEnding:Float;
 }
 
@@ -45,6 +46,7 @@ class Level
                 platformColor: [186, 211, 230],
                 actorsColor: [255, 255, 255],
                 bpm: 100.0,
+                songStarting: 0.0,
                 songEnding: -1.0,
             },
             events: [],

@@ -75,6 +75,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     var loadedMusicPath:String = "";
     
     var eventWidgets:Array<FlxSprite> = [];
+    var eventWidgetBaseYs:Map<FlxSprite, Float> = [];
     var levelDataWidgets:Array<FlxSprite> = [];
     
     public var selectedEvent(default, null):Null<TimelineEvent>;
@@ -84,6 +85,8 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     var isEventUIDirty:Bool = false; // set if the ui need to be rebuilt
     
     var lastCopiedEvents:Array<TimelineEvent> = [];
+    var eventPanelScroll:Float = 0;
+    var eventPanelContentHeight:Float = 0;
     
     var currentLevelDir:String = ""; // pasta do level aberto; vazio enquanto não foi salvo ou aberto
     
@@ -221,6 +224,8 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         meta.backgroundColor = meta.backgroundColor ?? LevelRuntime.DEFAULT_BG.copy();
         meta.platformColor = meta.platformColor ?? LevelRuntime.DEFAULT_PLATFORM.copy();
         meta.actorsColor = meta.actorsColor ?? LevelRuntime.DEFAULT_ACTORS.copy();
+        meta.songStarting = meta.songStarting ?? 0;
+        meta.songEnding = meta.songEnding ?? -1;
         runtime.applyMeta();
         
         var rowY:Float = 16;
@@ -241,6 +246,10 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
                 Conductor.changeBPM(v);
         });
         rowY += 52;
+        addLabeledNumericStepper(rowY, "Song start (ms)", 100, meta.songStarting, 0, 9999999, 0, (v:Float) -> levelData.meta.songStarting = v);
+        rowY += 36;
+        addLabeledNumericStepper(rowY, "Song end (ms)", 100, meta.songEnding, -9999999, 9999999, 0, (v:Float) -> levelData.meta.songEnding = v);
+        rowY += 52;
         addColorRow("Background", meta.backgroundColor, rowY);
         rowY += 36;
         addColorRow("Platform", meta.platformColor, rowY);
@@ -260,9 +269,9 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     
     function addLabeledNumericStepper(posY:Float, text:String = "", step:Float, defValue:Float, min:Float, max:Float, decimals:Int, onChange:Float->Void)
     {
-        addLevelWidget(new FlxText(8, posY, 100, text, 18));
+        addLevelWidget(new FlxText(8, posY, 256, text, 18));
         
-        var numeric:GameUINumericStepper = new GameUINumericStepper(128, posY + 4, step, defValue, min, max, decimals);
+        var numeric:GameUINumericStepper = new GameUINumericStepper(200, posY + 4, step, defValue, min, max, decimals);
         numeric.onValueChange = () -> onChange(numeric.value);
         addLevelWidget(numeric);
     }
@@ -272,31 +281,29 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     {
         addLevelWidget(new FlxText(8, rowY, 110, label, 16));
         
-        var swatch:FlxSprite = new FlxSprite(124, rowY);
-        swatch.makeGraphic(24, 24, FlxColor.WHITE);
+        var swatch:FlxSprite = new FlxSprite(112, rowY);
+        swatch.makeGraphic(28, 28, FlxColor.WHITE);
         inline function refresh()
             swatch.color = FlxColor.fromRGB(rgb[0], rgb[1], rgb[2]);
             
         refresh();
         addLevelWidget(swatch);
         
+        var channelNames:Array<String> = ["R", "G", "B"];
         for (i in 0...3)
         {
-            var x0:Float = 160 + i * 104;
-            var value:FlxText = new FlxText(x0 + 30, rowY, 40, Std.string(rgb[i]), 14);
-            value.alignment = FlxTextAlign.CENTER;
+            var channelIndex:Int = i;
+            var x0:Float = 148 + i * 104;
+            addLevelWidget(new FlxText(x0, rowY + 5, 24, channelNames[i], 14));
             
-            function change(delta:Int)
+            var numeric:GameUINumericStepper = new GameUINumericStepper(x0 + 24, rowY, 1, rgb[channelIndex], 0, 255, 0);
+            numeric.onValueChange = () ->
             {
-                rgb[i] = Std.int(FlxMath.bound(rgb[i] + delta, 0, 255));
-                value.text = Std.string(rgb[i]);
+                rgb[channelIndex] = Std.int(FlxMath.bound(numeric.value, 0, 255));
                 refresh();
                 runtime.applyMeta();
-            }
-            
-            addLevelWidget(new GameUIButton(x0, rowY, "-", () -> change(-5), 28, 24));
-            addLevelWidget(value);
-            addLevelWidget(new GameUIButton(x0 + 72, rowY, "+", () -> change(5), 28, 24));
+            };
+            addLevelWidget(numeric);
         }
     }
     
@@ -485,13 +492,29 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         editorTimeline.cursorMusicTime = cursorMusicTime;
         Conductor.songPosition = cursorMusicTime;
         
-        var overTimeline = FlxG.mouse.viewY >= editorTimeline.y;
+        var mouseHud = FlxG.mouse.getViewPosition(hudCam);
+        var mouseHudX:Float = mouseHud.x;
+        var mouseHudY:Float = mouseHud.y;
+        
+        var overTimeline = mouseHudY >= editorTimeline.y;
         var scrollLanes = overTimeline && FlxG.keys.pressed.SHIFT && FlxG.mouse.wheel != 0;
         if (scrollLanes)
             editorTimeline.scrollLanes(-FlxG.mouse.wheel);
             
+        var overEventPanel = boxCurrentSelectedEvent != null
+            && boxCurrentSelectedEvent.visible
+            && mouseHudX >= boxCurrentSelectedEvent.x
+            && mouseHudX <= boxCurrentSelectedEvent.x + boxCurrentSelectedEvent.bg.width
+            && mouseHudY >= boxCurrentSelectedEvent.y
+            && mouseHudY <= boxCurrentSelectedEvent.y + boxCurrentSelectedEvent.bg.height;
+        if (overEventPanel && !scrollLanes && FlxG.mouse.wheel != 0)
+        {
+            eventPanelScroll = FlxMath.bound(eventPanelScroll - FlxG.mouse.wheel * 32, 0, Math.max(0, eventPanelContentHeight - boxCurrentSelectedEvent.bg.height + 8));
+            applyEventPanelScroll();
+        }
+        
         // arrows and wheel, move the time //
-        var wheel = scrollLanes ? 0 : FlxG.mouse.wheel;
+        var wheel = scrollLanes || overEventPanel ? 0 : FlxG.mouse.wheel;
         var dir:Float = (FlxG.keys.pressed.RIGHT || wheel > 0 ? 1 : 0) - (FlxG.keys.pressed.LEFT || wheel < 0 ? 1 : 0);
         if (dir != 0)
         {
@@ -538,9 +561,9 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         }
         
         // select event //
-        if (FlxG.mouse.justPressed && FlxG.mouse.viewY >= editorTimeline.y)
+        if (FlxG.mouse.justPressed && mouseHudY >= editorTimeline.y)
         {
-            var hit = editorTimeline.eventAt(FlxG.mouse.viewX, FlxG.mouse.viewY);
+            var hit = editorTimeline.eventAt(mouseHudX, mouseHudY);
             if (FlxG.keys.pressed.CONTROL)
             {
                 if (hit == null)
@@ -617,7 +640,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     {
         if (events.length == 0)
             return;
-
+            
         for (e in events)
         {
             levelData.events.push(e);
@@ -658,12 +681,12 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     {
         if (lastCopiedEvents.length == 0)
             return;
-
+            
         var earliestTime:Float = lastCopiedEvents[0].time;
         for (e in lastCopiedEvents)
             if (e.time < earliestTime)
                 earliestTime = e.time;
-
+                
         var offset = snapTime(cursorMusicTime) - earliestTime;
         var copies:Array<TimelineEvent> = [];
         for (source in lastCopiedEvents)
@@ -798,6 +821,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     {
         isEventUIDirty = false;
         clearEventUI();
+        eventPanelScroll = 0;
         
         if (selectedEvent == null)
             return;
@@ -818,6 +842,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
             w.destroy();
         }
         eventWidgets = [];
+        eventWidgetBaseYs = [];
         boxCurrentSelectedEvent.visible = false;
     }
     
@@ -861,7 +886,8 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
                     if (value == "scale_x" || value == "scale_y")
                     {
                         var currentValue:Dynamic = Reflect.field(holder, "value");
-                        if (currentValue == null || ((Std.isOfType(currentValue, Int) || Std.isOfType(currentValue, Float)) && currentValue <= 0))
+                        if (currentValue == null
+                            || ((Std.isOfType(currentValue, Int) || Std.isOfType(currentValue, Float)) && currentValue <= 0))
                             Reflect.setField(holder, "value", 0.01);
                     }
                     isEventUIDirty = true;
@@ -928,6 +954,31 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
             }
             rowY += ROW_HEIGHT;
         }
+        eventPanelContentHeight = rowY;
+        applyEventPanelScroll();
+    }
+    
+    function applyEventPanelScroll()
+    {
+        if (boxCurrentSelectedEvent == null)
+            return;
+        var panelBottom:Float = boxCurrentSelectedEvent.bg.height;
+        for (w in eventWidgets)
+        {
+            var baseY:Null<Float> = eventWidgetBaseYs.get(w);
+            if (baseY == null)
+                baseY = w.y - boxCurrentSelectedEvent.y;
+            if (baseY < 40)
+            {
+                w.y = boxCurrentSelectedEvent.y + baseY;
+                w.visible = w.y <= boxCurrentSelectedEvent.y + panelBottom;
+            }
+            else
+            {
+                w.y = boxCurrentSelectedEvent.y + baseY - eventPanelScroll;
+                w.visible = w.y + w.height >= boxCurrentSelectedEvent.y + 40 && w.y <= boxCurrentSelectedEvent.y + panelBottom;
+            }
+        }
     }
     
     function addTextRow(f:FieldDef, rowY:Float)
@@ -973,6 +1024,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     function addWidget(w:FlxSprite)
     {
         setUICamera(w, hudCam);
+        eventWidgetBaseYs.set(w, w.y - boxCurrentSelectedEvent.y);
         boxCurrentSelectedEvent.add(w);
         eventWidgets.push(w);
     }

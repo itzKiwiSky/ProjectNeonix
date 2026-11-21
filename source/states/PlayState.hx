@@ -1,7 +1,5 @@
 package states;
 
-import flixel.FlxSubState;
-import openfl.display.Shader;
 import flixel.FlxObject;
 import objects.core.Player;
 import states.substates.GameOverSubstate;
@@ -23,21 +21,24 @@ import core.level.Level;
 import core.level.Level.LevelData;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.math.FlxMath;
 import flixel.sound.FlxSound;
 import ui.GameUIButton;
 
 class PlayState extends MusicSyncedState
 {
-    public inline static var levelPath:String = "assets/data/vindicate_me.json"; // quem abrir o PlayState escolhe a fase aqui
-    
+    public static var levelName:String = "life_is_game";
     public static var needRestart:Bool = false;
     
+    var levelPath:String = "";
     var playtestData:Null<LevelData>;
     var playtestMode:Bool = false;
     var playtestStartTime:Float = 0;
     var gameplayStopped:Bool = false;
     var music:Null<FlxSound>;
     var playtestMusicAsset:Null<Sound>;
+    var songStartTime:Float = 0;
+    var songEndTime:Float = 0;
     var player:Player;
     var platformSprite:FlxSprite;
     var background:FlxSprite;
@@ -193,13 +194,17 @@ class PlayState extends MusicSyncedState
             
         if (playtestMode)
         {
-            Conductor.songPosition = playtestStartTime;
             if (playtestMusicAsset != null)
             {
                 music = FlxG.sound.create(playtestMusicAsset);
                 music.volume = 0.2;
-                music.play(true, playtestStartTime);
+                configureSongRange(level.meta.songStarting ?? 0, level.meta.songEnding ?? -1);
+                var startAt:Float = FlxMath.bound(playtestStartTime, songStartTime, songEndTime);
+                Conductor.songPosition = startAt;
+                music.play(true, startAt);
             }
+            else
+                Conductor.songPosition = playtestStartTime;
             return;
         }
         
@@ -209,8 +214,16 @@ class PlayState extends MusicSyncedState
         {
             music = FlxG.sound.create(sound);
             music.volume = 0.2;
-            music.play();
+            configureSongRange(level.meta.songStarting ?? 0, level.meta.songEnding ?? -1);
+            Conductor.songPosition = songStartTime;
+            music.play(true, songStartTime);
         }
+    }
+    
+    function configureSongRange(configuredStart:Float, configuredEnd:Float)
+    {
+        songStartTime = FlxMath.bound(configuredStart, 0, music.length);
+        songEndTime = configuredEnd < 0 ? music.length : FlxMath.bound(configuredEnd, songStartTime, music.length);
     }
     
     override public function update(elapsed:Float)
@@ -223,6 +236,11 @@ class PlayState extends MusicSyncedState
         
         if (music != null)
         {
+            if (music.time >= songEndTime)
+            {
+                music.pause();
+                music.time = songEndTime;
+            }
             Conductor.songPosition = music.time;
             
             FlxG.watch.add(music, "time", "music time");
@@ -259,7 +277,10 @@ class PlayState extends MusicSyncedState
             if (FlxG.keys.justPressed.R)
             {
                 if (music != null)
-                    music.time = 0;
+                {
+                    music.time = songStartTime;
+                    Conductor.songPosition = songStartTime;
+                }
             }
         }
         
@@ -280,10 +301,10 @@ class PlayState extends MusicSyncedState
             grayscale.strength = 0;
             if (music != null)
             {
-                music.time = 0;
+                music.time = songStartTime;
                 music.pitch = 1;
-                Conductor.songPosition = music.time;
-                music.play();
+                Conductor.songPosition = songStartTime;
+                music.play(true, songStartTime);
             }
             Conductor.recalculateTimings();
             player.reboot();

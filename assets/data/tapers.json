@@ -1,0 +1,644 @@
+{
+    "editorMeta": {
+        "lastSavedTime": 0,
+        "audioPath": "",
+        "eventLanes": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            4,
+            null,
+            4,
+            5,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            9,
+            9
+        ]
+    },
+    "meta": {
+        "title": "Tapers",
+        "platformColor": [
+            186,
+            211,
+            230
+        ],
+        "backgroundID": 2,
+        "songEnding": -1,
+        "songFilename": "builtin:tapers.ogg",
+        "actorsColor": [
+            255,
+            255,
+            255
+        ],
+        "songStarting": 0,
+        "backgroundColor": [
+            0,
+            0,
+            0
+        ],
+        "bpm": 100,
+        "artist": "Cacola"
+    },
+    "events": [
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 500,
+                "y": 490,
+                "useRandomX": true,
+                "useRandomY": false,
+                "outro": 200
+            },
+            "time": 2550,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 500,
+                "y": 490,
+                "useRandomX": true,
+                "useRandomY": false,
+                "outro": 200
+            },
+            "time": 2811,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 500,
+                "y": 490,
+                "useRandomX": true,
+                "useRandomY": false,
+                "outro": 200
+            },
+            "time": 4500,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 500,
+                "y": 490,
+                "useRandomX": true,
+                "useRandomY": false,
+                "outro": 200
+            },
+            "time": 4800,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 500,
+                "y": 490,
+                "useRandomX": true,
+                "useRandomY": false,
+                "outro": 200
+            },
+            "time": 6450,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 500,
+                "y": 490,
+                "useRandomX": true,
+                "useRandomY": false,
+                "outro": 200
+            },
+            "time": 6600,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 500,
+                "y": 490,
+                "useRandomX": true,
+                "useRandomY": false,
+                "outro": 200
+            },
+            "time": 8400,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 500,
+                "y": 490,
+                "useRandomX": true,
+                "useRandomY": false,
+                "outro": 200
+            },
+            "time": 8700,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 500,
+                "y": 490,
+                "useRandomX": true,
+                "useRandomY": false,
+                "outro": 200
+            },
+            "time": 10552.3333333333,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 500,
+                "y": 490,
+                "useRandomX": true,
+                "useRandomY": false,
+                "outro": 200
+            },
+            "time": 10435.6666666667,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 500,
+                "y": 490,
+                "useRandomX": true,
+                "useRandomY": false,
+                "outro": 200
+            },
+            "time": 12300,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 500,
+                "y": 490,
+                "useRandomX": true,
+                "useRandomY": false,
+                "outro": 200
+            },
+            "time": 12450,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 500,
+                "y": 490,
+                "useRandomX": true,
+                "useRandomY": false,
+                "outro": 200
+            },
+            "time": 14100,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 500,
+                "y": 490,
+                "useRandomX": true,
+                "useRandomY": false,
+                "outro": 200
+            },
+            "time": 14400,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 500,
+                "y": 490,
+                "useRandomX": true,
+                "useRandomY": false,
+                "outro": 200
+            },
+            "time": 16200,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 500,
+                "y": 490,
+                "useRandomX": true,
+                "useRandomY": false,
+                "outro": 200
+            },
+            "time": 16350,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 500,
+                "y": 490,
+                "useRandomX": true,
+                "useRandomY": false,
+                "outro": 200
+            },
+            "time": 18150,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 500,
+                "y": 490,
+                "useRandomX": true,
+                "useRandomY": false,
+                "outro": 200
+            },
+            "time": 18300,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 500,
+                "y": 490,
+                "useRandomX": true,
+                "useRandomY": false,
+                "outro": 200
+            },
+            "time": 19950,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 500,
+                "y": 490,
+                "useRandomX": true,
+                "useRandomY": false,
+                "outro": 200
+            },
+            "time": 20250,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 500,
+                "y": 490,
+                "useRandomX": true,
+                "useRandomY": false,
+                "outro": 200
+            },
+            "time": 21900,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 500,
+                "y": 490,
+                "useRandomX": true,
+                "useRandomY": false,
+                "outro": 200
+            },
+            "time": 22200,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 500,
+                "y": 490,
+                "useRandomX": true,
+                "useRandomY": false,
+                "outro": 200
+            },
+            "time": 23850,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 500,
+                "y": 490,
+                "useRandomX": true,
+                "useRandomY": false,
+                "outro": 200
+            },
+            "time": 24000,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 500,
+                "y": 490,
+                "useRandomX": true,
+                "useRandomY": false,
+                "outro": 200
+            },
+            "time": 25800,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 500,
+                "y": 490,
+                "useRandomX": true,
+                "useRandomY": false,
+                "outro": 200
+            },
+            "time": 25950,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 500,
+                "y": 490,
+                "useRandomX": true,
+                "useRandomY": false,
+                "outro": 200
+            },
+            "time": 27750,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 500,
+                "y": 490,
+                "useRandomX": true,
+                "useRandomY": false,
+                "outro": 200
+            },
+            "time": 27900,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 500,
+                "y": 490,
+                "useRandomX": true,
+                "useRandomY": false,
+                "outro": 200
+            },
+            "time": 29700,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 750,
+            "params": {
+                "x": 640,
+                "duration": 500,
+                "y": 490,
+                "useRandomX": true,
+                "useRandomY": false,
+                "outro": 200
+            },
+            "time": 29850,
+            "object": "pulse_square"
+        },
+        {
+            "lead": 750,
+            "time": 12600,
+            "params": {
+                "x": 640,
+                "duration": 4150,
+                "useRandomX": true,
+                "stopY": 506,
+                "outro": 500
+            },
+            "persistent": false,
+            "object": "falling_block"
+        },
+        {
+            "lead": 750,
+            "time": 14850,
+            "params": {
+                "x": 640,
+                "duration": 4150,
+                "useRandomX": true,
+                "stopY": 506,
+                "outro": 500
+            },
+            "persistent": false,
+            "object": "falling_block"
+        },
+        {
+            "lead": 750,
+            "time": 17250,
+            "params": {
+                "x": 640,
+                "duration": 4150,
+                "useRandomX": true,
+                "stopY": 506,
+                "outro": 500
+            },
+            "persistent": false,
+            "object": "falling_block"
+        },
+        {
+            "lead": 750,
+            "time": 20550,
+            "params": {
+                "x": 640,
+                "duration": 4150,
+                "useRandomX": true,
+                "stopY": 506,
+                "outro": 500
+            },
+            "persistent": false,
+            "object": "falling_block"
+        },
+        {
+            "lead": 750,
+            "time": 22200,
+            "params": {
+                "x": 640,
+                "duration": 4150,
+                "useRandomX": true,
+                "stopY": 506,
+                "outro": 500
+            },
+            "persistent": false,
+            "object": "falling_block"
+        },
+        {
+            "lead": 750,
+            "time": 24600,
+            "params": {
+                "x": 640,
+                "duration": 4150,
+                "useRandomX": true,
+                "stopY": 506,
+                "outro": 500
+            },
+            "persistent": false,
+            "object": "falling_block"
+        },
+        {
+            "lead": 750,
+            "time": 26400,
+            "params": {
+                "x": 640,
+                "duration": 4150,
+                "useRandomX": true,
+                "stopY": 506,
+                "outro": 500
+            },
+            "persistent": false,
+            "object": "falling_block"
+        },
+        {
+            "lead": 750,
+            "time": 28350,
+            "params": {
+                "x": 640,
+                "duration": 4150,
+                "useRandomX": true,
+                "stopY": 506,
+                "outro": 500
+            },
+            "persistent": false,
+            "object": "falling_block"
+        },
+        {
+            "lead": 750,
+            "time": 30450,
+            "params": {
+                "x": 640,
+                "duration": 1750,
+                "useRandomX": true,
+                "stopY": 506,
+                "outro": 500
+            },
+            "persistent": false,
+            "object": "falling_block"
+        },
+        {
+            "lead": 750,
+            "time": 30300,
+            "params": {
+                "x": 640,
+                "duration": 1750,
+                "useRandomX": true,
+                "stopY": 506,
+                "outro": 500
+            },
+            "persistent": false,
+            "object": "falling_block"
+        },
+        {
+            "lead": 750,
+            "time": 30600,
+            "params": {
+                "x": 640,
+                "duration": 1750,
+                "useRandomX": true,
+                "stopY": 506,
+                "outro": 500
+            },
+            "persistent": false,
+            "object": "falling_block"
+        },
+        {
+            "lead": 750,
+            "time": 30750,
+            "params": {
+                "x": 640,
+                "duration": 1750,
+                "useRandomX": false,
+                "stopY": 506,
+                "outro": 500
+            },
+            "persistent": false,
+            "object": "falling_block"
+        },
+        {
+            "params": {
+                "duration": 1850,
+                "easing": "backOut",
+                "zoom": 1.4
+            },
+            "object": "camera_zoom",
+            "lead": 0,
+            "time": 30464.6666666666
+        },
+        {
+            "params": {
+                "duration": 250,
+                "easing": "backOut",
+                "zoom": 1
+            },
+            "lead": 0,
+            "object": "camera_zoom",
+            "time": 32339
+        }
+    ]
+}

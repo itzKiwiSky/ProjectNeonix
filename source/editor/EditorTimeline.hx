@@ -53,27 +53,37 @@ class EditorTimeline extends FlxTypedSpriteGroup<FlxSprite>
     
     public function eventAt(mouseX:Float, mouseY:Float):Null<TimelineEvent>
     {
-        var localY = mouseY - (this.y + LANES_TOP);
-        var visibleLane = Math.floor(localY / LANE_HEIGHT);
-        if (visibleLane < 0 || visibleLane >= VISIBLE_LANES)
-            return null;
-            
-        var lane = laneOffset + Std.int(visibleLane);
-        var t = xToTime(mouseX);
-        
-        // de trás pra frente: o último da lista é o que está desenhado por cima
         var i = eventSprites.length - 1;
         while (i >= 0)
         {
             var s = eventSprites[i];
-            var barY = this.y + LANES_TOP + Std.int(visibleLane) * LANE_HEIGHT;
-            
-            var insideTime = t >= startOf(s.event) && t <= endOf(s.event);
-            var insideLane = mouseY >= barY && mouseY <= barY + 32;
-            
-            if (s.lane == lane && insideTime && insideLane)
-                return s.event;
-                
+            var visibleLane = s.lane - laneOffset;
+            if (visibleLane >= 0 && visibleLane < VISIBLE_LANES)
+            {
+                var barY = this.y + LANES_TOP + visibleLane * LANE_HEIGHT;
+                if (mouseY >= barY && mouseY <= barY + 32)
+                {
+                    var e = s.event;
+                    var lead:Float = e.lead == null ? 0 : e.lead;
+                    var duration = param(e, "duration");
+                    var outro = param(e, "outro");
+                    var isInstant = e.object == "send_event" || e.object == "kill_actor";
+
+                    var hitMin = timeToX(isInstant ? e.time : e.time - lead);
+                    var hitMax = timeToX(isInstant ? e.time + EVENT_LABEL_MS : e.time + duration + outro);
+                    if (mouseX >= hitMin - 4 && mouseX <= hitMax + 4)
+                        return e;
+
+                    if (s.nameLabel.visible)
+                    {
+                        var labelX = s.nameLabel.x;
+                        var labelWidth = s.nameLabel.width;
+                        if (mouseX >= labelX - 2 && mouseX <= labelX + labelWidth + 2
+                            && mouseY >= s.nameLabel.y && mouseY <= s.nameLabel.y + s.nameLabel.height)
+                            return e;
+                    }
+                }
+            }
             i--;
         }
         return null;
