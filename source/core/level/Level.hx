@@ -63,9 +63,15 @@ class Level
         }
     }
     
-    public static function loadJsonData(filename:String):LevelData
+    public static function loadJsonData(filename:String, rawJson:Bool = false):LevelData
     {
-        final data:LevelData = Json.parse(File.getContent(filename));
+        var data:LevelData;
+        
+        if (rawJson)
+            data = Json.parse(filename);
+        else
+            data = Json.parse(File.getContent(filename));
+            
         return data;
     }
 }

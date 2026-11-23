@@ -1,17 +1,30 @@
 package core.utils;
 
+import core.level.Level;
+import sys.io.File;
+import core.level.Level.LevelData;
 import haxe.io.Path;
 import openfl.media.Sound;
 import openfl.utils.AssetType;
 import openfl.utils.Assets as OpenFlAssets;
 import sys.FileSystem;
 
+typedef PathScheme =
+{
+    scheme:Null<String>,
+    path:String,
+}
+
 class Paths
 {
-    static final SCHEMES:Map<String, String> = ["embed" => "assets/embed/", "builtin" => "assets/embed/music/"];
+    static final SCHEMES:Map<String, String> = [
+        "embed" => "assets/embed/",
+        "builtin" => "assets/embed/music/",
+        "builtin_level" => "assets/data/",
+    ];
     
     // só é esquema se for um dos conhecidos: "C:\x.ogg" e "audio.ogg" ficam sem esquema
-    public static function split(ref:String):{scheme:Null<String>, path:String}
+    public static function split(ref:String):PathScheme
     {
         var i = ref.indexOf(":");
         if (i > 0)
@@ -42,11 +55,11 @@ class Paths
     
     public static function loadSong(ref:String, levelDir:String):Null<Sound>
     {
-        var p = split(ref);
+        final p:PathScheme = split(ref);
         
         if (p.scheme != null)
         {
-            var id = normalizePath(ref);
+            final id = normalizePath(ref);
             // sem filtrar por tipo: dependendo do project.xml o .ogg é registrado como SOUND ou MUSIC
             return OpenFlAssets.exists(id) ? OpenFlAssets.getSound(id) : null;
         }
@@ -54,7 +67,40 @@ class Paths
         if (levelDir == "")
             return null; // level que ainda não foi salvo não tem pasta
             
-        var file = Path.join([levelDir, p.path]);
+        final file:String = Path.join([levelDir, p.path]);
         return FileSystem.exists(file) ? Sound.fromFile(file) : null;
+    }
+
+    public static function loadLevelData(ref:String):Null<String>
+    {
+        final p:PathScheme = split(ref);
+
+        if (p.scheme == "builtin" || p.scheme == "builtin_level")
+        {
+            var path:String = p.path;
+            path = Path.normalize(Path.join(["assets", "data", path]));
+            if (OpenFlAssets.exists(path))
+                return OpenFlAssets.getText(path);
+            return FileSystem.exists(path) ? File.getContent(path) : null;
+        }
+
+        if (p.scheme == "embed")
+        {
+            var path:String = Path.normalize(Path.join(["assets", "embed", p.path]));
+            if (OpenFlAssets.exists(path))
+                return OpenFlAssets.getText(path);
+            return FileSystem.exists(path) ? File.getContent(path) : null;
+        }
+
+        var file:String = Path.normalize(p.path);
+        if (OpenFlAssets.exists(file))
+            return OpenFlAssets.getText(file);
+        if (FileSystem.exists(file))
+            return File.getContent(file);
+
+        file = Path.normalize(Path.join(["assets", "data", p.path]));
+        if (OpenFlAssets.exists(file))
+            return OpenFlAssets.getText(file);
+        return FileSystem.exists(file) ? File.getContent(file) : null;
     }
 }

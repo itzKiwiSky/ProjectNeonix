@@ -185,7 +185,7 @@ class PlayState extends MusicSyncedState
     
     function reloadLevelData()
     {
-        var level:LevelData = playtestData == null ? Level.loadJsonData(levelPath) : playtestData;
+        var level:LevelData = playtestData == null ? Level.loadJsonData(Paths.loadLevelData('builtin:$levelName.json'), true) : playtestData;
         runtime.load(level);
         Conductor.changeBPM(level.meta.bpm ?? 110);
         

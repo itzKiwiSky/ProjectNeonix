@@ -1,5 +1,6 @@
 package;
 
+import states.BoostrapState;
 import states.EditorState;
 import flixel.FlxG;
 import states.PlayState;
@@ -16,7 +17,7 @@ class Main extends Sprite
     public function new()
     {
         super();
-        game = new FlxGame(screenWidth, screenHeight, PlayState, updateFrameRate, updateFrameRate, true, false);
+        game = new FlxGame(screenWidth, screenHeight, BoostrapState, updateFrameRate, updateFrameRate, true, false);
         
         addChild(game);
         
