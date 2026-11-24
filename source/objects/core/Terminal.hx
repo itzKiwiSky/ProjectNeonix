@@ -1,5 +1,6 @@
 package objects.core;
 
+import core.utils.TTFAtlas;
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 import flixel.FlxSprite;
 import flixel.graphics.frames.FlxBitmapFont;
@@ -104,22 +105,22 @@ class Terminal extends FlxTypedSpriteGroup<FlxSprite>
     
     var canvas:FlxSprite;
     
-    public function new(width:Int, height:Int, charWidth:Int = 32, charHeight:Int = 32)
+    public function new(width:Int, height:Int, fontPath:String, fontSize:Int)
     {
         super();
         
-        this.charWidth = charWidth;
-        this.charHeight = charHeight;
+        final letters:String = "\u0001"
+            + "☺☻♥♦♣♠•◘○◙♂♀♪♫☼►◄↕‼¶§▬↨↑↓→←∟↔▲▼ !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{¦}~⌂ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥₧ƒáíóúñÑªº¿⌐¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■□";
+            
+        var atlas = TTFAtlas.build(fontPath, fontSize, letters);
+        
+        this.charWidth = atlas.cellW;
+        this.charHeight = atlas.cellH;
         
         this.terminalWidth = width;
         this.terminalHeight = height;
         
-        final letters:String = "\u0001"
-            + "☺☻♥♦♣♠•◘○◙♂♀♪♫☼►◄↕‼¶§▬↨↑↓→←∟↔▲▼ !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{¦}~⌂ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜ¢£¥₧ƒáíóúñÑªº¿⌐¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αßΓπΣσµτΦΘΩδ∞φε∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■□";
-        trace("letters.length = " + letters.length); // tem que dar 256
-        
-        this.font = FlxBitmapFont.fromMonospace("assets/embed/fonts/font_compaqthin.png", letters, FlxPoint.get(32, 32));
-        
+        this.font = atlas.font;
         numCols = Std.int(width / charWidth);
         numRows = Std.int(height / charHeight);
         

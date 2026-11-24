@@ -10,7 +10,7 @@ class DebugState extends FlxState
     
     override function create()
     {
-        terminal = new Terminal(FlxG.width, FlxG.height, 32, 32);
+        terminal = new Terminal(FlxG.width, FlxG.height, "assets/embed/fonts/ibmvga.ttf", 32);
         add(terminal);
         
         terminal.print("Hello World", 1, 1);
