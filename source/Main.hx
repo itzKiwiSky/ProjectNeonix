@@ -28,17 +28,16 @@ class Main extends Sprite
         
         addChild(game);
         
+        FlxG.autoPause = false;
+        FlxG.sound.muteKeys = null;
+        FlxG.sound.volumeUpKeys = null;
+        FlxG.sound.volumeDownKeys = null;
+        
         fpsVar = new FPSCounter(10, 3, 0xFFFFFF);
         addChild(fpsVar);
         
         Lib.current.stage.align = "tl";
         Lib.current.stage.scaleMode = StageScaleMode.NO_SCALE;
-        
-        FlxG.game.focusLostFramerate = 60;
-        FlxG.autoPause = false;
-        FlxG.sound.muteKeys = null;
-        FlxG.sound.volumeUpKeys = null;
-        FlxG.sound.volumeDownKeys = null;
         
         FlxG.signals.gameResized.add((w:Int, h:Int) ->
         {
@@ -58,10 +57,5 @@ class Main extends Sprite
             sprite.__cacheBitmap = null;
             sprite.__cacheBitmapData = null;
         }
-    }
-    
-    public static function main():Void
-    {
-        Lib.current.addChild(new Main());
     }
 }
