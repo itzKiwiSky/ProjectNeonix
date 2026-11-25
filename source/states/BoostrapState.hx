@@ -10,6 +10,6 @@ class BoostrapState extends FlxState
     override function create()
     {
         SaveUtils.applyDefaults(UserPreferences);
-        FlxG.switchState(() -> new states.DebugState());
+        FlxG.switchState(() -> new states.MainMenuState());
     }
 }
