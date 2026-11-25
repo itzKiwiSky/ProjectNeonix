@@ -34,7 +34,6 @@ class MainMenuState extends MusicSyncedState
         sun.updateHitbox();
         sun.screenCenter(X);
         sun.y = 100;
-        
         add(sun);
         
         logo.loadGraphic("assets/images/menus/logo_thingy.png");
@@ -43,7 +42,6 @@ class MainMenuState extends MusicSyncedState
         logo.screenCenter(X);
         logo.y = 90;
         add(logo);
-        
         add(logoEffectSprites);
         
         if (FlxG.sound.music == null)
