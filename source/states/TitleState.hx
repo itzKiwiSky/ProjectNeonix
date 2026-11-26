@@ -62,6 +62,7 @@ class TitleState extends MusicSyncedState
         if (FlxG.sound.music == null)
         {
             FlxG.sound.music = FlxG.sound.create("assets/embed/music/future_base.ogg");
+            FlxG.sound.music.persist = true;
             FlxG.sound.music.play();
         }
         
@@ -104,7 +105,7 @@ class TitleState extends MusicSyncedState
             {
                 FlxTween.tween(camObj, {y: FlxG.height * 2}, 2, {
                     ease: FlxEase.backIn,
-                    onComplete: (t:FlxTween) -> {}
+                    onComplete: (t:FlxTween) -> FlxG.switchState(() -> new MainMenuState())
                 });
             });
         }
@@ -112,7 +113,7 @@ class TitleState extends MusicSyncedState
     
     override function onBeatHit()
     {
-        inline function creatFXSprite()
+        inline function createFXSprite()
         {
             var s:FlxSprite = logoEffectSprites.recycle(FlxSprite, () ->
             {
@@ -136,13 +137,13 @@ class TitleState extends MusicSyncedState
         {
             if (beats % 2 == 0)
             {
-                creatFXSprite();
+                createFXSprite();
                 logoScale = 0.29;
             }
         }
         else
         {
-            creatFXSprite();
+            createFXSprite();
             logoScale = 0.27;
         }
     }
