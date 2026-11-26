@@ -1,5 +1,6 @@
 package states;
 
+import flixel.util.FlxColor;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.FlxSprite;
 import flixel.group.FlxGroup.FlxTypedGroup;
@@ -86,6 +87,7 @@ class MainMenuState extends FlxState
             sprite.x = x;
             sprite.screenCenter(Y);
             sprite.scale.set(scale, scale);
+            sprite.color = selected ? FlxColor.WHITE : 0xFF656565;
         }
         
         if (FlxG.keys.anyJustPressed([D, RIGHT]))
