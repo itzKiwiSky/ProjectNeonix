@@ -1,5 +1,6 @@
 package states;
 
+import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.graphics.frames.FlxAtlasFrames;
 import flixel.FlxSprite;
@@ -10,16 +11,73 @@ import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxState;
 
+typedef MenuItem =
+{
+    var title:String;
+    var iconID:String;
+    var onClick:Void->Void;
+    var isLocked:Bool;
+}
+
 class MainMenuState extends FlxState
 {
     var camObj:FlxObject;
     var sun:FlxSprite;
     
     var elements:FlxTypedGroup<FlxSprite>;
+    var icons:FlxTypedGroup<FlxSprite>;
     
     var scroll:Float = 0;
     var scrollTarget:Float = 0;
     final scrollSpeed:Float = 10;
+    
+    var textTitle:FlxText;
+    var currentSelectedItem:String = "";
+    
+    final items:Array<MenuItem> = [
+        /*{
+                title: "Browse Levels",
+                iconID: "editorHubBrowse",
+                onClick: function() {},
+                isLocked: true
+            },
+            {
+                title: "Downloaded Levels ",
+                iconID: "editorHubSaved",
+                onClick: function() {},
+                isLocked: true
+            },
+            {
+                title: "Level Editor",
+                iconID: "selectionEditor",
+                onClick: function() {},
+                isLocked: true
+        },*/
+        {
+            title: "Normal Levels",
+            iconID: "selectionNormal",
+            onClick: function() {},
+            isLocked: false
+        },
+        {
+            title: "Player Customization",
+            iconID: "selectionPlayerEditor",
+            onClick: function() {},
+            isLocked: false
+        },
+        {
+            title: "Settings",
+            iconID: "settingsHub",
+            onClick: function() {},
+            isLocked: false
+        },
+        /*{
+            title: "Achieviments",
+            iconID: "trophieAchieviment",
+            onClick: function() {},
+            isLocked: true
+        }*/
+    ];
     
     override function create()
     {
@@ -28,6 +86,15 @@ class MainMenuState extends FlxState
         camObj.screenCenter();
         camObj.y = -FlxG.height * 2;
         add(camObj);
+        
+        textTitle = new FlxText();
+        textTitle.font = "assets/embed/fonts/nexa_bold.otf";
+        textTitle.size = 22;
+        textTitle.text = "Yay";
+        textTitle.screenCenter(X);
+        textTitle.y = FlxG.height - 90;
+        textTitle.antialiasing = true;
+        add(textTitle);
         
         sun = new FlxSprite();
         sun.loadGraphic("assets/images/menus/sun.png");
@@ -39,22 +106,29 @@ class MainMenuState extends FlxState
         elements = new FlxTypedGroup<FlxSprite>();
         add(elements);
         
-        final names:Array<String> = [
-            "editorHubBrowse",
-            "editorHubEditor",
-            "editorHubSaved",
-            "selectionEditor",
-            "selectionNormal",
-            "selectionPlayerEditor",
-        ];
+        icons = new FlxTypedGroup<FlxSprite>();
+        add(icons);
         
-        for (name in names)
+        var sprIcons:FlxSprite = new FlxSprite();
+        sprIcons.frames = FlxAtlasFrames.fromSparrow("assets/images/menus/menu_icons.png", "assets/images/menus/menu_icons.xml");
+        sprIcons.animation.addByPrefix("errorIcon", "errorIcon", 1, true);
+        sprIcons.animation.addByPrefix("exportIcon", "exportIcon", 1, true);
+        sprIcons.animation.addByPrefix("importIcon", "importIcon", 1, true);
+        sprIcons.animation.addByPrefix("lock", "lock", 1, true);
+        sprIcons.animation.addByPrefix("star_rate", "star_rate", 1, true);
+        sprIcons.animation.addByPrefix("star_rate_half", "star_rate_half", 1, true);
+        sprIcons.animation.addByPrefix("star_rate_hole", "star_rate_hole", 1, true);
+        sprIcons.animation.addByPrefix("sucessIcon", "sucessIcon", 1, true);
+        sprIcons.animation.addByPrefix("userIcon", "userIcon", 1, true);
+        
+        for (item in items)
         {
             var spr:FlxSprite = new FlxSprite();
             spr.frames = FlxAtlasFrames.fromSparrow("assets/images/menus/selection_icons.png", "assets/images/menus/selection_icons.xml");
-            spr.animation.addByPrefix(name, name, 0, true);
+            spr.animation.addByPrefix(item.iconID, item.iconID, 0, true);
             spr.updateHitbox();
-            spr.animation.play(name, true);
+            spr.animation.play(item.iconID, true);
+            
             elements.add(spr);
         }
         
@@ -87,7 +161,10 @@ class MainMenuState extends FlxState
             sprite.x = x;
             sprite.screenCenter(Y);
             sprite.scale.set(scale, scale);
-            sprite.color = selected ? FlxColor.WHITE : 0xFF656565;
+            if (items[Math.floor(scrollTarget)].isLocked)
+                sprite.color = 0xff383838;
+            else
+                sprite.color = selected ? FlxColor.WHITE : 0xFF656565;
         }
         
         if (FlxG.keys.anyJustPressed([D, RIGHT]))
@@ -98,5 +175,8 @@ class MainMenuState extends FlxState
         {
             // push
         }
+        
+        textTitle.text = items[Math.floor(scrollTarget)].title;
+        textTitle.screenCenter(X);
     }
 }

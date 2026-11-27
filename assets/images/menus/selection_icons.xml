@@ -2,17 +2,12 @@
 <!--
 Created with Funkin Packer v0.1.3 https://neeeoo.github.io/funkin-packer/
 -->
-<TextureAtlas imagePath="selection_icons.png" width="1544" height="1029">
-	<SubTexture name="editorHubBrowse0000" x="1" y="1" width="512" height="512" frameX="-0"
-		frameY="-0" frameWidth="512" frameHeight="512" />
-	<SubTexture name="editorHubEditor0000" x="516" y="1" width="512" height="512" frameX="-0"
-		frameY="-0" frameWidth="512" frameHeight="512" />
-	<SubTexture name="editorHubSaved0000" x="1" y="516" width="512" height="512" frameX="-0"
-		frameY="-0" frameWidth="512" frameHeight="512" />
-	<SubTexture name="selectionEditor0000" x="516" y="516" width="512" height="512" frameX="-0"
-		frameY="-0" frameWidth="512" frameHeight="512" />
-	<SubTexture name="selectionNormal0000" x="1031" y="1" width="512" height="512" frameX="-0"
-		frameY="-0" frameWidth="512" frameHeight="512" />
-	<SubTexture name="selectionPlayerEditor0000" x="1031" y="516" width="512" height="512"
-		frameX="-0" frameY="-0" frameWidth="512" frameHeight="512" />
+<TextureAtlas imagePath="texture.png" width="1544" height="1544">
+	<SubTexture name="editorHubBrowse0000" x="1" y="1" width="512" height="512" frameX="-0" frameY="-0" frameWidth="512" frameHeight="512" />
+	<SubTexture name="editorHubSaved0000" x="516" y="1" width="512" height="512" frameX="-0" frameY="-0" frameWidth="512" frameHeight="512" />
+	<SubTexture name="selectionEditor0000" x="1" y="516" width="512" height="512" frameX="-0" frameY="-0" frameWidth="512" frameHeight="512" />
+	<SubTexture name="selectionNormal0000" x="516" y="516" width="512" height="512" frameX="-0" frameY="-0" frameWidth="512" frameHeight="512" />
+	<SubTexture name="selectionPlayerEditor0000" x="1031" y="1" width="512" height="512" frameX="-0" frameY="-0" frameWidth="512" frameHeight="512" />
+	<SubTexture name="settingsHub0000" x="1031" y="516" width="512" height="512" frameX="-0" frameY="-0" frameWidth="512" frameHeight="512" />
+	<SubTexture name="trophieAchieviment0000" x="1" y="1031" width="512" height="512" frameX="-0" frameY="-0" frameWidth="512" frameHeight="512" />
 </TextureAtlas>

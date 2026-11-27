@@ -10,6 +10,6 @@ class BoostrapState extends FlxState
     override function create()
     {
         SaveUtils.applyDefaults(UserPreferences);
-        FlxG.switchState(() -> new DVDLoopState());
+        FlxG.switchState(() -> new states.TitleState());
     }
 }
