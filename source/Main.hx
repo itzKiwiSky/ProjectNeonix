@@ -19,7 +19,7 @@ class Main extends Sprite
     
     public static var fpsVar:FPSCounter;
     
-    var updateFrameRate:Int = 60;
+    var updateFrameRate:Int = 144;
     
     public function new()
     {

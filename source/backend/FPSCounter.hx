@@ -3,7 +3,9 @@ package backend;
 import flixel.FlxG;
 import openfl.text.TextField;
 import openfl.text.TextFormat;
-import openfl.system.System;
+import cpp.vm.Gc;
+import flixel.util.FlxStringUtil;
+import flixel.util.FlxColor;
 
 /**
     The FPS class provides an easy-to-use monitor to display
@@ -50,6 +52,7 @@ class FPSCounter extends TextField
         times.push(now);
         while (times[0] < now - 1000)
             times.shift();
+            
         // prevents the overlay from updating every frame, why would you need to anyways @crowplexus
         if (deltaTimeout < 50)
         {
@@ -64,13 +67,11 @@ class FPSCounter extends TextField
     
     public dynamic function updateText():Void
     { // so people can override it in hscript
-        text = 'FPS: ${currentFPS}' + '\nMemory: ${flixel.util.FlxStringUtil.formatBytes(memoryMegas)}';
+        text = 'FPS: ${currentFPS}' + '\nMemory: ${FlxStringUtil.formatBytes(memoryMegas)}';
         
-        textColor = 0xFFFFFFFF;
-        if (currentFPS < FlxG.drawFramerate * 0.5)
-            textColor = 0xFFFF0000;
+        textColor = (currentFPS < FlxG.drawFramerate * 0.5) ? FlxColor.RED : FlxColor.WHITE;
     }
     
     inline function get_memoryMegas():Float
-        return cpp.vm.Gc.memInfo64(cpp.vm.Gc.MEM_INFO_USAGE);
+        return Gc.memInfo64(cpp.vm.Gc.MEM_INFO_USAGE);
 }
