@@ -1,5 +1,6 @@
 package states;
 
+import flixel.addons.effects.FlxTrailArea;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.graphics.frames.FlxAtlasFrames;
@@ -29,10 +30,11 @@ class MainMenuState extends FlxState
     
     var scroll:Float = 0;
     var scrollTarget:Float = 0;
-    final scrollSpeed:Float = 10;
+    final scrollSpeed:Float = 7.5;
     
     var textTitle:FlxText;
     var currentSelectedItem:String = "";
+    var trail:FlxTrailArea;
     
     final items:Array<MenuItem> = [
         /*{
@@ -103,23 +105,14 @@ class MainMenuState extends FlxState
         sun.screenCenter();
         add(sun);
         
+        trail = new FlxTrailArea(0, 0, FlxG.width, FlxG.height);
+        add(trail);
+        
         elements = new FlxTypedGroup<FlxSprite>();
         add(elements);
         
         icons = new FlxTypedGroup<FlxSprite>();
         add(icons);
-        
-        var sprIcons:FlxSprite = new FlxSprite();
-        sprIcons.frames = FlxAtlasFrames.fromSparrow("assets/images/menus/menu_icons.png", "assets/images/menus/menu_icons.xml");
-        sprIcons.animation.addByPrefix("errorIcon", "errorIcon", 1, true);
-        sprIcons.animation.addByPrefix("exportIcon", "exportIcon", 1, true);
-        sprIcons.animation.addByPrefix("importIcon", "importIcon", 1, true);
-        sprIcons.animation.addByPrefix("lock", "lock", 1, true);
-        sprIcons.animation.addByPrefix("star_rate", "star_rate", 1, true);
-        sprIcons.animation.addByPrefix("star_rate_half", "star_rate_half", 1, true);
-        sprIcons.animation.addByPrefix("star_rate_hole", "star_rate_hole", 1, true);
-        sprIcons.animation.addByPrefix("sucessIcon", "sucessIcon", 1, true);
-        sprIcons.animation.addByPrefix("userIcon", "userIcon", 1, true);
         
         for (item in items)
         {
@@ -130,6 +123,7 @@ class MainMenuState extends FlxState
             spr.animation.play(item.iconID, true);
             
             elements.add(spr);
+            trail.add(spr);
         }
         
         FlxG.camera.follow(camObj, null, 0.4);
@@ -139,6 +133,23 @@ class MainMenuState extends FlxState
         });
         
         super.create();
+    }
+    
+    inline function createIconSprite(id:String):FlxSprite
+    {
+        var sprIcons:FlxSprite = new FlxSprite();
+        sprIcons.frames = FlxAtlasFrames.fromSparrow("assets/images/menus/menu_icons.png", "assets/images/menus/menu_icons.xml");
+        sprIcons.animation.addByPrefix("error", "errorIcon", 1, true);
+        sprIcons.animation.addByPrefix("export", "exportIcon", 1, true);
+        sprIcons.animation.addByPrefix("import", "importIcon", 1, true);
+        sprIcons.animation.addByPrefix("lock", "lock", 1, true);
+        sprIcons.animation.addByPrefix("star_rate", "star_rate", 1, true);
+        sprIcons.animation.addByPrefix("star_rate_half", "star_rate_half", 1, true);
+        sprIcons.animation.addByPrefix("star_rate_hole", "star_rate_hole", 1, true);
+        sprIcons.animation.addByPrefix("sucess", "sucessIcon", 1, true);
+        sprIcons.animation.addByPrefix("user", "userIcon", 1, true);
+        sprIcons.animation.play(id, true);
+        return sprIcons;
     }
     
     override function update(elapsed:Float)
@@ -172,10 +183,8 @@ class MainMenuState extends FlxState
         else if (FlxG.keys.anyJustPressed([A, LEFT]))
             scrollTarget = Math.max(0, scrollTarget - 1);
         else if (FlxG.keys.justPressed.ENTER)
-        {
-            // push
-        }
-        
+            items[Math.floor(scrollTarget)].onClick();
+            
         textTitle.text = items[Math.floor(scrollTarget)].title;
         textTitle.screenCenter(X);
     }
