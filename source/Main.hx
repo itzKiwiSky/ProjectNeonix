@@ -1,12 +1,15 @@
 package;
 
+#if !html5
 import backend.FPSCounter;
+#end
 import openfl.display.StageScaleMode;
 import openfl.Lib;
 import states.BoostrapState;
+#if EDITOR_ALLOWED
 import states.EditorState;
+#end
 import flixel.FlxG;
-import states.PlayState;
 import flixel.FlxGame;
 import openfl.display.Sprite;
 

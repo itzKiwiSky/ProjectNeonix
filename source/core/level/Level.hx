@@ -1,8 +1,14 @@
 package core.level;
 
-import sys.io.File;
 import haxe.Json;
+import haxe.io.Path;
 import core.managers.Timeline.TimelineEvent;
+#if sys
+import openfl.filesystem.File as OpenFlFile;
+import openfl.filesystem.FileMode;
+import openfl.filesystem.FileStream;
+#end
+import openfl.utils.Assets as OpenFlAssets;
 
 typedef LevelMetaData =
 {
@@ -34,8 +40,14 @@ typedef LevelData =
 
 class Level
 {
-    public static function emptyLevel()
-    {
+    public inline static function emptyEditorMetadata():EditorMeta
+        return {
+            audioPath: "",
+            lastSavedTime: 0,
+            eventLanes: [],
+        }
+        
+    public inline static function emptyLevel():LevelData
         return {
             meta: {
                 title: "",
@@ -51,27 +63,33 @@ class Level
             },
             events: [],
             editorMeta: emptyEditorMetadata(),
-        };
-    }
-    
-    public static function emptyEditorMetadata():EditorMeta
-    {
-        return {
-            audioPath: "",
-            lastSavedTime: 0,
-            eventLanes: [],
         }
-    }
-    
+        
     public static function loadJsonData(filename:String, rawJson:Bool = false):LevelData
     {
-        var data:LevelData;
-        
-        if (rawJson)
-            data = Json.parse(filename);
-        else
-            data = Json.parse(File.getContent(filename));
-            
-        return data;
+        var json:String = filename;
+        if (!rawJson)
+        {
+            if (Path.isAbsolute(filename))
+            {
+                #if sys
+                var file:OpenFlFile = new OpenFlFile(filename);
+                var stream:FileStream = new FileStream();
+                stream.open(file, FileMode.READ);
+                json = stream.readUTFBytes(stream.bytesAvailable);
+                stream.close();
+                #else
+                throw 'Cannot load an external level file on this target: "$filename".';
+                #end
+            }
+            else
+            {
+                if (!OpenFlAssets.exists(filename))
+                    throw 'Level asset not found: "$filename".';
+                json = OpenFlAssets.getText(filename);
+            }
+        }
+
+        return Json.parse(json);
     }
 }

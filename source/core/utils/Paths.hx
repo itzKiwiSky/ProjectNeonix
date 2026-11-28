@@ -1,11 +1,8 @@
 package core.utils;
 
-import core.level.Level;
 import sys.io.File;
-import core.level.Level.LevelData;
 import haxe.io.Path;
 import openfl.media.Sound;
-import openfl.utils.AssetType;
 import openfl.utils.Assets as OpenFlAssets;
 import sys.FileSystem;
 
@@ -70,11 +67,11 @@ class Paths
         final file:String = Path.join([levelDir, p.path]);
         return FileSystem.exists(file) ? Sound.fromFile(file) : null;
     }
-
+    
     public static function loadLevelData(ref:String):Null<String>
     {
         final p:PathScheme = split(ref);
-
+        
         if (p.scheme == "builtin" || p.scheme == "builtin_level")
         {
             var path:String = p.path;
@@ -83,7 +80,7 @@ class Paths
                 return OpenFlAssets.getText(path);
             return FileSystem.exists(path) ? File.getContent(path) : null;
         }
-
+        
         if (p.scheme == "embed")
         {
             var path:String = Path.normalize(Path.join(["assets", "embed", p.path]));
@@ -91,13 +88,13 @@ class Paths
                 return OpenFlAssets.getText(path);
             return FileSystem.exists(path) ? File.getContent(path) : null;
         }
-
+        
         var file:String = Path.normalize(p.path);
         if (OpenFlAssets.exists(file))
             return OpenFlAssets.getText(file);
         if (FileSystem.exists(file))
             return File.getContent(file);
-
+            
         file = Path.normalize(Path.join(["assets", "data", p.path]));
         if (OpenFlAssets.exists(file))
             return OpenFlAssets.getText(file);
