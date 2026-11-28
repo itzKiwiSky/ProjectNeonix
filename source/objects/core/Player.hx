@@ -5,7 +5,6 @@ import core.save.UserPreferences;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.addons.display.FlxPieDial;
-import flixel.addons.display.FlxPieDial.FlxPieDialShape;
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
 import flixel.math.FlxMath;
 import flixel.tweens.FlxEase;
@@ -29,6 +28,8 @@ class Player extends FlxTypedSpriteGroup<FlxSprite>
     
     var playerSpeed:Float = 350;
     var playerSize:Int = 48;
+    
+    public var invencible:Bool = false;
     
     public var isKilled:Bool = false;
     
@@ -77,15 +78,15 @@ class Player extends FlxTypedSpriteGroup<FlxSprite>
             return;
             
         if (hitbox.isTouching(DOWN) && FlxG.keys.anyPressed([UP, SPACE, Z, W]))
-            hitbox.velocity.y = -400;
+            hitbox.velocity.y = -480;
             
         activeGamepad = FlxG.gamepads.lastActive;
         var gamepadAxis:Float = 0;
         if (activeGamepad != null)
             gamepadAxis = -activeGamepad.getXAxis(LEFT_ANALOG_STICK);
             
-        var movingRight:Int = FlxG.keys.anyPressed([D, RIGHT]) ? 1 : 0;
-        var movingLeft:Int = FlxG.keys.anyPressed([A, LEFT]) ? 1 : 0;
+        var movingRight:Int = FlxG.keys.anyPressed([D]) ? 1 : 0;
+        var movingLeft:Int = FlxG.keys.anyPressed([A]) ? 1 : 0;
         var dir:Float = (movingRight - movingLeft) - gamepadAxis;
         
         hitbox.velocity.x = dir * playerSpeed;
@@ -132,6 +133,12 @@ class Player extends FlxTypedSpriteGroup<FlxSprite>
     
     public function testHit()
     {
+        if (invencible)
+        {
+            trace("The player was hit! ");
+            return;
+        }
+        
         if (wasHit || health <= 0)
             return;
             

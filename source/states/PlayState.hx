@@ -127,6 +127,8 @@ class PlayState extends MusicSyncedState
         
         background.updateHitbox();
         
+        FlxG.debugger.drawDebug = true;
+        
         FlxG.worldBounds.set(-128, 0, FlxG.width + 256, FlxG.height + 32);
         
         updateCameraTarget();
@@ -234,6 +236,12 @@ class PlayState extends MusicSyncedState
             return;
         }
         
+        #if EDITOR_ALLOWED
+        player.invencible = playtestMode;
+        if (playtestMode)
+            updatePlaytestTimeControls(elapsed);
+        #end
+        
         if (music != null)
         {
             if (music.time >= songEndTime)
@@ -245,7 +253,7 @@ class PlayState extends MusicSyncedState
             
             FlxG.watch.add(music, "time", "music time");
         }
-        else
+        else if (!playtestMode)
             Conductor.songPosition = 0;
             
         runtime.update(Conductor.songPosition);
@@ -283,7 +291,9 @@ class PlayState extends MusicSyncedState
                 }
             }
         }
+        #end
         
+        #if debug
         if (FlxG.keys.justPressed.Q)
             player.health = 0;
         #end
@@ -292,6 +302,30 @@ class PlayState extends MusicSyncedState
         updateCameraTarget();
         
         resetLevel();
+    }
+    
+    function updatePlaytestTimeControls(elapsed:Float)
+    {
+        if (FlxG.keys.justPressed.P && music != null)
+        {
+            if (music.playing)
+                music.pause();
+            else
+                music.play(true, Conductor.songPosition);
+        }
+        
+        var direction:Float = (FlxG.keys.pressed.RIGHT ? 1 : 0) - (FlxG.keys.pressed.LEFT ? 1 : 0);
+        if (direction == 0)
+            return;
+            
+        var speed:Float = FlxG.keys.pressed.SHIFT ? 5000 : (FlxG.keys.pressed.ALT ? 500 : 1000);
+        var currentTime:Float = music == null ? Conductor.songPosition : music.time;
+        var maximumTime:Float = music == null ? Math.POSITIVE_INFINITY : songEndTime;
+        var newTime:Float = Math.max(songStartTime, Math.min(maximumTime, currentTime + direction * speed * elapsed));
+        
+        if (music != null)
+            music.time = newTime;
+        Conductor.songPosition = newTime;
     }
     
     public function resetLevel()

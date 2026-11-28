@@ -71,24 +71,28 @@ class Sawblade extends LevelActor
                 key: "x",
                 label: "Start X",
                 kind: FieldKind.Number,
+                min: -999999,
                 defaultValue: 128
             },
             {
                 key: "y",
                 label: "Start Y",
                 kind: FieldKind.Number,
+                min: -999999,
                 defaultValue: 360
             },
             {
                 key: "endX",
                 label: "End X",
                 kind: FieldKind.Number,
+                min: -999999,
                 defaultValue: 1152
             },
             {
                 key: "endY",
                 label: "End Y",
                 kind: FieldKind.Number,
+                min: -999999,
                 defaultValue: 360
             },
             {
