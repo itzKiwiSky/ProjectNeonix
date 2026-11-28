@@ -36,6 +36,7 @@
 
 
 	<define name="DISCORD_ALLOWED" />
+	<define name="EDITOR_ALLOWED" />
 
 	<!-- _____________________________ Path Settings ____________________________ -->
 

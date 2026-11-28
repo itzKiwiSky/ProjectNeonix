@@ -261,7 +261,7 @@ class PlayState extends MusicSyncedState
         if (runtime.hits(player.hitbox))
             player.testHit();
             
-        #if debug
+        #if EDITOR_ALLOWED
         if (FlxG.keys.justPressed.SEVEN)
         {
             if (music != null)

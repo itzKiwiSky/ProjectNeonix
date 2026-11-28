@@ -456,7 +456,7 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
         }
     }
     
-    function cameraWorldConfig()
+    inline function cameraWorldConfig()
     {
         FlxG.worldBounds.set(0, 0, FlxG.width * 2, FlxG.height * 1.5);
     }

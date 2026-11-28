@@ -17,6 +17,7 @@ class FallingBlock extends LevelActor
     var warningBaseScaleX:Float;
     var warningBaseScaleY:Float;
     var blockBaseScale:Float;
+    var canBounce:Bool = true;
     
     static inline final sizeBase:Int = 128;
     static inline final WARNING_ANIMATION_MS:Float = 200;
@@ -64,6 +65,12 @@ class FallingBlock extends LevelActor
                 label: "Random X",
                 kind: Checkbox,
                 defaultValue: false
+            },
+            {
+                key: "canBounce",
+                label: "Bounce Animation",
+                kind: Checkbox,
+                defaultValue: true
             },
             {
                 key: "stopY",
@@ -154,7 +161,7 @@ class FallingBlock extends LevelActor
     override function onActiveUpdate()
     {
         var t = progress(currentTime, time, duration);
-        cy = START_Y + (stopY - START_Y) * FlxEase.bounceOut(t);
+        cy = START_Y + (stopY - START_Y) * (canBounce ? FlxEase.bounceOut(t) : FlxEase.sineOut(t));
         syncBlock();
     }
     

@@ -1,5 +1,6 @@
 package states;
 
+import openfl.filters.GlowFilter;
 import flixel.addons.effects.FlxTrailArea;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
@@ -48,12 +49,6 @@ class MainMenuState extends FlxState
                 iconID: "editorHubSaved",
                 onClick: function() {},
                 isLocked: true
-            },
-            {
-                title: "Level Editor",
-                iconID: "selectionEditor",
-                onClick: function() {},
-                isLocked: true
         },*/
         {
             title: "Normal Levels",
@@ -67,6 +62,19 @@ class MainMenuState extends FlxState
             onClick: function() {},
             isLocked: false
         },
+        #if EDITOR_ALLOWED
+        {
+            title: "Level Editor",
+            iconID: "selectionEditor",
+            onClick: () ->
+            {
+                if (FlxG.sound.music != null)
+                    FlxG.sound.music.stop();
+                FlxG.switchState(() -> new EditorState());
+            },
+            isLocked: false
+        },
+        #end
         {
             title: "Settings",
             iconID: "settingsHub",
@@ -83,11 +91,13 @@ class MainMenuState extends FlxState
     
     override function create()
     {
-        persistentDraw = persistentUpdate = true;
+        persistentUpdate = true;
         camObj = new FlxObject();
         camObj.screenCenter();
         camObj.y = -FlxG.height * 2;
         add(camObj);
+        
+        FlxG.camera.follow(camObj, null, 0.4);
         
         textTitle = new FlxText();
         textTitle.font = "assets/embed/fonts/nexa_bold.otf";
@@ -100,10 +110,18 @@ class MainMenuState extends FlxState
         
         sun = new FlxSprite();
         sun.loadGraphic("assets/images/menus/sun.png");
-        sun.scale.set(0.5, 0.5);
+        sun.scale.set(0.75, 0.75);
         sun.updateHitbox();
         sun.screenCenter();
+        sun.color = 0xFF818181;
         add(sun);
+        
+        if (FlxG.sound.music == null && !FlxG.sound.music.playing)
+        {
+            FlxG.sound.music = FlxG.sound.create("assets/embed/music/future_base.ogg");
+            FlxG.sound.music.persist = true;
+            FlxG.sound.music.play();
+        }
         
         trail = new FlxTrailArea(0, 0, FlxG.width, FlxG.height);
         add(trail);
@@ -125,8 +143,6 @@ class MainMenuState extends FlxState
             elements.add(spr);
             trail.add(spr);
         }
-        
-        FlxG.camera.follow(camObj, null, 0.4);
         
         FlxTween.tween(camObj, {y: FlxG.height * 0.5}, 1.5, {
             ease: FlxEase.backOut,
@@ -183,8 +199,9 @@ class MainMenuState extends FlxState
         else if (FlxG.keys.anyJustPressed([A, LEFT]))
             scrollTarget = Math.max(0, scrollTarget - 1);
         else if (FlxG.keys.justPressed.ENTER)
-            items[Math.floor(scrollTarget)].onClick();
-            
+            if (!items[Math.floor(scrollTarget)].isLocked)
+                items[Math.floor(scrollTarget)].onClick();
+                
         textTitle.text = items[Math.floor(scrollTarget)].title;
         textTitle.screenCenter(X);
     }

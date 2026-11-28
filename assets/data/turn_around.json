@@ -1,0 +1,394 @@
+{
+    "events": [
+        {
+            "params": {
+                "x": 640,
+                "y": 110,
+                "spread": 360,
+                "angle": 0,
+                "outro": 500,
+                "life": 3000,
+                "duration": 250,
+                "interval": 500,
+                "useRandomX": true,
+                "speed": 700,
+                "useRandomY": false,
+                "count": 8
+            },
+            "object": "bullet_emitter",
+            "lead": 750,
+            "time": 1599
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 110,
+                "angle": 0,
+                "outro": 500,
+                "spread": 360,
+                "life": 3000,
+                "duration": 250,
+                "interval": 500,
+                "useRandomX": true,
+                "speed": 700,
+                "useRandomY": false,
+                "count": 8
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 2700
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 110,
+                "angle": 0,
+                "outro": 500,
+                "spread": 360,
+                "life": 3000,
+                "duration": 250,
+                "interval": 500,
+                "useRandomX": true,
+                "speed": 700,
+                "useRandomY": false,
+                "count": 8
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 3600
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 110,
+                "angle": 0,
+                "outro": 500,
+                "spread": 360,
+                "life": 3000,
+                "duration": 250,
+                "interval": 500,
+                "useRandomX": true,
+                "speed": 700,
+                "useRandomY": false,
+                "count": 8
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 4650
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 110,
+                "angle": 0,
+                "outro": 500,
+                "spread": 360,
+                "life": 3000,
+                "duration": 250,
+                "interval": 500,
+                "useRandomX": true,
+                "speed": 700,
+                "useRandomY": false,
+                "count": 8
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 5700
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 110,
+                "angle": 0,
+                "outro": 500,
+                "spread": 360,
+                "life": 3000,
+                "duration": 250,
+                "interval": 500,
+                "useRandomX": true,
+                "speed": 700,
+                "useRandomY": false,
+                "count": 8
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 6600
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 110,
+                "angle": 0,
+                "outro": 500,
+                "spread": 360,
+                "life": 3000,
+                "duration": 250,
+                "interval": 500,
+                "useRandomX": true,
+                "speed": 700,
+                "useRandomY": false,
+                "count": 8
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 7650
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 110,
+                "angle": 0,
+                "outro": 500,
+                "spread": 360,
+                "life": 3000,
+                "duration": 250,
+                "interval": 500,
+                "useRandomX": true,
+                "speed": 700,
+                "useRandomY": false,
+                "count": 8
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 8700
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 110,
+                "angle": 0,
+                "outro": 500,
+                "spread": 360,
+                "life": 3000,
+                "duration": 250,
+                "interval": 500,
+                "useRandomX": true,
+                "speed": 700,
+                "useRandomY": false,
+                "count": 8
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 9750
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 110,
+                "angle": 0,
+                "outro": 500,
+                "spread": 360,
+                "life": 3000,
+                "duration": 250,
+                "interval": 500,
+                "useRandomX": true,
+                "speed": 700,
+                "useRandomY": false,
+                "count": 8
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 10800
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 110,
+                "angle": 0,
+                "outro": 500,
+                "spread": 360,
+                "life": 3000,
+                "duration": 250,
+                "interval": 500,
+                "useRandomX": true,
+                "speed": 700,
+                "useRandomY": false,
+                "count": 8
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 11700
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 110,
+                "angle": 0,
+                "outro": 500,
+                "spread": 360,
+                "life": 3000,
+                "duration": 250,
+                "interval": 500,
+                "useRandomX": true,
+                "speed": 700,
+                "useRandomY": false,
+                "count": 8
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 12750
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 110,
+                "angle": 0,
+                "outro": 500,
+                "spread": 360,
+                "life": 3000,
+                "duration": 250,
+                "interval": 500,
+                "useRandomX": true,
+                "speed": 700,
+                "useRandomY": false,
+                "count": 8
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 13800
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 110,
+                "angle": 0,
+                "outro": 500,
+                "spread": 360,
+                "life": 3000,
+                "duration": 250,
+                "interval": 500,
+                "useRandomX": true,
+                "speed": 700,
+                "useRandomY": false,
+                "count": 8
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 14850
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 110,
+                "angle": 0,
+                "outro": 500,
+                "spread": 360,
+                "life": 3000,
+                "duration": 250,
+                "interval": 500,
+                "useRandomX": true,
+                "speed": 700,
+                "useRandomY": false,
+                "count": 8
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 15750
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 110,
+                "angle": 0,
+                "outro": 500,
+                "spread": 360,
+                "life": 3000,
+                "duration": 250,
+                "interval": 500,
+                "useRandomX": true,
+                "speed": 700,
+                "useRandomY": false,
+                "count": 8
+            },
+            "lead": 750,
+            "object": "bullet_emitter",
+            "time": 16800
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 110,
+                "angle": 0,
+                "outro": 500,
+                "spread": 360,
+                "life": 3000,
+                "duration": 250,
+                "interval": 500,
+                "useRandomX": true,
+                "speed": 700,
+                "useRandomY": false,
+                "count": 8
+            },
+            "lead": 1000,
+            "object": "bullet_emitter",
+            "time": 17100
+        },
+        {
+            "params": {
+                "x": 640,
+                "y": 110,
+                "angle": 0,
+                "outro": 500,
+                "spread": 360,
+                "life": 3000,
+                "duration": 250,
+                "interval": 500,
+                "useRandomX": true,
+                "speed": 700,
+                "useRandomY": false,
+                "count": 8
+            },
+            "lead": 1000,
+            "object": "bullet_emitter",
+            "time": 17250
+        }
+    ],
+    "editorMeta": {
+        "lastSavedTime": 0,
+        "eventLanes": [
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        ],
+        "audioPath": ""
+    },
+    "meta": {
+        "artist": "TreePalm",
+        "actorsColor": [
+            238,
+            100,
+            230
+        ],
+        "bpm": 100,
+        "songStarting": 0,
+        "platformColor": [
+            232,
+            100,
+            230
+        ],
+        "backgroundColor": [
+            0,
+            0,
+            0
+        ],
+        "title": "Turn  Around",
+        "backgroundID": 2,
+        "songFilename": "builtin:turn_around.ogg",
+        "songEnding": -1
+    }
+}
