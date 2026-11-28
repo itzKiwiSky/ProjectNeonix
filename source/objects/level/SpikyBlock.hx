@@ -4,8 +4,8 @@ import core.LevelActor;
 import core.managers.ActorManager;
 import core.managers.ActorManager.EventCategory;
 import core.managers.ActorManager.FieldKind;
+import core.utils.Collision;
 import flixel.FlxBasic;
-import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.tweens.FlxEase;
 
@@ -118,5 +118,8 @@ class SpikyBlock extends LevelActor
     }
     
     override function hits(obj:FlxBasic):Bool
-        return canDamage && phase == Active && FlxG.overlap(block, obj);
+    {
+        var target:FlxSprite = Std.downcast(obj, FlxSprite);
+        return canDamage && phase == Active && target != null && Collision.spriteSprite(block, target);
+    }
 }

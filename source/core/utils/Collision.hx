@@ -1,66 +1,54 @@
 package core.utils;
 
-import flixel.math.FlxMath;
+import echo.Shape;
+import echo.shape.Circle;
+import echo.shape.Polygon;
+import echo.shape.Rect;
 import flixel.FlxSprite;
-
-typedef CollisionShapeRect =
-{
-    var x:Float;
-    var y:Float;
-    var width:Float;
-    var height:Float;
-}
-
-typedef CollisionShapeCircle =
-{
-    var x:Float;
-    var y:Float;
-    var radius:Float;
-}
-
-typedef CollisionShapePoint =
-{
-    var x:Float;
-    var y:Float;
-}
 
 class Collision
 {
-    public inline static function rectShapeFromFlxSprite(sprite:FlxSprite):CollisionShapeRect
-        return {
-            x: sprite.x,
-            y: sprite.y,
-            width: sprite.width,
-            height: sprite.height
-        }
-        
-    public inline static function createCircleShape(x:Float = 0, y:Float = 0, radius:Float = 2):CollisionShapeCircle
-        return {
-            x: x,
-            y: y,
-            radius: radius
-        }
-        
-    public static function rectCircle(rect:CollisionShapeRect, circle:CollisionShapeCircle):Bool
+    public static function spriteSprite(first:FlxSprite, second:FlxSprite):Bool
     {
-        if (circle.radius <= 0)
-            return false;
-
-        var closestX = FlxMath.bound(circle.x, rect.x, rect.x + rect.width);
-        var closestY = FlxMath.bound(circle.y, rect.y, rect.y + rect.height);
-        var dx = circle.x - closestX;
-        var dy = circle.y - closestY;
-        return dx * dx + dy * dy < circle.radius * circle.radius;
+        var a:Rect = rectFromSprite(first);
+        var b:Rect = rectFromSprite(second);
+        var overlaps:Bool = a.overlaps(b);
+        a.put();
+        b.put();
+        return overlaps;
     }
 
-    public static function circleCircle(first:CollisionShapeCircle, second:CollisionShapeCircle):Bool
+    public static function circleSprite(x:Float, y:Float, radius:Float, sprite:FlxSprite):Bool
     {
-        if (first.radius <= 0 || second.radius <= 0)
+        if (radius <= 0)
             return false;
 
-        var dx = first.x - second.x;
-        var dy = first.y - second.y;
-        var radiusSum = first.radius + second.radius;
-        return dx * dx + dy * dy < radiusSum * radiusSum;
+        var circle:Circle = Circle.get(x, y, radius);
+        var rect:Rect = rectFromSprite(sprite);
+        var overlaps:Bool = circle.overlaps(rect);
+        circle.put();
+        rect.put();
+        return overlaps;
     }
+
+    public static function ellipseSprite(x:Float, y:Float, radiusX:Float, radiusY:Float, rotation:Float, sprite:FlxSprite):Bool
+    {
+        if (radiusX <= 0 || radiusY <= 0)
+            return false;
+
+        var ellipse:Shape;
+        if (Math.abs(radiusX - radiusY) < 0.001)
+            ellipse = Circle.get(x, y, radiusX);
+        else
+            ellipse = Polygon.get(x, y, 32, 1, rotation, radiusX, radiusY);
+
+        var rect:Rect = rectFromSprite(sprite);
+        var overlaps:Bool = ellipse.overlaps(rect);
+        ellipse.put();
+        rect.put();
+        return overlaps;
+    }
+
+    static inline function rectFromSprite(sprite:FlxSprite):Rect
+        return Rect.get(sprite.x + sprite.width * 0.5, sprite.y + sprite.height * 0.5, sprite.width, sprite.height, sprite.angle);
 }

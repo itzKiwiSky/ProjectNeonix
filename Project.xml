@@ -21,7 +21,7 @@
 
 	<!--These
 	window settings apply to all targets-->
-	<window width="1280" height="720" fps="60" background="#000000" hardware="true" vsync="false" />
+	<window width="1280" height="720" fps="144" background="#000000" hardware="true" vsync="false" />
 
 	<!--HTML5-specific-->
 	<window if="html5" resizable="true" />
@@ -36,7 +36,7 @@
 
 
 	<define name="DISCORD_ALLOWED" />
-	<define name="EDITOR_ALLOWED" if="debug" />
+	<define name="EDITOR_ALLOWED" if="debug desktop" />
 
 	<!-- _____________________________ Path Settings ____________________________ -->
 
@@ -45,15 +45,21 @@
 
 	<assets path="assets/images" />
 	<assets path="assets/sounds" />
-	<assets path="assets/data" />
+
+	<library name="assets" preload="true" />
+	<assets path="assets/data" library="datalib" />
+
 	<assets path="assets/embed" embed="true" />
 
-	<!-- _______________________________ Libraries ______________________________ -->
+	<!-- ______________________________  Libraries ______________________________ -->
 
 	<haxelib name="flixel" />
 	<haxelib name="flixel-addons" />
 	<haxelib name="flixel-waveform" />
 	<haxelib name="haxe-addons" />
+
+	<haxelib name="echo" />
+	<haxelib name="hxmath" />
 
 	<haxelib name="hxdiscord_rpc" version="1.3.0" if="DISCORD_ALLOWED desktop" />
 
@@ -68,6 +74,8 @@
 	<haxedef name="FLX_NO_MOUSE" if="mobile" />
 	<haxedef name="FLX_NO_KEYBOARD" if="mobile" />
 	<haxedef name="FLX_NO_TOUCH" if="desktop" />
+
+	<haxedef name="ECHO_USE_HXMATH" />
 
 	<!--Disable
 	the Flixel core focus lost screen-->

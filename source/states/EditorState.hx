@@ -1,3 +1,4 @@
+#if EDITOR_ALLOWED
 package states;
 
 import core.utils.Paths;
@@ -1115,3 +1116,4 @@ class EditorState extends MusicSyncedState implements EngineUIEvent
     
     public function UIEvent(id:String, sender:Dynamic) {}
 }
+#end

@@ -17,7 +17,9 @@ class Main extends Sprite
     public static var screenWidth:Int = 1280;
     public static var screenHeight:Int = 720;
     
+    #if !html5
     public static var fpsVar:FPSCounter;
+    #end
     
     var updateFrameRate:Int = 144;
     
@@ -33,8 +35,10 @@ class Main extends Sprite
         FlxG.sound.volumeUpKeys = null;
         FlxG.sound.volumeDownKeys = null;
         
+        #if !html5
         fpsVar = new FPSCounter(10, 3, 0xFFFFFF);
         addChild(fpsVar);
+        #end
         
         Lib.current.stage.align = "tl";
         Lib.current.stage.scaleMode = StageScaleMode.NO_SCALE;

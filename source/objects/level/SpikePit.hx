@@ -2,9 +2,11 @@ package objects.level;
 
 import objects.composition.Spike;
 import core.managers.ActorManager;
+import core.utils.Collision;
 import core.LevelActor;
 import flixel.FlxBasic;
 import flixel.FlxG;
+import flixel.FlxSprite;
 import flixel.math.FlxMath;
 import flixel.tweens.FlxEase;
 
@@ -135,8 +137,12 @@ class SpikePit extends LevelActor
         if (phase != Active && phase != Outro)
             return false;
             
+        var target:FlxSprite = Std.downcast(obj, FlxSprite);
+        if (target == null)
+            return false;
+
         for (s in spikes)
-            if (s.raise > DANGER && s.spikeHitbox.overlaps(obj))
+            if (s.raise > DANGER && Collision.spriteSprite(s.spikeHitbox, target))
                 return true;
         return false;
     }

@@ -2,9 +2,9 @@ package objects.level;
 
 import core.managers.ActorManager;
 import core.LevelActor;
+import core.utils.Collision;
 import flixel.FlxBasic;
 import flixel.FlxSprite;
-import flixel.FlxG;
 import flixel.tweens.FlxEase;
 import flixel.util.FlxColor;
 import flixel.util.FlxSpriteUtil;
@@ -143,5 +143,8 @@ class PulseBlock extends LevelActor
     }
     
     override public function hits(obj:FlxBasic):Bool
-        return phase == Active && FlxG.overlap(obj, activeSprite);
+    {
+        var target:FlxSprite = Std.downcast(obj, FlxSprite);
+        return phase == Active && target != null && Collision.spriteSprite(activeSprite, target);
+    }
 }

@@ -5,6 +5,7 @@ import core.managers.ActorManager;
 import core.managers.ActorManager.EventCategory;
 import core.managers.ActorManager.FieldKind;
 import core.LevelActor;
+import core.utils.Collision;
 import flixel.FlxBasic;
 import flixel.FlxObject;
 import flixel.FlxSprite;
@@ -96,47 +97,18 @@ class Shape extends LevelActor
     override function onOutroUpdate()
         apply(1 - FlxEase.quadIn(progress(currentTime, outroStartTime, outroDuration)));
         
-    // o jogador é tratado como um círculo; a forma pode estar girada e escalada
+    // consulta a geometria já transformada do sprite; plataformas sólidas continuam no Flixel
     override function hits(obj:FlxBasic):Bool
     {
         if (solid)
             return false; // sólido não machuca
             
-        var o:FlxObject = Std.downcast(obj, FlxObject);
-        if (phase != Active || o == null)
+        var target:FlxSprite = Std.downcast(obj, FlxSprite);
+        if (phase != Active || target == null || !body.visible)
             return false;
-            
-        var r = Math.min(o.width, o.height) * 0.4;
-        var pivotX:Float = x;
-        var pivotY:Float = y;
-        var shapeDX:Float = curX + timelineMoveX - pivotX;
-        var shapeDY:Float = curY + timelineMoveY - pivotY;
-        var transformRad:Float = timelineRotation * Math.PI / 180;
-        var shapeX:Float = pivotX + shapeDX * Math.cos(transformRad) - shapeDY * Math.sin(transformRad);
-        var shapeY:Float = pivotY + shapeDX * Math.sin(transformRad) + shapeDY * Math.cos(transformRad);
-        shapeX = pivotX + (shapeX - pivotX) * timelineScaleX;
-        shapeY = pivotY + (shapeY - pivotY) * timelineScaleY;
-
-        var dx = o.x + o.width * 0.5 - shapeX;
-        var dy = o.y + o.height * 0.5 - shapeY;
-        
-        // leva o jogador para o espaço da forma, desfazendo a rotação
-        var rad = -(curAngle + timelineRotation) * Math.PI / 180;
-        var lx = dx * Math.cos(rad) - dy * Math.sin(rad);
-        var ly = dx * Math.sin(rad) + dy * Math.cos(rad);
-        
         if (circle)
-        {
-            var rx = baseW * 0.5 * curScale * timelineScaleX + r;
-            var ry = baseH * 0.5 * curScale * timelineScaleY + r;
-            return lx * lx / (rx * rx) + ly * ly / (ry * ry) <= 1;
-        }
-        
-        var hw = baseW * 0.5 * curScale * timelineScaleX;
-        var hh = baseH * 0.5 * curScale * timelineScaleY;
-        var ex = lx - FlxMath.bound(lx, -hw, hw); // distância até o ponto do retângulo mais perto
-        var ey = ly - FlxMath.bound(ly, -hh, hh);
-        return ex * ex + ey * ey <= r * r;
+            return Collision.ellipseSprite(body.x + body.width * 0.5, body.y + body.height * 0.5, body.width * 0.5, body.height * 0.5, body.angle, target);
+        return Collision.spriteSprite(body, target);
     }
     
     override function collide(obj:FlxObject):Bool

@@ -193,17 +193,17 @@ class Sawblade extends LevelActor
         
     override function hits(obj:FlxBasic):Bool
     {
-        var playerRect:CollisionShapeRect = Collision.rectShapeFromFlxSprite(cast obj);
-        var rad:Float = HITBOX_SIZE * 0.5 * Math.max(timelineScaleX, timelineScaleY);
-        var circHitbox:CollisionShapeCircle = Collision.createCircleShape(0, 0, rad);
-        
-        if (!sawSprite.visible)
+        var target:FlxSprite = Std.downcast(obj, FlxSprite);
+        if (phase != Active || target == null || !sawSprite.visible)
             return false;
-            
-        circHitbox.x = sawHitbox.x + HITBOX_SIZE * 0.5;
-        circHitbox.y = sawHitbox.y + HITBOX_SIZE * 0.5;
-        if (Collision.rectCircle(playerRect, circHitbox))
-            return true;
-        return false;
+
+        return Collision.ellipseSprite(
+            sawHitbox.x + sawHitbox.width * 0.5,
+            sawHitbox.y + sawHitbox.height * 0.5,
+            sawHitbox.width * 0.5,
+            sawHitbox.height * 0.5,
+            sawHitbox.angle,
+            target
+        );
     }
 }

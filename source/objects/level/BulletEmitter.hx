@@ -232,20 +232,25 @@ class BulletEmitter extends LevelActor
     override function onOutroUpdate()
         setBodyScale(1 - FlxEase.quadOut(progress(currentTime, outroStartTime, outroDuration)));
         
-    // círculo contra círculo, contando só as balas visíveis
+    // consulta as balas visíveis com Echo
     override public function hits(obj:FlxBasic):Bool
     {
-        var playerRect = Collision.rectShapeFromFlxSprite(cast obj);
-        var bulletRadius = Bullet.SIZE * 0.5 * Math.max(timelineScaleX, timelineScaleY);
-        var bulletCircle = Collision.createCircleShape(0, 0, bulletRadius);
+        var target:FlxSprite = Std.downcast(obj, FlxSprite);
+        if (target == null)
+            return false;
         
         for (b in bullets)
         {
             if (!b.visible)
                 continue;
-            bulletCircle.x = b.x + Bullet.SIZE * 0.5;
-            bulletCircle.y = b.y + Bullet.SIZE * 0.5;
-            if (Collision.rectCircle(playerRect, bulletCircle))
+            if (Collision.ellipseSprite(
+                b.x + b.width * 0.5,
+                b.y + b.height * 0.5,
+                b.width * 0.5,
+                b.height * 0.5,
+                b.angle,
+                target
+            ))
                 return true;
         }
         return false;

@@ -113,6 +113,7 @@ class PlayState extends MusicSyncedState
         add(platformSprite);
         add(runtime.active);
         
+        #if EDITOR_ALLOWED
         if (playtestMode)
         {
             returnButton = new GameUIButton(8, 8, "Back to editor", returnToEditor, 144, 28);
@@ -122,6 +123,7 @@ class PlayState extends MusicSyncedState
             returnButton.broadcastButtonEvent = false;
             add(returnButton);
         }
+        #end
         
         reloadLevelData();
         
@@ -357,11 +359,13 @@ class PlayState extends MusicSyncedState
         cameraObject.setPosition(worldCenterX + (playerCenterX - worldCenterX) * camFollowX - cameraObject.width * 0.5, worldCenterY + (playerCenterY - worldCenterY) * camFollowY - cameraObject.height * 0.5);
     }
     
+    #if EDITOR_ALLOWED
     function returnToEditor()
     {
         destroyMusic();
         FlxG.switchState(() -> new EditorState());
     }
+    #end
     
     function destroyMusic()
     {

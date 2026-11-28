@@ -4,6 +4,7 @@ import core.LevelActor;
 import core.managers.ActorManager;
 import core.managers.ActorManager.EventCategory;
 import core.managers.ActorManager.FieldKind;
+import core.utils.Collision;
 import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -157,5 +158,8 @@ class Laser extends LevelActor
     }
 
     override function hits(obj:FlxBasic):Bool
-        return phase == Active && FlxG.overlap(activeSprite, obj);
+    {
+        var target:FlxSprite = Std.downcast(obj, FlxSprite);
+        return phase == Active && target != null && Collision.spriteSprite(activeSprite, target);
+    }
 }

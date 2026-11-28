@@ -3,6 +3,7 @@ package objects.level;
 import flixel.tweens.FlxEase;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import core.utils.Collision;
 import core.managers.ActorManager;
 import core.managers.ActorManager.EventCategory;
 import core.managers.ActorManager.FieldKind;
@@ -174,5 +175,8 @@ class FallingBlock extends LevelActor
     }
     
     override function hits(obj:FlxBasic):Bool
-        return phase == Active && FlxG.overlap(obj, movingBlock);
+    {
+        var target:FlxSprite = Std.downcast(obj, FlxSprite);
+        return phase == Active && target != null && Collision.spriteSprite(target, movingBlock);
+    }
 }
